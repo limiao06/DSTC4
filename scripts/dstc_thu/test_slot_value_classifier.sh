@@ -1,0 +1,8 @@
+python Slot_value_classifier.py ../../output/sub_segments_dev.json ../../output/slot_value_TuB_tM_c0.3_model --ontology ../config/ontology_dstc4.json > ../../output/slot_value_TuB_tM_c0.3_model/svc_dev_out.txt
+python Slot_value_classifier.py ../../output/sub_segments_dev.json ../../output/slot_value_TuB_tM_c0.5_model --ontology ../config/ontology_dstc4.json > ../../output/slot_value_TuB_tM_c0.5_model/svc_dev_out.txt
+python Slot_value_classifier.py ../../output/sub_segments_dev.json ../../output/slot_value_TuB_tM_c0.7_model --ontology ../config/ontology_dstc4.json > ../../output/slot_value_TuB_tM_c0.7_model/svc_dev_out.txt
+python Slot_value_classifier.py ../../output/sub_segments_dev.json ../../output/slot_value_TuB_tM_c0.9_model --ontology ../config/ontology_dstc4.json > ../../output/slot_value_TuB_tM_c0.9_model/svc_dev_out.txt
+python Slot_value_classifier.py ../../output/sub_segments_dev.json ../../output/slot_value_TuB_tN_c0.3_model --ontology ../config/ontology_dstc4.json > ../../output/slot_value_TuB_tN_c0.3_model/svc_dev_out.txt
+python Slot_value_classifier.py ../../output/sub_segments_dev.json ../../output/slot_value_TuB_tN_c0.5_model --ontology ../config/ontology_dstc4.json > ../../output/slot_value_TuB_tN_c0.5_model/svc_dev_out.txt
+python Slot_value_classifier.py ../../output/sub_segments_dev.json ../../output/slot_value_TuB_tN_c0.7_model --ontology ../config/ontology_dstc4.json > ../../output/slot_value_TuB_tN_c0.7_model/svc_dev_out.txt
+python Slot_value_classifier.py ../../output/sub_segments_dev.json ../../output/slot_value_TuB_tN_c0.9_model --ontology ../config/ontology_dstc4.json > ../../output/slot_value_TuB_tN_c0.9_model/svc_dev_out.txt
