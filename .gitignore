@@ -6,5 +6,7 @@
 data/
 output/
 processed_data/
-script_bk/
+scripts_bk/
 my_code/
+*.bat
+temp/
