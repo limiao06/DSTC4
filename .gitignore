@@ -1,0 +1,10 @@
+*.txt
+*.pyc
+*.sh
+*.swp
+*.csv
+data/
+output/
+processed_data/
+script_bk/
+my_code/

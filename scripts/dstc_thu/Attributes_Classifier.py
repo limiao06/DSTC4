@@ -6,11 +6,6 @@ temp attributes classifier
 train svm model
 '''
 
-
-'''
-test, little change
-'''
-
 import argparse, sys, time, json, os, math
 import logging
 import re
