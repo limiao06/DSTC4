@@ -1,0 +1,18 @@
+{
+    "INFO": true, 
+    "CUISINE": false, 
+    "FROM": false, 
+    "TYPE_OF_PLACE": true, 
+    "DRINK": false, 
+    "TIME": true, 
+    "TO": false, 
+    "STATION": false, 
+    "PLACE": false, 
+    "MEAL_TIME": true, 
+    "ACTIVITY": true, 
+    "DISH": false, 
+    "LINE": true, 
+    "TYPE": true, 
+    "TICKET": true, 
+    "NEIGHBOURHOOD": false
+}
