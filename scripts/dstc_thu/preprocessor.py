@@ -13,14 +13,19 @@ from GlobalConfig import GetConfig
 
 class stemmer(object):
 	MY_ID = 'STEMMER'
-	def __init__(self):
+	def __init__(self, flag=True):
 		#self.config = GetConfig()
 		#from nltk.stem.lancaster import LancasterStemmer as Stemmer
-		from nltk.stem.porter import PorterStemmer as Stemmer
-		self.st = Stemmer()
+		self.flag = flag
+		if self.flag:
+			from nltk.stem.porter import PorterStemmer as Stemmer
+			self.st = Stemmer()
 
 	def stem(self, string):
-		return self.st.stem(string)
+		if self.flag:
+			return self.st.stem(string)
+		else:
+			return string
 
 class tokenizer(object):
 	MY_ID = 'TOKENIZER'

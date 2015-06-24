@@ -53,6 +53,7 @@ class Tuple_Extractor(object):
 		if not slot_config_file:
 			self.appLogger.debug('Slot config file is not assigned, so use the default config file')
 		slot_config_file = self.config.get(self.MY_ID,'slot_config_file')
+		slot_config_file = os.path.join(os.path.dirname(__file__),'../config/', slot_config_file)
 		self.appLogger.debug('Slot config file: %s' %(slot_config_file))
 
 		input = codes.open(slot_config_file, 'r', 'utf-8')
@@ -67,6 +68,185 @@ class Tuple_Extractor(object):
 				for value in frame_label[slot]:
 					output_tuple.append('%s:%s' %(slot, value))
 		return list(set(output_tuple))
+
+
+class feature(object):
+	MY_ID = 'svc_feature'
+	def __init__(self, tagsets, tokenizer_mode=None, use_stemmer=None):
+		self.config = GetConfig()
+		self.appLogger = logging.getLogger(self.MY_ID)
+
+		# tokenizer
+		if tokenizer_mode:
+			self.tokenizer_mode = tokenizer_mode
+		else:
+			self.tokenizer_mode = self.config.get(self.MY_ID,'tokenizer_mode')
+		self.appLogger.debug('tokenizer mode: %s' %(self.tokenizer_mode))
+		self.tokenizer = tokenizer(self.tokenizer_mode)
+
+		# stemmer
+		if use_stemmer == None:
+			use_stemmer = self.tokenizer_mode = self.config.getboolean(self.MY_ID,'use_stemmer')
+		self.appLogger.debug('use stemmer ? %s' %(use_stemmer))	
+		self.use_stemmer = use_stemmer
+		self.stemmer = stemmer(use_stemmer)
+
+		self.tagsets = tagsets
+
+		self.feature_list = None
+		self.unigram = False
+		self.bigram = False
+		self.trigram = False
+		
+
+		# feature vector
+		self.UNI_LEX = None
+		self.BI_LEX = None
+		self.TRI_LEX = None
+
+		self.UNI_LEX_weight = None
+		self.BI_LEX_weight = None
+		self.TRI_LEX_weight = None
+
+		self.TOPIC_LEX = None
+		self.BASELINE_LEX = None
+		
+		self.TOPIC_LEX_offset = 0
+		self.UNI_LEX_offset = 0
+		self.BI_LEX_offset = 0
+		self.TRI_LEX_offset = 0
+		self.BASELINE_LEX_offset = 0
+		self.is_set = False
+
+	def _set_offset(self):
+		self.TOPIC_LEX_offset = 0
+		self.UNI_LEX_offset = 0
+		self.BI_LEX_offset = 0
+		self.TRI_LEX_offset = 0
+		self.BASELINE_LEX_offset = 0
+
+		if 'TOPIC' in self.feature_list:
+			self.UNI_LEX_offset = self.TOPIC_LEX_offset + len(self.TOPIC_LEX)
+
+		if self.unigram
+			self.BI_LEX_offset = self.UNI_LEX_offset + len(self.UNI_LEX)
+
+		if self.bigram:
+			self.TRI_LEX_offset = self.BI_LEX_offset + len(self.BI_LEX)
+
+		if self.trigram:
+			self.BASELINE_LEX_offset = self.TRI_LEX_offset + len(self.TRI_LEX)
+
+
+	def _prepare_resources(self):
+		self._set_offset()
+		if self.tagsets:
+			self.SubSeg_baseline = SubSegBaselineTracker(self.tagsets)
+			self.baseline = BaselineTracker(self.tagsets)
+		else:
+			self.appLogger.error('Error: _prepare_resources(): Ontology tagsets not ready!')
+			raise Exception('Error: _prepare_resources(): Ontology tagsets not ready!')
+		self.is_set = True
+
+	def load_Lexicon(self, Lexicon_file):
+		input = codecs.open(Lexicon_file, 'r', 'utf-8')
+		in_json = json.load(input)
+		input.close()
+		self.feature_list = in_json['feature_list']
+		self.unigram = in_json['feature_unigram']
+		self.bigram = in_json['feature_bigram']
+		self.trigram = in_json['feature_trigram']
+		self.UNI_LEX = in_json['UNI_LEX']
+		self.BI_LEX = in_json['BI_LEX']
+		self.TRI_LEX = in_json['TRI_LEX']
+		self.UNI_LEX_weight = in_json['UNI_LEX_weight']
+		self.BI_LEX_weight = in_json['BI_LEX_weight']
+		self.TRI_LEX_weight = in_json['TRI_LEX_weight']
+
+		self.TOPIC_LEX = in_json['TOPIC_LEX']
+		self.BASELINE_LEX = in_json['BASELINE_LEX']
+
+		self.tokenizer_mode = in_json['tokenizer_mode']
+		self.tokenizer = tokenizer(self.tokenizer_mode)
+
+		self.use_stemmer = in_json['use_stemmer']
+		self.stemmer = stemmer(self.use_stemmer)
+
+		self._prepare_resources()
+
+
+	def save_Lexicon(self, Lexicon_file):
+		output = codecs.open(Lexicon_file, 'w', 'utf-8')
+		out_json = {}
+		out_json['tokenizer_mode'] = self.tokenizer_mode
+		out_json['use_stemmer'] = self.use_stemmer
+		out_json['feature_list'] = self.feature_list
+		out_json['feature_unigram'] = self.unigram
+		out_json['feature_bigram'] = self.bigram
+		out_json['feature_trigram'] = self.trigram
+
+		out_json['UNI_LEX'] = self.UNI_LEX
+		out_json['BI_LEX'] = self.BI_LEX
+		out_json['TRI_LEX'] = self.TRI_LEX
+		out_json['UNI_LEX_weight'] = self.UNI_LEX_weight
+		out_json['BI_LEX_weight'] = self.BI_LEX_weight
+		out_json['TRI_LEX_weight'] = self.TRI_LEX_weight
+
+		out_json['TOPIC_LEX'] = self.TOPIC_LEX
+		out_json['BASELINE_LEX'] = self.BASELINE_LEX
+		json.dump(out_json, output, indent=4)
+		output.close()
+
+
+	def Stat_Lexicon(self, train_samples, label_samples,  feature_list = ['TOPIC', 'NGRAM_u:b', 'BASELINE'], feature_):
+		'''
+		train samples is a list of samples
+		each item is a list , each item of the list is correspond to the feature list
+		'''
+		if len(train_samples) != len(label_samples):
+			self.appLogger.error('Error: size of train samples and label samples mismatch! %d : %d' %(len(train_samples), len(label_samples)))
+			raise Exception('Error: size of train samples and label samples mismatch! %d : %d' %(len(train_samples), len(label_samples)))
+		if len(train_samples) == 0:
+			self.appLogger.error('Error: No samples!')
+			raise Exception('Error: No samples!')
+
+		self.feature_list = feature_list
+		sample_field_num = len(train_samples[0])
+		if sample_field_num != len(self.feature_list):
+			self.appLogger.error('Error: size of sample field num and feature list mismatch! %d : %d' %(sample_field_num, len(self.feature_list)))
+			raise Exception('Error: size of sample field num and feature list mismatch! %d : %d' %(sample_field_num, len(self.feature_list)))
+
+		for feature in feature_list:
+			if feature.startswith('NGRAM'):
+				ngram_feature = feature[6:]
+				tokens = ngram_feature.split(':')
+				for t in tokens:
+					if t == 'u':
+						self.unigram = True
+						continue
+					elif t == 'b':
+						self.bigram = True
+						continue
+					elif t == 't':
+						self.trigram = True
+						continue
+					else:
+						self.appLogger.error('Unknown ngram feature! %s' %(ngram_feature))
+						raise Exception('Unknown ngram feature! %s' %(ngram_feature))
+
+		for i, feature in enumerate(self.feature_list):
+			if feature == 'TOPIC':
+				self.TOPIC_LEX = self._stat_lexicon(train_samples[:][i], threshold = 0)
+			elif feature == 'BASELINE':
+				self.BASELINE_LEX = self._stat_lexicon(train_samples[:][i], threshold = 0)
+			elif feature.startswith('NGRAM'):
+				#!!!! here!!!
+
+
+
+
+
+
 
 
 
