@@ -271,10 +271,10 @@ class feature(object):
 
 				if self.unigram:
 					self.UNI_LEX = self._stat_lexicon(unigram_lists, threshold=2)
-					self.UNI_LEX_weight = self._calc_feature_weight(unigram_lists, label_samples self.UNI_LEX, 'simple')
+					self.UNI_LEX_weight = self._calc_feature_weight(unigram_lists, label_samples, self.UNI_LEX, 'simple')
 				if self.bigram:
 					self.BI_LEX = self._stat_lexicon(bigram_lists, threshold=2)
-					self.BI_LEX_weight = self._calc_feature_weight(bigram_lists, label_samples,self.BI_LEX,'simple')
+					self.BI_LEX_weight = self._calc_feature_weight(bigram_lists, label_samples, self.BI_LEX,'simple')
 				if self.trigram:
 					self.TRI_LEX = self._stat_lexicon(trigram_lists, threshold=2)
 					self.TRI_LEX_weight = self._calc_feature_weight(trigram_lists, label_samples, self.TRI_LEX,'simple')
