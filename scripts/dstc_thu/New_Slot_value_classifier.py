@@ -221,6 +221,10 @@ class feature(object):
 			self.appLogger.error('Error: size of sample field num and feature list mismatch! %d : %d' %(sample_field_num, len(self.feature_list)))
 			raise Exception('Error: size of sample field num and feature list mismatch! %d : %d' %(sample_field_num, len(self.feature_list)))
 
+		print feature_list
+		print train_samples[0]
+		print label_samples[0]
+		
 		for feature in feature_list:
 			if feature.startswith('NGRAM'):
 				ngram_feature = feature[6:]
