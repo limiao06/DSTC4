@@ -508,12 +508,12 @@ class slot_value_classifier(object):
 
 		# save train samples
 		output = codecs.open(os.path.join(model_dir, out_json['train_samples_file']), 'w', 'utf-8')
-		out_json = {}
-		out_json['train_samples'] = train_samples
-		out_json['label_samples'] = label_samples
-		out_json['train_feature_samples'] = train_feature_samples
-		out_json['train_labels'] = train_labels
-		json.dump(out_json, output, indent=4)
+		train_json = {}
+		train_json['train_samples'] = train_samples
+		train_json['label_samples'] = label_samples
+		train_json['train_feature_samples'] = train_feature_samples
+		train_json['train_labels'] = train_labels
+		json.dump(train_json, output, indent=4)
 		output.close()
 
 		# save feature
