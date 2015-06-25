@@ -246,19 +246,19 @@ class feature(object):
 
 		for i, feature in enumerate(self.feature_list):
 			if feature == 'TOPIC':
-				print i
+				#print i
 				topic_samples = [train_sample[i] for train_sample in train_samples]
-				print topic_samples[0:3]
+				#print topic_samples[0:3]
 				self.TOPIC_LEX = self._stat_lexicon(topic_samples, threshold = 0)
 			elif feature == 'BASELINE':
-				print i
+				#print i
 				baseline_samples = [train_sample[i] for train_sample in train_samples]
-				print baseline_samples[0:3]
+				#print baseline_samples[0:3]
 				self.BASELINE_LEX = self._stat_lexicon(baseline_samples, threshold = 0)
 			elif feature.startswith('NGRAM'):
-				print i
+				#print i
 				sent_samples = [train_sample[i] for train_sample in train_samples]
-				print sent_samples[0:3]
+				#print sent_samples[0:3]
 				unigram_lists = []
 				bigram_lists = []
 				trigram_lists = []
@@ -267,8 +267,8 @@ class feature(object):
 					tokens = self._preprocessing(sent)
 					if self.unigram:
 						unigram_lists.append(tokens)
-					tokens.tokens.insert(0,'*')
-					tokens.tokens.insert(0,'*')
+					tokens.insert(0,'*')
+					tokens.insert(0,'*')
 					tokens.append('*')
 					tokens.append('*')
 					if self.bigram:
@@ -369,8 +369,8 @@ class feature(object):
 								feature_vector[idx] += weight
 							else:
 								feature_vector[idx] = weight
-				tokens.tokens.insert(0,'*')
-				tokens.tokens.insert(0,'*')
+				tokens.insert(0,'*')
+				tokens.insert(0,'*')
 				tokens.append('*')
 				tokens.append('*')
 				if self.bigram:
