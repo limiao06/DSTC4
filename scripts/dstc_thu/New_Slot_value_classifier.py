@@ -641,7 +641,7 @@ def main(argv):
 	parser.add_argument('--test',dest='test',action='store_true', help='train or test.')	
 	args = parser.parse_args()
 
-	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=False)
+	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=True)
 	feature_list = GetFeatureList(args.feature)
 
 	svc = slot_value_classifier()
