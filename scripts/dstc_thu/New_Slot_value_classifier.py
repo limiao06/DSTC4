@@ -439,6 +439,10 @@ class slot_value_classifier(object):
 		self.tagsets = ontology_reader.OntologyReader(ontology_file).get_tagsets()
 		self._prepare_resources()
 
+		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
+		self.feature.feature_list = feature_list
+
+
 		# stat train samples
 		tuple_extractor = Tuple_Extractor()
 		label_samples = []
@@ -450,7 +454,6 @@ class slot_value_classifier(object):
 					label_samples.append(tuple_extractor.extract_tuple(frame_label))
 					train_samples.append(self._extract_utter_tuple(log_utter))
 		# stat lexicon
-		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
 		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
 		# extract feature, build training data
 		for labels in label_samples:
