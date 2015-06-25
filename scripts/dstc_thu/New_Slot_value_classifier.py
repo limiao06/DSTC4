@@ -306,7 +306,7 @@ class feature(object):
 
 		return lexicon_weight
 
-	def _stat_lexicon(feature_lists, threshold):
+	def _stat_lexicon(self, feature_lists, threshold):
 		lexicon_count = {}
 		for feature in feature_lists:
 			for f in feature:
