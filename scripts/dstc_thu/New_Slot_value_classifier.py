@@ -57,7 +57,7 @@ class Tuple_Extractor(object):
 		slot_config_file = os.path.join(os.path.dirname(__file__),'../config/', slot_config_file)
 		self.appLogger.debug('Slot config file: %s' %(slot_config_file))
 
-		input = codes.open(slot_config_file, 'r', 'utf-8')
+		input = codecs.open(slot_config_file, 'r', 'utf-8')
 		self.slot_config = json.load(input)
 		input.close()
 
