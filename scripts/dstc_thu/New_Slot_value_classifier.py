@@ -340,7 +340,7 @@ class feature(object):
 			self.appLogger.error('size of feature_tuple and the feature_list mismatch! %d : %d' (len(feature_tuple), len(feature_list)))
 			raise Exception('size of feature_tuple and the feature_list mismatch! %d : %d' (len(feature_tuple), len(feature_list)))
 		feature_vector = {}
-		for i, feature in self.feature_list:
+		for i, feature in enumerate(self.feature_list):
 			if feature == 'TOPIC':
 				for f in feature_tuple[i]:
 					if f in self.TOPIC_LEX:
