@@ -263,7 +263,7 @@ class feature(object):
 				bigram_lists = []
 				trigram_lists = []
 				for sent in sent_samples:
-					print sent
+					#print sent
 					tokens = self._preprocessing(sent)
 					if self.unigram:
 						unigram_lists.append(tokens)
@@ -476,7 +476,7 @@ class slot_value_classifier(object):
 
 		train_feature_samples = []
 		for train_sample in train_samples:
-			train_feature_samples.append(feature.ExtractFeatureFromTuple(train_sample))
+			train_feature_samples.append(self.feature.ExtractFeatureFromTuple(train_sample))
 
 		train_labels = {}
 		for key in self.model_keys:
