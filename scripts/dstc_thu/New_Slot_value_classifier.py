@@ -577,6 +577,9 @@ def GetFeatureList(feature_code):
 
 	feature_list = []
 	feature_code_list = list(feature_code)
+	u_flag = False
+	b_flag = False
+	t_flag = False
 
 	if 'T' in feature_code_list:
 		feature_list.append('TOPIC')
