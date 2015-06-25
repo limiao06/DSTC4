@@ -248,14 +248,18 @@ class feature(object):
 			if feature == 'TOPIC':
 				print i
 				print train_samples[0:3][i]
+				print train_samples[i][0:3]
+
 				self.TOPIC_LEX = self._stat_lexicon(train_samples[:][i], threshold = 0)
 			elif feature == 'BASELINE':
 				print i
 				print train_samples[0:3][i]
+				print train_samples[i][0:3]
 				self.BASELINE_LEX = self._stat_lexicon(train_samples[:][i], threshold = 0)
 			elif feature.startswith('NGRAM'):
 				print i
 				print train_samples[0:3][i]
+				print train_samples[i][0:3]
 				sent_samples = train_samples[:][i]
 				unigram_lists = []
 				bigram_lists = []
