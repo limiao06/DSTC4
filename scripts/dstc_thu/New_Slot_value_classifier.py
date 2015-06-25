@@ -285,10 +285,10 @@ class feature(object):
 
 	def _calc_feature_weight(self, feature_lists, label_samples, lexcion, method = 'simple'):
 		lexicon_weight = {}
-		if method = 'simple':
+		if method == 'simple':
 			for key in lexcion:
 				lexicon_weight[key] = 1
-		elif method = 'IDF':
+		elif method == 'IDF':
 			for key in lexcion:
 				lexicon_weight[key] = 0.0
 			N = len(feature_lists)
