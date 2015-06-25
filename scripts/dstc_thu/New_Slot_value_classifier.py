@@ -411,10 +411,10 @@ class slot_value_classifier(object):
 			self.appLogger.error('Error: _prepare_resources(): Ontology tagsets not ready!')
 			raise Exception('Error: _prepare_resources(): Ontology tagsets not ready!')
 
-	def _extract_utter_tuple(self, utter):
+	def _extract_utter_tuple(self, utter, feature_list):
 		train_sample = []
 		topic = utter['segment_info']['topic']
-		for i, feature in enumerate(self.feature.feature_list):
+		for i, feature in enumerate(feature_list):
 			if feature == 'TOPIC':
 				train_sample.append([topic])
 			elif feature == 'BASELINE':
@@ -439,9 +439,6 @@ class slot_value_classifier(object):
 		self.tagsets = ontology_reader.OntologyReader(ontology_file).get_tagsets()
 		self._prepare_resources()
 
-		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
-		self.feature.feature_list = feature_list
-
 
 		# stat train samples
 		tuple_extractor = Tuple_Extractor()
@@ -452,8 +449,9 @@ class slot_value_classifier(object):
 				if 'frame_label' in label_utter:
 					frame_label = label_utter['frame_label']
 					label_samples.append(tuple_extractor.extract_tuple(frame_label))
-					train_samples.append(self._extract_utter_tuple(log_utter))
+					train_samples.append(self._extract_utter_tuple(log_utter, feature_list))
 		# stat lexicon
+		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
 		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
 		# extract feature, build training data
 		for labels in label_samples:
@@ -537,8 +535,8 @@ class slot_value_classifier(object):
 			self.models[key] = load_model(os.path.join(model_dir, '%s.svm.m' %(key)))
 		self.is_set = True
 
-	def PredictUtter(self, Utter):
-		sample_tuple = self._extract_utter_tuple(Utter)
+	def PredictUtter(self, Utter, feature_list):
+		sample_tuple = self._extract_utter_tuple(Utter, feature_list)
 		feature_vector = self.feature.ExtractFeatureFromTuple(sample_tuple)
 
 		result = {}
