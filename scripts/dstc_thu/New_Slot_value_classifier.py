@@ -414,7 +414,7 @@ class slot_value_classifier(object):
 	def _extract_utter_tuple(self, utter):
 		train_sample = []
 		topic = utter['segment_info']['topic']
-		for i, feature in enumerate(feature_list):
+		for i, feature in enumerate(self.feature.feature_list):
 			if feature == 'TOPIC':
 				train_sample.append([topic])
 			elif feature == 'BASELINE':
