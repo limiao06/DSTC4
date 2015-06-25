@@ -250,7 +250,7 @@ class feature(object):
 				bigram_lists = []
 				trigram_lists = []
 				for sent in sent_samples:
-					tokens = self._preprocessing(utter)
+					tokens = self._preprocessing(sent)
 					if self.unigram:
 						unigram_lists.append(tokens)
 					tokens.tokens.insert(0,'*')
@@ -345,7 +345,7 @@ class feature(object):
 							feature_vector[idx] = 1
 			elif feature.startswith('NGRAM'):
 				sent = feature_tuple[i]
-				tokens = self._preprocessing(utter)
+				tokens = self._preprocessing(sent)
 				if self.unigram:
 					for tk in tokens:
 						if tk in self.UNI_LEX:
