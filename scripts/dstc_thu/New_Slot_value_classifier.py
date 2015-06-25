@@ -343,7 +343,7 @@ class feature(object):
 						else:
 							feature_vector[idx] = 1
 			elif feature.startswith('NGRAM'):
-				sent = feature_tuple[i]:
+				sent = feature_tuple[i]
 				tokens = self._preprocessing(utter)
 				if self.unigram:
 					for tk in tokens:
@@ -651,7 +651,7 @@ def main(argv):
 		svc.TestFromDataSet(dataset,args.model_dir)
 	else:
 		print 'Train'
-		svc.TrainFromDataSet(args.ontology, feature_list, dataset, args.model_dir args.mode, args.UseST)
+		svc.TrainFromDataSet(args.ontology, feature_list, dataset, args.model_dir, args.mode, args.UseST)
 
 if __name__ =="__main__":
 	main(sys.argv)
