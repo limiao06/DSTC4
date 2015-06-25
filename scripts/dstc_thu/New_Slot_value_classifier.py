@@ -128,7 +128,7 @@ class feature(object):
 		if 'TOPIC' in self.feature_list:
 			self.UNI_LEX_offset = self.TOPIC_LEX_offset + len(self.TOPIC_LEX)
 
-		if self.unigram
+		if self.unigram:
 			self.BI_LEX_offset = self.UNI_LEX_offset + len(self.UNI_LEX)
 
 		if self.bigram:
