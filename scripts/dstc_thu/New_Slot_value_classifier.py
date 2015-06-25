@@ -26,6 +26,7 @@ from temp_baseline import BaselineTracker as SubSegBaselineTracker
 sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
 
 import ontology_reader
+import dataset_walker
 from baseline import BaselineTracker as BaselineTracker
 
 
