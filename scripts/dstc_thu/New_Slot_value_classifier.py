@@ -220,11 +220,12 @@ class feature(object):
 		if sample_field_num != len(self.feature_list):
 			self.appLogger.error('Error: size of sample field num and feature list mismatch! %d : %d' %(sample_field_num, len(self.feature_list)))
 			raise Exception('Error: size of sample field num and feature list mismatch! %d : %d' %(sample_field_num, len(self.feature_list)))
-
+		'''
 		print feature_list
 		print train_samples[0]
 		print label_samples[0]
-		
+		'''
+
 		for feature in feature_list:
 			if feature.startswith('NGRAM'):
 				ngram_feature = feature[6:]
@@ -254,6 +255,7 @@ class feature(object):
 				bigram_lists = []
 				trigram_lists = []
 				for sent in sent_samples:
+					print sent
 					tokens = self._preprocessing(sent)
 					if self.unigram:
 						unigram_lists.append(tokens)
