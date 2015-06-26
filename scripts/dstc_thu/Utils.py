@@ -181,7 +181,7 @@ def EvalMultiLabel(labels, output_labels):
     micro_label_results['recall'] = micro_label_results['right'] * 1.0 / micro_label_results['label']
     micro_label_results['f1'] = 2 * micro_label_results['precision'] * micro_label_results['recall'] / (micro_label_results['precision'] + micro_label_results['recall'])
 
-
+    Macro_label_results = {}
     Macro_label_results['precision'] = sum([v['precision'] for k,v in label_results.items()]) / len(label_results)
     Macro_label_results['recall'] = sum([v['recall'] for k,v in label_results.items()]) / len(label_results)
     Macro_label_results['f1'] = sum([v['f1'] for k,v in label_results.items()]) / len(label_results)
