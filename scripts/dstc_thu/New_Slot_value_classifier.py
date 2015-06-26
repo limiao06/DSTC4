@@ -683,8 +683,6 @@ def main(argv):
 	args = parser.parse_args()
 
 	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=True)
-	feature_list = GetFeatureList(args.feature)
-
 	svc = slot_value_classifier()
 
 	if args.test and args.train:
@@ -696,6 +694,7 @@ def main(argv):
 		svc.TestFromDataSet(dataset,args.model_dir)
 	else:
 		print 'Train'
+		feature_list = GetFeatureList(args.feature)
 		svc.TrainFromDataSet(args.ontology, feature_list, dataset, args.model_dir, args.mode, args.UseST)
 
 if __name__ =="__main__":
