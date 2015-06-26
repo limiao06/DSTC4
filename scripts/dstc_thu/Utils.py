@@ -147,9 +147,14 @@ def EvalMultiLabel(labels, output_labels):
         for l in label:
             if l in output_label:
                 right_count += 1
-        s_precision = right_count * 1.0 / output_count
-        s_recall = right_count * 1.0 / label_count
-        s_fscore =  2 * s_precision * s_recall / (s_precision + s_recall)
+        if label_count == 0 or output_count == 0 or right_count == 0:
+            s_precision = 0.0
+            s_recall = 0.0
+            s_fscore = 0.0
+        else:
+            s_precision = right_count * 1.0 / output_count
+            s_recall = right_count * 1.0 / label_count
+            s_fscore =  2 * s_precision * s_recall / (s_precision + s_recall)
 
         micro_label_results['label'] += label_count
         micro_label_results['out'] += output_count
