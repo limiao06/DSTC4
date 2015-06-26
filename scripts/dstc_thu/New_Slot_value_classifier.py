@@ -614,7 +614,6 @@ class slot_value_classifier(object):
 
 def GetFeatureList(feature_code):
 	if feature_code == None or feature_code == '':
-		self.appLogger.error('Error: Empty feature code!')
 		raise Exception('Error: Empty feature code!')
 
 	feature_list = []
