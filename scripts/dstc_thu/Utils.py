@@ -191,7 +191,7 @@ def EvalMultiLabel(labels, output_labels):
     sample_fscore_all = sum([a[2] for a in sample_results]) / len(sample_results)
 
     print '# sample performance'
-    print '%.3f %.3f %.3f' %(sample_precison_all, sample_recall_all, sample_fscore_all)
+    print '%.3f %.3f %.3f' %(sample_precision_all, sample_recall_all, sample_fscore_all)
 
     print  '# label performance'
     print 'Macro-average'
