@@ -529,6 +529,31 @@ class slot_value_classifier(object):
 		self.LoadMode(model_dir)
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
+		tuple_extractor = Tuple_Extractor()
+		label_samples = []
+		test_samples = []
+		for call in dataset:
+			for (log_utter, label_utter) in call:
+				if 'frame_label' in label_utter:
+					frame_label = label_utter['frame_label']
+					label_samples.append(tuple_extractor.extract_tuple(frame_label))
+					test_samples.append(self._extract_utter_tuple(log_utter, self.feature.feature_list))
+
+		out_label_samples = []
+		for sample in test_samples:
+			out_label = []
+			result, result_prob = self.PredictTuple(sample)
+			for k,v in result.items():
+				if v == 1:
+					out_label.append(k)
+			out_label_samples.append(out_label)
+
+		EvalMultiLabel(label_samples, out_label_samples)
+
+
+
+
+
 
 	def LoadMode(self, model_dir):
 		# load config
@@ -551,8 +576,10 @@ class slot_value_classifier(object):
 
 	def PredictUtter(self, Utter, feature_list):
 		sample_tuple = self._extract_utter_tuple(Utter, feature_list)
-		feature_vector = self.feature.ExtractFeatureFromTuple(sample_tuple)
+		return self.PredictTuple(sample_tuple)
 
+	def PredictTuple(self, s_tuple):
+		feature_vector = self.feature.ExtractFeatureFromTuple(s_tuple)
 		result = {}
 		result_prob = {}
 		for key in self.model_keys:
