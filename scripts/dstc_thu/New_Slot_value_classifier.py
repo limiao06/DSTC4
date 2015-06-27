@@ -132,39 +132,7 @@ class Tuple_Extractor(object):
 			return frame_label
 
 
-	def _generate_frame_high_precision(self, add_tuples, probs):
-		frame_label = {}
-		while True:
-			current_size = len(add_tuples)
-			if current_size == 0:
-				break
-			remove_index = []
-			for i, t in enumerate(add_tuples):
-				if t[0] == 'root':
-					if t[1] not in frame_label:
-						frame_label[t[1]] = {'prob': probs[i], 'values':{}}
-					else:
-						if probs[i] > frame_label[t[1]]['prob']:
-							frame_label[t[1]]['prob'] = probs[i]
-					remove_index.append(i)
-				else:
-					if t[0] in frame_label:
-						new_prob = 1 - (1-probs[i])*(1- frame_label[t[0]]['prob'])
-						if t[1] not in frame_label[t[0]]['values']:
-							frame_label[t[0]]['values'][t[1]] = new_prob
-						else:
-							if new_prob > frame_label[t[0]]['values'][t[1]]:
-								frame_label[t[0]]['values'][t[1]] = new_prob
-						remove_index.append(i)
-
-			add_tuples = [t for i,t in enumerate(add_tuples) if i not in remove_index]
-			probs = [p for i,p in enumerate(probs) if i not in remove_index]
-			if len(add_tuples) == current_size:
-				break
-		return frame_label
-
-	def _generate_frame_high_recall(self, add_tuples, probs):
-
+	
 
 
 
