@@ -14,7 +14,7 @@ import argparse, sys, time, json, os, copy
 import logging
 from GlobalConfig import *
 
-from Slot_value_classifier import slot_value_classifier
+from New_Slot_value_classifier import slot_value_classifier
 from value_extractor import value_extractor
 from Utils import *
 
@@ -26,6 +26,7 @@ import ontology_reader, dataset_walker
 
 class msiip_nsvc_tracker(object):
 	MY_ID = 'msiip_nsvc'
+	# need to fix!!!
 	def __init__(self, tagsets, model_dir, ratio_thres = 0, max_num = 2, update_alpha = 0, slot_prob_thres = 0.5):
 		self.tagsets = tagsets
 		self.frame = {}
@@ -48,12 +49,15 @@ class msiip_nsvc_tracker(object):
 
 
 	def addUtter(self, utter):
+		# need to fix!!! 
 		self.appLogger.debug('utter_index: %d' % (utter['utter_index']))
 		output = {'utter_index': utter['utter_index']}
 		topic = utter['segment_info']['topic']
 		if topic in self.tagsets:
 			self._UpdateFrameProb(utter)
 			self._UpdateFrame()
+
+			# nedd to fix !!! Add a DSTC4_rule class doing such things check the frame
 			if topic == 'ATTRACTION' and 'PLACE' in self.frame and 'NEIGHBOURHOOD' in self.frame and self.frame['PLACE'] == self.frame['NEIGHBOURHOOD']:
 				del self.frame['PLACE']
 
@@ -62,6 +66,7 @@ class msiip_nsvc_tracker(object):
 		return output
 
 	def _UpdateFrameProb(self, utter):
+		# need to fix!!!
 		topic = utter['segment_info']['topic']
 		if utter['segment_info']['target_bio'] == 'B':
 			self.frame = {}
@@ -103,17 +108,20 @@ class msiip_nsvc_tracker(object):
 						if ratio >= self.ratio_thres:
 							self._AddSlotValue2Frame(slot,value)
 
+
 	def _AddSLot2FrameProb(self, slot, prob):
 		if slot not in self.frame_prob:
 			self.frame_prob[slot] = [prob, {}]
 		else:
-			self.frame_prob[slot][0] = prob * (1-self.alpha) + self.frame_prob[slot][0] * self.alpha
+			if self.frame_prob[slot][0] < prob:
+				self.frame_prob[slot][0] = prob
 
 	def _AddSlotValue2FrameProb(self, slot, value, prob):
 		if value not in self.frame_prob[slot][1]:
 			self.frame_prob[slot][1][value] = prob
 		else:
-			self.frame_prob[slot][1][value] = prob * (1-self.alpha) + self.frame_prob[slot][1][value] * self.alpha
+			if self.frame_prob[slot][1][value] < prob:
+				self.frame_prob[slot][1][value] = prob
 
 	def _AddSlotValue2Frame(self,slot,value):
 		if slot not in self.frame:
