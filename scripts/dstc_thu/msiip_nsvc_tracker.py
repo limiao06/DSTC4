@@ -66,7 +66,7 @@ class msiip_nsvc_tracker(object):
 	def _UpdateFrameProb(self, utter):
 		topic = utter['segment_info']['topic']
 		if utter['segment_info']['target_bio'] == 'B':
-			self.appLogger.debug('seg begion: utter_index: %d' % (utter['utter_index']))
+			self.appLogger.debug('seg begin: utter_index: %d' % (utter['utter_index']))
 			self.frame = {}
 			self.frame_prob = {}
 			
@@ -182,6 +182,7 @@ def main(argv):
 		for (utter,_) in call:
 			sys.stderr.write('%d:%d\n'%(call.log['session_id'], utter['utter_index']))
 			tracker_result = tracker.addUtter(utter)
+			self.appLogger.debug('index: %d, BIO_tag: %s' %(utter['utter_index'], utter['segment_info']['target_bio']))
 			if tracker_result is not None:
 				this_session["utterances"].append(tracker_result)
 		track["sessions"].append(this_session)
