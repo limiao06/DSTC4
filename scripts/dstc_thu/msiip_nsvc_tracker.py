@@ -176,7 +176,7 @@ def main(argv):
 	track["dataset"]  = args.dataset
 	start_time = time.time()
 
-	tracker = msiip_simple_tracker(tagsets, args.model_dir, ratio_thres=args.ratio_thres)
+	tracker = msiip_nsvc_tracker(tagsets, args.model_dir, ratio_thres=args.ratio_thres)
 	for call in dataset:
 		this_session = {"session_id":call.log["session_id"], "utterances":[]}
 		tracker.reset()
