@@ -598,7 +598,7 @@ class slot_value_classifier(object):
 		print 'Done!'
 
 	def TestFromDataSet(self, dataset, model_dir):
-		self.LoadMode(model_dir)
+		self.LoadModel(model_dir)
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
 		tuple_extractor = Tuple_Extractor()
@@ -627,7 +627,7 @@ class slot_value_classifier(object):
 
 
 
-	def LoadMode(self, model_dir):
+	def LoadModel(self, model_dir):
 		# load config
 		input = codecs.open(os.path.join(model_dir,'config.json'), 'r', 'utf-8')
 		config_json = json.load(input)
