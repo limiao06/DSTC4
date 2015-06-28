@@ -28,7 +28,6 @@ import ontology_reader, dataset_walker
 
 class msiip_nsvc_tracker(object):
 	MY_ID = 'msiip_nsvc'
-	# need to fix!!!
 	def __init__(self, tagsets, model_dir, ratio_thres = 0, max_num = 2, slot_prob_thres = 0.5, mode = 'hr'):
 		self.tagsets = tagsets
 		self.frame = {}
@@ -53,7 +52,6 @@ class msiip_nsvc_tracker(object):
 
 
 	def addUtter(self, utter):
-		# need to fix!!! 
 		self.appLogger.debug('utter_index: %d' % (utter['utter_index']))
 		output = {'utter_index': utter['utter_index']}
 		topic = utter['segment_info']['topic']
@@ -66,7 +64,6 @@ class msiip_nsvc_tracker(object):
 		return output
 
 	def _UpdateFrameProb(self, utter):
-		# need to fix!!!
 		topic = utter['segment_info']['topic']
 		if utter['segment_info']['target_bio'] == 'B':
 			self.frame = {}
