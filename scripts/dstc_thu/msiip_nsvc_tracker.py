@@ -37,6 +37,7 @@ class msiip_nsvc_tracker(object):
 		self.frame_prob = {}
 		self.slot_prob_threshold = slot_prob_thres
 		self.ratio_thres = ratio_thres
+		self.mode = mode
 
 		self.svc = slot_value_classifier()
 		self.svc.LoadModel(model_dir)
