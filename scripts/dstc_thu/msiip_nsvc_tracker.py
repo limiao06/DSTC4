@@ -182,7 +182,7 @@ def main(argv):
 		for (utter,_) in call:
 			sys.stderr.write('%d:%d\n'%(call.log['session_id'], utter['utter_index']))
 			tracker_result = tracker.addUtter(utter)
-			self.appLogger.debug('index: %d, BIO_tag: %s' %(utter['utter_index'], utter['segment_info']['target_bio']))
+			tracker.appLogger.debug('index: %d, BIO_tag: %s' %(utter['utter_index'], utter['segment_info']['target_bio']))
 			if tracker_result is not None:
 				this_session["utterances"].append(tracker_result)
 		track["sessions"].append(this_session)
