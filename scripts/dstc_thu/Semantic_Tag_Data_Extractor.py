@@ -199,7 +199,7 @@ def main(argv):
 	# 设置logging
 	log_level_key = config.get('logging','level')
 	run_code_name = os.path.basename(sys.argv[0])[0:-3]
-	logging.basicConfig(filename = os.path.join(os.path.dirname(__file__), '%s_%s.log' %(run_code_name,time.strftime('%Y-%m-%d',time.localtime(time.time())))), \
+	logging.basicConfig(filename = os.path.join(os.path.dirname(__file__), '../../output/logs', '%s_%s.log' %(run_code_name,time.strftime('%Y-%m-%d',time.localtime(time.time())))), \
     					level = GetLogLevel(log_level_key), 
     					format = '%(asctime)s %(levelname)8s %(lineno)4d %(module)s:%(name)s.%(funcName)s: %(message)s')
 	
