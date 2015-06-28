@@ -14,7 +14,7 @@ class DSTC4_rules(object):
 	def __init__(self, tagsets):
 		self.tagsets = tagsets
 
-	def prune_frame_label(topic, frame_label):
+	def prune_frame_label(self, topic, frame_label):
 		for slot in frame_label:
 			if slot not in self.tagsets[topic]:
 				del frame_label[slot]
