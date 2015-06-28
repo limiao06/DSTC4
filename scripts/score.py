@@ -40,75 +40,80 @@ def main(argv):
 
 	utter_counter = 0.0
 
-	for session, track_session in zip(sessions, tracker_output["sessions"]):
-		session_id = session.log['session_id']
+	try:
+		for session, track_session in zip(sessions, tracker_output["sessions"]):
+			session_id = session.log['session_id']
 
-		prev_ref_frame = None
-		prev_track_frame = None
+			prev_ref_frame = None
+			prev_track_frame = None
 
-		for (log_utter, label_utter), track_utter in zip(session, track_session["utterances"]):
-			utter_counter += 1.0
+			for (log_utter, label_utter), track_utter in zip(session, track_session["utterances"]):
+				utter_counter += 1.0
 
-			if log_utter['segment_info']['target_bio'] == 'B':
-				# Beginning of a new segment
-				ref_frame = label_utter['frame_label']
-				track_frame = track_utter['frame_label']
+				if log_utter['segment_info']['target_bio'] == 'B':
+					# Beginning of a new segment
+					ref_frame = label_utter['frame_label']
+					track_frame = track_utter['frame_label']
+
+					for (topic, slot), schedule, stat_class in stats:
+						if schedule == 2:
+							if topic == 'all':
+								stat_class.add(prev_track_frame, prev_ref_frame)
+							elif prev_topic == topic:
+								if slot == 'all':
+									stat_class.add(prev_track_frame, prev_ref_frame)
+								else:
+									if slot in prev_track_frame and slot in prev_ref_frame:
+										stat_class.add({slot: prev_track_frame[slot]}, {slot: prev_ref_frame[slot]})
+									elif slot in prev_track_frame and slot not in prev_ref_frame:
+										stat_class.add({slot: prev_track_frame[slot]}, {slot: []})
+									elif slot not in prev_track_frame and slot in prev_ref_frame:
+										stat_class.add({slot: []}, {slot: prev_ref_frame[slot]})
+
+				elif log_utter['segment_info']['target_bio'] == 'I':
+					ref_frame = label_utter['frame_label']
+					track_frame = track_utter['frame_label']
+				elif log_utter['segment_info']['target_bio'] == 'O':
+					ref_frame = None
+					track_frame = None
 
 				for (topic, slot), schedule, stat_class in stats:
-					if schedule == 2:
+					if schedule == 1:
 						if topic == 'all':
-							stat_class.add(prev_track_frame, prev_ref_frame)
-						elif prev_topic == topic:
+							stat_class.add(track_frame, ref_frame)
+						elif log_utter['segment_info']['topic'] == topic:
 							if slot == 'all':
-								stat_class.add(prev_track_frame, prev_ref_frame)
+								stat_class.add(track_frame, ref_frame)
 							else:
-								if slot in prev_track_frame and slot in prev_ref_frame:
-									stat_class.add({slot: prev_track_frame[slot]}, {slot: prev_ref_frame[slot]})
-								elif slot in prev_track_frame and slot not in prev_ref_frame:
-									stat_class.add({slot: prev_track_frame[slot]}, {slot: []})
-								elif slot not in prev_track_frame and slot in prev_ref_frame:
-									stat_class.add({slot: []}, {slot: prev_ref_frame[slot]})
+								if slot in track_frame and slot in ref_frame:
+									stat_class.add({slot: track_frame[slot]}, {slot: ref_frame[slot]})
+								elif slot in track_frame and slot not in ref_frame:
+									stat_class.add({slot: track_frame[slot]}, {slot: []})
+								elif slot not in track_frame and slot in ref_frame:
+									stat_class.add({slot: []}, {slot: ref_frame[slot]})
 
-			elif log_utter['segment_info']['target_bio'] == 'I':
-				ref_frame = label_utter['frame_label']
-				track_frame = track_utter['frame_label']
-			elif log_utter['segment_info']['target_bio'] == 'O':
-				ref_frame = None
-				track_frame = None
+				prev_ref_frame = ref_frame
+				prev_track_frame = track_frame
+				prev_topic = log_utter['segment_info']['topic']
 
 			for (topic, slot), schedule, stat_class in stats:
-				if schedule == 1:
+				if schedule == 2:
 					if topic == 'all':
-						stat_class.add(track_frame, ref_frame)
-					elif log_utter['segment_info']['topic'] == topic:
-						if slot == 'all':
-							stat_class.add(track_frame, ref_frame)
-						else:
-							if slot in track_frame and slot in ref_frame:
-								stat_class.add({slot: track_frame[slot]}, {slot: ref_frame[slot]})
-							elif slot in track_frame and slot not in ref_frame:
-								stat_class.add({slot: track_frame[slot]}, {slot: []})
-							elif slot not in track_frame and slot in ref_frame:
-								stat_class.add({slot: []}, {slot: ref_frame[slot]})
-
-			prev_ref_frame = ref_frame
-			prev_track_frame = track_frame
-			prev_topic = log_utter['segment_info']['topic']
-
-		for (topic, slot), schedule, stat_class in stats:
-			if schedule == 2:
-				if topic == 'all':
-					stat_class.add(prev_track_frame, prev_ref_frame)
-				elif prev_topic == topic:
-					if slot == 'all':
 						stat_class.add(prev_track_frame, prev_ref_frame)
-					else:
-						if slot in prev_track_frame and slot in prev_ref_frame:
-							stat_class.add({slot: prev_track_frame[slot]}, {slot: prev_ref_frame[slot]})
-						elif slot in track_frame and slot not in ref_frame:
-							stat_class.add({slot: prev_track_frame[slot]}, {slot: []})
-						elif slot not in track_frame and slot in ref_frame:
-							stat_class.add({slot: []}, {slot: prev_ref_frame[slot]})
+					elif prev_topic == topic:
+						if slot == 'all':
+							stat_class.add(prev_track_frame, prev_ref_frame)
+						else:
+							if slot in prev_track_frame and slot in prev_ref_frame:
+								stat_class.add({slot: prev_track_frame[slot]}, {slot: prev_ref_frame[slot]})
+							elif slot in track_frame and slot not in ref_frame:
+								stat_class.add({slot: prev_track_frame[slot]}, {slot: []})
+							elif slot not in track_frame and slot in ref_frame:
+								stat_class.add({slot: []}, {slot: prev_ref_frame[slot]})
+	except Exception, e:
+		print >>sys.stderr, session_id, track_utter['utter_index']
+		raise e
+	
 
 	csvfile = open(args.scorefile,'w')
 	print >> csvfile,("topic, slot, schedule, stat, N, result")
