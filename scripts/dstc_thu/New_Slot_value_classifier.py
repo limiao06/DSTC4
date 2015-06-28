@@ -84,7 +84,7 @@ class Tuple_Extractor(object):
 		high-precision mode: 'hp'
 		high-recall mode: 'hr'
 		'''
-		if mode != 'hp' or mode != 'hr':
+		if mode != 'hp' and mode != 'hr':
 			self.appLogger.error('Error: Unknown generate mode: %s' %(mode))
 			raise Exception('Error: Unknown generate mode: %s' %(mode))
 
