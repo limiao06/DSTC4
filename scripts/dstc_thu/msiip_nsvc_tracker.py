@@ -74,12 +74,12 @@ class msiip_nsvc_tracker(object):
 		if topic in self.tagsets:
 			transcript = utter['transcript']
 			# first use svc
-			svc_result, result_prob = self.svc.PredictUtter(utter, self.svc.feature_list)
+			svc_result, result_prob = self.svc.PredictUtter(utter, self.svc.feature.feature_list)
 			tuples = []
 			probs = []
 			for key in svc_result:
-				label = svc_result[slot_key]
-				prob = result_prob[slot_key][1]
+				label = svc_result[key]
+				prob = result_prob[key][1]
 				if label == 1:
 					tuples.append(key)
 					probs.append(prob)

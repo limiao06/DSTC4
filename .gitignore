@@ -10,3 +10,4 @@ scripts_bk/
 my_code/
 *.bat
 temp/
+*.log
