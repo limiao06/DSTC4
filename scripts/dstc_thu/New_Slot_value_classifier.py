@@ -5,7 +5,7 @@
 slot value classifier
 similiar to the STC method in (Mairesse et al., 2009).
 first read from a config file
-find which slot is enumeratable which is un-enumeratable
+find which slot is enumerable which is non-enumerable
 '''
 
 import argparse, sys, time, json, os, math
@@ -40,13 +40,13 @@ class Tuple_Extractor(object):
 	MY_ID = 'Tuple_Extractor'
 	'''
 	read a config file
-	know which slot is enumeratable and which is un-enumeratable
+	know which slot is enumerable and which is non-enumerable
 
 	then it can extract tuple from Frame_Label
 	'''
 	def __init__(self, slot_config_file = None):
 		'''
-		slot_config_file tells while slot is enumeratable and which is not
+		slot_config_file tells while slot is enumerable and which is not
 		'''
 		self.config = GetConfig()
 		self.appLogger = logging.getLogger(self.MY_ID)
@@ -61,11 +61,18 @@ class Tuple_Extractor(object):
 		self.slot_config = json.load(input)
 		input.close()
 
+	def enumerable(self, slot):
+		if slot not in self.slot_config:
+			self.appLogger.error('Error: Unknown slot: %s' %(slot))
+			raise Exception('Error: Unknown slot: %s' %(slot))
+		else:
+			return self.slot_config[slot]
+
 	def extract_tuple(self, frame_label):
 		output_tuple = []
 		for slot in frame_label:
 			output_tuple.append('root:%s' %(slot))
-			if self.slot_config[slot]:
+			if self.enumerable(slot): 
 				for value in frame_label[slot]:
 					output_tuple.append('%s:%s' %(slot, value))
 		return list(set(output_tuple))

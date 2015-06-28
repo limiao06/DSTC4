@@ -15,7 +15,9 @@ import logging
 from GlobalConfig import *
 
 from New_Slot_value_classifier import slot_value_classifier
+from New_Slot_value_classifier import Tuple_Extractor
 from value_extractor import value_extractor
+from dstc4_rules import DSTC4_rules
 from Utils import *
 
 sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
@@ -27,19 +29,20 @@ import ontology_reader, dataset_walker
 class msiip_nsvc_tracker(object):
 	MY_ID = 'msiip_nsvc'
 	# need to fix!!!
-	def __init__(self, tagsets, model_dir, ratio_thres = 0, max_num = 2, update_alpha = 0, slot_prob_thres = 0.5):
+	def __init__(self, tagsets, model_dir, ratio_thres = 0, max_num = 2, slot_prob_thres = 0.5, mode = 'hr'):
 		self.tagsets = tagsets
 		self.frame = {}
 		self.memory = {}
 
 		self.frame_prob = {}
-		self.alpha = update_alpha
 		self.slot_prob_threshold = slot_prob_thres
 		self.ratio_thres = ratio_thres
 
 		self.svc = slot_value_classifier()
 		self.svc.LoadModel(model_dir)
 
+		self.tuple_extractor = Tuple_Extractor()
+		self.rules = DSTC4_rules(tagsets)
 		self.appLogger = logging.getLogger(self.MY_ID)
 
 		if not self.svc.is_set:
@@ -56,11 +59,7 @@ class msiip_nsvc_tracker(object):
 		if topic in self.tagsets:
 			self._UpdateFrameProb(utter)
 			self._UpdateFrame()
-
-			# nedd to fix !!! Add a DSTC4_rule class doing such things check the frame
-			if topic == 'ATTRACTION' and 'PLACE' in self.frame and 'NEIGHBOURHOOD' in self.frame and self.frame['PLACE'] == self.frame['NEIGHBOURHOOD']:
-				del self.frame['PLACE']
-
+			self.frame = self.rules.prune_frame_label(topic, self.frame)
 			output['frame_prob'] = copy.deepcopy(self.frame_prob)
 			output['frame_label'] = copy.deepcopy(self.frame)
 		return output
@@ -74,21 +73,26 @@ class msiip_nsvc_tracker(object):
 			
 		if topic in self.tagsets:
 			transcript = utter['transcript']
-			svc_result, result_prob = self.svc.PredictUtter(utter)
-
-			for slot_key in svc_result:
+			# first use svc
+			svc_result, result_prob = self.svc.PredictUtter(utter, self.svc.feature_list)
+			tuples = []
+			probs = []
+			for key in svc_result:
 				label = svc_result[slot_key]
 				prob = result_prob[slot_key][1]
-				# print (label, prob)
-				if slot_key.startswith('INFO'):
-					slot,value = slot_key.split(':')
-					if slot in self.tagsets[topic] and value in self.tagsets[topic][slot]:
-						self._AddSLot2FrameProb(slot, -1)
-						self._AddSlotValue2FrameProb(slot,value,prob)
-				else:
-					slot = slot_key
-					if slot in self.tagsets[topic]:
-						self._AddSLot2FrameProb(slot, prob)
+				if label == 1:
+					tuples.append(key)
+					probs.append(prob)
+
+			prob_frame_labels = self.tuple_extractor.generate_frame(tuples, probs, self.mode)
+			for slot in prob_frame_labels:
+				if slot in self.tagsets[topic]:
+					self._AddSLot2FrameProb(slot, prob_frame_labels[slot]['prob'])
+					if self.tuple_extractor.enumerable(slot):
+						if prob_frame_labels[slot]['values']:
+							for value, prob in prob_frame_labels[slot]['values'].items():
+								self._AddSlotValue2FrameProb(slot, value, prob)
+					else:
 						value_list = self.value_extractor.ExtractValue(topic, slot, transcript)
 						for value, ratio in value_list:
 							self._AddSlotValue2FrameProb(slot, value, ratio)
@@ -98,7 +102,7 @@ class msiip_nsvc_tracker(object):
 	def _UpdateFrame(self):
 		self.frame = {}
 		for slot in self.frame_prob:
-			if slot == 'INFO':
+			if self.tuple_extractor.enumerable(slot):
 				for value, prob in self.frame_prob[slot][1].items():
 					if prob >= self.slot_prob_threshold:
 						self._AddSlotValue2Frame(slot,value)
