@@ -15,7 +15,8 @@ import json
 import os
 import re
 from math import log
-from GlobalConfig import GetConfig()
+from GlobalConfig import GetConfig
+import codecs
 
 
 def GetLogLevel(log_level_key):
@@ -53,8 +54,8 @@ class Tuple_Extractor(object):
 
         if not slot_config_file:
             self.appLogger.debug('Slot config file is not assigned, so use the default config file')
-        slot_config_file = self.config.get(self.MY_ID,'slot_config_file')
-        slot_config_file = os.path.join(os.path.dirname(__file__),'../config/', slot_config_file)
+            slot_config_file = self.config.get(self.MY_ID,'slot_config_file')
+            slot_config_file = os.path.join(os.path.dirname(__file__),'../config/', slot_config_file)
         self.appLogger.debug('Slot config file: %s' %(slot_config_file))
 
         input = codecs.open(slot_config_file, 'r', 'utf-8')
