@@ -83,6 +83,8 @@ class msiip_nsvc_tracker(object):
 					tuples.append(key)
 					probs.append(prob)
 
+			self.appLogger.debug('tuples: %s, probs: %s' %(tuples.__str__(), probs.__str__()))
+
 			prob_frame_labels = self.tuple_extractor.generate_frame(tuples, probs, self.mode)
 			for slot in prob_frame_labels:
 				if slot in self.tagsets[topic]:
