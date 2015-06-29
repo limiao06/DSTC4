@@ -15,6 +15,7 @@ import json
 import os
 import re
 from math import log
+from GlobalConfig import GetConfig()
 
 
 def GetLogLevel(log_level_key):
