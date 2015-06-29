@@ -228,27 +228,28 @@ class feature(object):
 				unigram_lists = []
 				bigram_lists = []
 				trigram_lists = []
-				for sent in sent_samples:
-					#print sent
-					tokens = self._preprocessing(sent)
-					if self.unigram:
-						unigram_lists.append(tokens)
-					tokens.insert(0,'*')
-					tokens.insert(0,'*')
-					tokens.append('*')
-					tokens.append('*')
-					if self.bigram:
-						bigram_tokens = []
-						for j in range(1, len(tokens)-2):
-							key = '%s, %s' %(tokens[i],tokens[i+1])
-							bigram_tokens.append(key)
-						bigram_lists.append(bigram_tokens)
-					if self.trigram:
-						trigram_tokens = []
-						for j in range(len(len(tokens)-2)):
-							key = '%s, %s, %s'%(tokens[i],tokens[i+1],tokens[i+2])
-							trigram_tokens.append(key)
-						trigram_lists.append(trigram_tokens)
+				for sents in sent_samples:
+					for sent in sents:
+						#print sent
+						tokens = self._preprocessing(sent)
+						if self.unigram:
+							unigram_lists.append(tokens)
+						tokens.insert(0,'*')
+						tokens.insert(0,'*')
+						tokens.append('*')
+						tokens.append('*')
+						if self.bigram:
+							bigram_tokens = []
+							for j in range(1, len(tokens)-2):
+								key = '%s, %s' %(tokens[i],tokens[i+1])
+								bigram_tokens.append(key)
+							bigram_lists.append(bigram_tokens)
+						if self.trigram:
+							trigram_tokens = []
+							for j in range(len(len(tokens)-2)):
+								key = '%s, %s, %s'%(tokens[i],tokens[i+1],tokens[i+2])
+								trigram_tokens.append(key)
+							trigram_lists.append(trigram_tokens)
 
 				if self.unigram:
 					self.UNI_LEX = self._stat_lexicon(unigram_lists, threshold=2)
@@ -324,42 +325,43 @@ class feature(object):
 						else:
 							feature_vector[idx] = 1
 			elif feature.startswith('NGRAM'):
-				sent = feature_tuple[i]
-				tokens = self._preprocessing(sent)
-				if self.unigram:
-					for tk in tokens:
-						if tk in self.UNI_LEX:
-							idx = self.UNI_LEX_offset + self.UNI_LEX[tk]
-							weight = self.UNI_LEX_weight[tk]
-							if idx in feature_vector:
-								feature_vector[idx] += weight
-							else:
-								feature_vector[idx] = weight
-				tokens.insert(0,'*')
-				tokens.insert(0,'*')
-				tokens.append('*')
-				tokens.append('*')
-				if self.bigram:
-					for j in range(1, len(tokens)-2):
-						key = '%s, %s' %(tokens[i],tokens[i+1])
-						if key in self.BI_LEX:
-							idx = self.BI_LEX_offset + self.BI_LEX[key]
-							weight = self.BI_LEX_weight[key]
-							if idx in feature_vector:
-								feature_vector[idx] += weight
-							else:
-								feature_vector[idx] = weight
+				sents = feature_tuple[i]
+				for sent in sents:
+					tokens = self._preprocessing(sent)
+					if self.unigram:
+						for tk in tokens:
+							if tk in self.UNI_LEX:
+								idx = self.UNI_LEX_offset + self.UNI_LEX[tk]
+								weight = self.UNI_LEX_weight[tk]
+								if idx in feature_vector:
+									feature_vector[idx] += weight
+								else:
+									feature_vector[idx] = weight
+					tokens.insert(0,'*')
+					tokens.insert(0,'*')
+					tokens.append('*')
+					tokens.append('*')
+					if self.bigram:
+						for j in range(1, len(tokens)-2):
+							key = '%s, %s' %(tokens[i],tokens[i+1])
+							if key in self.BI_LEX:
+								idx = self.BI_LEX_offset + self.BI_LEX[key]
+								weight = self.BI_LEX_weight[key]
+								if idx in feature_vector:
+									feature_vector[idx] += weight
+								else:
+									feature_vector[idx] = weight
 
-				if self.trigram:
-					for j in range(len(len(tokens)-2)):
-						key = '%s, %s, %s'%(tokens[i],tokens[i+1],tokens[i+2])
-						if key in self.TRI_LEX:
-							idx = self.TRI_LEX_offset + self.TRI_LEX[key]
-							weight = self.TRI_LEX_weight[key]
-							if idx in feature_vector:
-								feature_vector[idx] += weight
-							else:
-								feature_vector[idx] = weight
+					if self.trigram:
+						for j in range(len(len(tokens)-2)):
+							key = '%s, %s, %s'%(tokens[i],tokens[i+1],tokens[i+2])
+							if key in self.TRI_LEX:
+								idx = self.TRI_LEX_offset + self.TRI_LEX[key]
+								weight = self.TRI_LEX_weight[key]
+								if idx in feature_vector:
+									feature_vector[idx] += weight
+								else:
+									feature_vector[idx] = weight
 		return feature_vector
 
 
@@ -402,7 +404,7 @@ class slot_value_classifier(object):
 				baseline_out_label = self.baseline.frame
 				train_sample.append(tuple_extractor.extract_tuple(baseline_out_label))
 			elif feature.startswith('NGRAM'):
-				train_sample.append(utter['transcript'])
+				train_sample.append([utter['transcript']])
 			else:
 				self.appLogger.error('Unknown feature: %s' %(feature))
 				raise Exception('Unknown feature: %s' %(feature))
