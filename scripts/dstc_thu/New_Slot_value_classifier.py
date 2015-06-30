@@ -505,7 +505,7 @@ class slot_value_classifier(object):
 			(label, label_prob) = self.svm_predict(self.models[key], feature_vector)
 			result[key] = label
 			result_prob[key] = label_prob
-			self.appLogger.debug('%s: label: %d, prob_dict:%s' %(key, label, label_prob))
+			# self.appLogger.debug('%s: label: %d, prob_dict:%s' %(key, label, label_prob))
 		return result, result_prob
 
 	def svm_predict(self, model, feature_vector):
