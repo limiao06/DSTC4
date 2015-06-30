@@ -241,13 +241,13 @@ class feature(object):
 						if self.bigram:
 							bigram_tokens = []
 							for j in range(1, len(tokens)-2):
-								key = '%s, %s' %(tokens[i],tokens[i+1])
+								key = '%s, %s' %(tokens[j],tokens[j+1])
 								bigram_tokens.append(key)
 							bigram_lists.append(bigram_tokens)
 						if self.trigram:
 							trigram_tokens = []
 							for j in range(len(tokens)-2):
-								key = '%s, %s, %s'%(tokens[i],tokens[i+1],tokens[i+2])
+								key = '%s, %s, %s'%(tokens[j],tokens[j+1],tokens[j+2])
 								trigram_tokens.append(key)
 							trigram_lists.append(trigram_tokens)
 
@@ -343,7 +343,7 @@ class feature(object):
 					tokens.append('*')
 					if self.bigram:
 						for j in range(1, len(tokens)-2):
-							key = '%s, %s' %(tokens[i],tokens[i+1])
+							key = '%s, %s' %(tokens[j],tokens[j+1])
 							if key in self.BI_LEX:
 								idx = self.BI_LEX_offset + self.BI_LEX[key]
 								weight = self.BI_LEX_weight[key]
@@ -354,7 +354,7 @@ class feature(object):
 
 					if self.trigram:
 						for j in range(len(tokens)-2):
-							key = '%s, %s, %s'%(tokens[i],tokens[i+1],tokens[i+2])
+							key = '%s, %s, %s'%(tokens[j],tokens[j+1],tokens[j+2])
 							if key in self.TRI_LEX:
 								idx = self.TRI_LEX_offset + self.TRI_LEX[key]
 								weight = self.TRI_LEX_weight[key]
