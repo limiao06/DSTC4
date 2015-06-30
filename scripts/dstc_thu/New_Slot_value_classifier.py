@@ -388,124 +388,53 @@ class slot_value_classifier(object):
 
 	def _prepare_resources(self):
 		if self.tagsets:
+			self.SubSeg_baseline = SubSegBaselineTracker(self.tagsets)
 			self.baseline = BaselineTracker(self.tagsets)
 		else:
 			self.appLogger.error('Error: _prepare_resources(): Ontology tagsets not ready!')
 			raise Exception('Error: _prepare_resources(): Ontology tagsets not ready!')
 
-	def _extract_utter_tuple(self, utter, feature_list):
-		train_sample = []
-		topic = utter['segment_info']['topic']
-		for i, feature in enumerate(feature_list):
-			if feature == 'TOPIC':
-				train_sample.append([topic])
-			elif feature == 'BASELINE':
-				self.baseline.addUtter(utter)
-				baseline_out_label = self.baseline.frame
-				train_sample.append(tuple_extractor.extract_tuple(baseline_out_label))
-			elif feature.startswith('NGRAM'):
-				train_sample.append([utter['transcript']])
-			else:
-				self.appLogger.error('Unknown feature: %s' %(feature))
-				raise Exception('Unknown feature: %s' %(feature))
-		return train_sample
-
-
 	def TrainFromDataSet(self, ontology_file, feature_list, dataset, model_dir, tokenizer_mode, use_stemmer):
-		# deal with model dir
-		if os.path.exists(model_dir):
-			shutil.rmtree(model_dir,True)
-		os.mkdir(model_dir)
-
-		self.ontology_file = ontology_file
-		self.tagsets = ontology_reader.OntologyReader(ontology_file).get_tagsets()
-		self._prepare_resources()
-
-
+		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
-		tuple_extractor = Tuple_Extractor()
-		label_samples = []
-		train_samples = []
-		for call in dataset:
-			for (log_utter, label_utter) in call:
-				if 'frame_label' in label_utter:
-					frame_label = label_utter['frame_label']
-					label_samples.append(tuple_extractor.extract_tuple(frame_label))
-					train_samples.append(self._extract_utter_tuple(log_utter, feature_list))
+		label_samples, train_samples = self._stat_samples_from_dataset(dataset)
 		# stat lexicon
 		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
 		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
 		# extract feature, build training data
-		for labels in label_samples:
-			for label in labels:
-				if label not in self.models:
-					self.models[label] = None
-		self.model_keys = self.models.keys()
-
-		train_feature_samples = []
-		for train_sample in train_samples:
-			train_feature_samples.append(self.feature.ExtractFeatureFromTuple(train_sample))
-
-		train_labels = {}
-		for key in self.model_keys:
-			train_labels[key] = [0] * len(train_feature_samples)
-		for i,labels in enumerate(label_samples):
-			for key in list(set(labels)):
-				train_labels[key][i] = 1
+		train_labels, train_feature_samples = self._build_svm_train_samples(label_samples, train_samples)
 		# begin train
 		print 'train svm models...'
-		for model_key in self.model_keys:
-			print 'Train tuple: %s' %(model_key)
-			prob = problem(train_labels[model_key], train_feature_samples)
-			param = parameter('-s 0 -c 1')
-			self.models[model_key] = liblinear.train(prob, param)
-		
+		self._train_svm_models(train_labels, train_feature_samples)
 		# save model
 		print 'save models'
-		out_json = {}
-		out_json['tuples'] = self.model_keys
-		out_json['train_samples_file'] = 'train_samples.json'
-		out_json['feature_lexicon_file'] = 'feature_lexicon.json'
-		out_json['ontology_file'] = 'ontology.json'
-		output = codecs.open(os.path.join(model_dir, 'config.json'), 'w', 'utf-8')
-		json.dump(out_json, output, indent=4)
-		output.close()
-
-		# save ontology file
-		shutil.copyfile(self.ontology_file, os.path.join(model_dir,out_json['ontology_file']))
-
-		# save train samples
-		output = codecs.open(os.path.join(model_dir, out_json['train_samples_file']), 'w', 'utf-8')
-		train_json = {}
-		train_json['train_samples'] = train_samples
-		train_json['label_samples'] = label_samples
-		train_json['train_feature_samples'] = train_feature_samples
-		train_json['train_labels'] = train_labels
-		json.dump(train_json, output, indent=4)
-		output.close()
-
-		# save feature
-		self.feature.save_Lexicon(os.path.join(model_dir, out_json['feature_lexicon_file']))
-
-		# save svm models
-		for model_key in self.model_keys:
-			save_model(os.path.join(model_dir, '%s.svm.m' %(model_key)), self.models[model_key])
-
+		self._save_models(model_dir, label_samples, train_samples, train_labels, train_feature_samples)
 		print 'Done!'
+
+	def TrainFromSubSegments(self, ontology_file, feature_list, sub_segments, model_dir, tokenizer_mode, use_stemmer):
+		self._prepare_train(model_dir, ontology_file)
+		# stat train samples
+		label_samples, train_samples = self._stat_samples_from_sub_segments(sub_segments)
+		# stat lexicon
+		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
+		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
+		# extract feature, build training data
+		train_labels, train_feature_samples = self._build_svm_train_samples(label_samples, train_samples)
+		# begin train
+		print 'train svm models...'
+		self._train_svm_models(train_labels, train_feature_samples)
+		# save model
+		print 'save models'
+		self._save_models(model_dir, label_samples, train_samples, train_labels, train_feature_samples)
+		print 'Done!'
+
 
 	def TestFromDataSet(self, dataset, model_dir):
 		self.LoadModel(model_dir)
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
 		tuple_extractor = Tuple_Extractor()
-		label_samples = []
-		test_samples = []
-		for call in dataset:
-			for (log_utter, label_utter) in call:
-				if 'frame_label' in label_utter:
-					frame_label = label_utter['frame_label']
-					label_samples.append(tuple_extractor.extract_tuple(frame_label))
-					test_samples.append(self._extract_utter_tuple(log_utter, self.feature.feature_list))
+		label_samples, test_samples = self._stat_samples_from_dataset(dataset)
 
 		out_label_samples = []
 		for sample in test_samples:
@@ -518,10 +447,24 @@ class slot_value_classifier(object):
 
 		EvalMultiLabel(label_samples, out_label_samples)
 
+	
+	def TestFromSubSeg(self, sub_segments, model_dir):
+		self.LoadModel(model_dir)
+		if not self.is_set:
+			raise Exception('Can not load model from :%s' %(model_dir))
+		tuple_extractor = Tuple_Extractor()
+		label_samples, test_samples = self._stat_samples_from_sub_segments(sub_segments)
 
+		out_label_samples = []
+		for sample in test_samples:
+			out_label = []
+			result, result_prob = self.PredictTuple(sample)
+			for k,v in result.items():
+				if v == 1:
+					out_label.append(k)
+			out_label_samples.append(out_label)
 
-
-
+		EvalMultiLabel(label_samples, out_label_samples)
 
 	def LoadModel(self, model_dir):
 		# load config
@@ -576,6 +519,147 @@ class slot_value_classifier(object):
 			label = liblinear.predict_probability(model, x, prob_estimates)
 			probs = prob_estimates[:nr_class]
 			return (label, probs)
+
+	def _extract_utter_tuple(self, utter, feature_list):
+		'''
+		from utter extract feature tuple
+		'''
+		train_sample = []
+		topic = utter['segment_info']['topic']
+		for i, feature in enumerate(feature_list):
+			if feature == 'TOPIC':
+				train_sample.append([topic])
+			elif feature == 'BASELINE':
+				self.baseline.addUtter(utter)
+				baseline_out_label = self.baseline.frame
+				train_sample.append(tuple_extractor.extract_tuple(baseline_out_label))
+			elif feature.startswith('NGRAM'):
+				train_sample.append([utter['transcript']])
+			else:
+				self.appLogger.error('Unknown feature: %s' %(feature))
+				raise Exception('Unknown feature: %s' %(feature))
+		return train_sample
+
+	def _extract_sub_seg_tuple(self, sub_seg, feature_list):
+		'''
+		from sub_seg extract feature tuple
+		'''
+		train_sample = []
+		topic = sub_seg['topic']
+		for i, feature in enumerate(feature_list):
+			if feature == 'TOPIC':
+				train_sample.append([topic])
+			elif feature == 'BASELINE':
+				baseline_out_label = self.SubSeg_baseline.addSubSeg(sub_seg)
+				train_sample.append(tuple_extractor.extract_tuple(baseline_out_label))
+			elif feature.startswith('NGRAM'):
+				transcripts = []
+				for sent in sub_seg['utter_sents']:
+					transcript = sent[sent.find(':')+2:]
+					transcripts.append(transcript)
+				train_sample.append(transcripts)
+			else:
+				self.appLogger.error('Unknown feature: %s' %(feature))
+				raise Exception('Unknown feature: %s' %(feature))
+		return train_sample
+
+	def _prepare_train(self, model_dir, ontology_file):
+		'''
+		deal with model dir
+		read ontology file
+		'''
+		if os.path.exists(model_dir):
+			shutil.rmtree(model_dir,True)
+		os.mkdir(model_dir)
+
+		self.ontology_file = ontology_file
+		self.tagsets = ontology_reader.OntologyReader(ontology_file).get_tagsets()
+		self._prepare_resources()
+
+	def _stat_samples_from_dataset(self, dataset):
+		# stat train samples
+		tuple_extractor = Tuple_Extractor()
+		label_samples = []
+		train_samples = []
+		for call in dataset:
+			for (log_utter, label_utter) in call:
+				if 'frame_label' in label_utter:
+					frame_label = label_utter['frame_label']
+					label_samples.append(tuple_extractor.extract_tuple(frame_label))
+					train_samples.append(self._extract_utter_tuple(log_utter, feature_list))
+		return (label_samples, train_samples)
+
+	def _stat_samples_from_sub_segments(self, sub_segments):
+		# stat train samples
+		tuple_extractor = Tuple_Extractor()
+		label_samples = []
+		train_samples = []
+		for session in sub_segments['sessions']:
+			for sub_seg in session['sub_segments']:
+				frame_label = sub_seg['frame_label']
+				label_samples.append(tuple_extractor.extract_tuple(frame_label))
+				train_samples.append(self._extract_sub_seg_tuple(sub_seg, feature_list))
+		return (label_samples, train_samples)
+
+	def _build_svm_train_samples(self, label_samples, train_samples):
+		for labels in label_samples:
+			for label in labels:
+				if label not in self.models:
+					self.models[label] = None
+		self.model_keys = self.models.keys()
+
+		train_feature_samples = []
+		for train_sample in train_samples:
+			train_feature_samples.append(self.feature.ExtractFeatureFromTuple(train_sample))
+
+		train_labels = {}
+		for key in self.model_keys:
+			train_labels[key] = [0] * len(train_feature_samples)
+		for i,labels in enumerate(label_samples):
+			for key in list(set(labels)):
+				train_labels[key][i] = 1
+		return (train_labels, train_feature_samples)
+
+	def _train_svm_models(self, train_labels, train_feature_samples, param_str = '-s 0 -c 1'):
+		for model_key in self.model_keys:
+			print 'Train tuple: %s' %(model_key)
+			prob = problem(train_labels[model_key], train_feature_samples)
+			param = parameter(param_str)
+			self.models[model_key] = liblinear.train(prob, param)
+
+	def _save_models(self, model_dir, label_samples, train_samples, train_labels, train_feature_samples):
+		out_json = {}
+		out_json['tuples'] = self.model_keys
+		out_json['train_samples_file'] = 'train_samples.json'
+		out_json['feature_lexicon_file'] = 'feature_lexicon.json'
+		out_json['ontology_file'] = 'ontology.json'
+		output = codecs.open(os.path.join(model_dir, 'config.json'), 'w', 'utf-8')
+		json.dump(out_json, output, indent=4)
+		output.close()
+
+		# save ontology file
+		shutil.copyfile(self.ontology_file, os.path.join(model_dir,out_json['ontology_file']))
+
+		# save train samples
+		output = codecs.open(os.path.join(model_dir, out_json['train_samples_file']), 'w', 'utf-8')
+		train_json = {}
+		train_json['train_samples'] = train_samples
+		train_json['label_samples'] = label_samples
+		train_json['train_feature_samples'] = train_feature_samples
+		train_json['train_labels'] = train_labels
+		json.dump(train_json, output, indent=4)
+		output.close()
+
+		# save feature
+		self.feature.save_Lexicon(os.path.join(model_dir, out_json['feature_lexicon_file']))
+
+		# save svm models
+		for model_key in self.model_keys:
+			save_model(os.path.join(model_dir, '%s.svm.m' %(model_key)), self.models[model_key])
+
+
+
+
 
 
 
