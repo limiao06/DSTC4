@@ -246,7 +246,7 @@ class feature(object):
 							bigram_lists.append(bigram_tokens)
 						if self.trigram:
 							trigram_tokens = []
-							for j in range(len(len(tokens)-2)):
+							for j in range(len(tokens)-2):
 								key = '%s, %s, %s'%(tokens[i],tokens[i+1],tokens[i+2])
 								trigram_tokens.append(key)
 							trigram_lists.append(trigram_tokens)
