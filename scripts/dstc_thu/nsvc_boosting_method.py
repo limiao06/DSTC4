@@ -27,7 +27,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 	for call in dataset:
 		for (log_utter, label_utter) in call:
 			if 'frame_label' in label_utter:
-				svc.appLogger.info('%d:%d\n'%(call.log['session_id'], log_utter['utter_index']))
+				svc.appLogger.info('%d:%d'%(call.log['session_id'], log_utter['utter_index']))
 				svc.appLogger.info('transcript: %s' %(log_utter['transcript']))
 				frame_label = label_utter['frame_label']
 				frame_tuples = svc.tuple_extractor.extract_tuple(frame_label)
