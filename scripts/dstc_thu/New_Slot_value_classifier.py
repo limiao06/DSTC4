@@ -395,6 +395,9 @@ class slot_value_classifier(object):
 			raise Exception('Error: _prepare_resources(): Ontology tagsets not ready!')
 
 	def TrainFromDataSet(self, ontology_file, feature_list, dataset, model_dir, tokenizer_mode, use_stemmer):
+		if not feature_list:
+			self.appLogger('Error: feature list can not be empty!')
+			raise Exception('Error: feature list can not be empty!')
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
 		label_samples, train_samples = self._stat_samples_from_dataset(dataset, feature_list)
@@ -412,6 +415,9 @@ class slot_value_classifier(object):
 		print 'Done!'
 
 	def TrainFromSubSegments(self, ontology_file, feature_list, sub_segments, model_dir, tokenizer_mode, use_stemmer):
+		if not feature_list:
+			self.appLogger('Error: feature list can not be empty!')
+			raise Exception('Error: feature list can not be empty!')
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
 		label_samples, train_samples = self._stat_samples_from_sub_segments(sub_segments, feature_list)
@@ -669,7 +675,7 @@ class slot_value_classifier(object):
 
 def GetFeatureList(feature_code):
 	if feature_code == None or feature_code == '':
-		raise Exception('Error: Empty feature code!')
+		return []
 
 	feature_list = []
 	feature_code_list = list(feature_code)
@@ -697,7 +703,5 @@ def GetFeatureList(feature_code):
 		feature_list.append(NGRAM_key)
 	if 'B' in feature_code_list:
 		feature_list.append('BASELINE')	
-	if not feature_list:
-		self.appLogger.error('Error: Empty feature list!')
-		raise Exception('Error: Empty feature list!')
+
 	return feature_list

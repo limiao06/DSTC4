@@ -18,7 +18,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 	if old_model_dir:
 		if os.path.exists(old_model_dir):
 			svc.LoadModel(old_model_dir)
-			if not self.is_set:
+			if not svc.is_set:
 				raise Exception('Can not load model from :%s' %(old_model_dir))
 	else:
 		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, model_dir, tokenize_mode, use_stemmer)
@@ -63,7 +63,7 @@ def main(argv):
 	parser = argparse.ArgumentParser(description='STC like slot value classifier.')
 	parser.add_argument('--dataset', dest='dataset', action='store', metavar='DATASET', required=True, help='The dataset to analyze')
 	parser.add_argument('--dataroot',dest='dataroot',action='store',required=True,metavar='PATH', help='Will look for corpus in <destroot>/<dataset>/...')
-	parser.add_argument('--subseg', dest='subseg', action='store', required=True, help='The sub_segments file to analyze')
+	parser.add_argument('--subseg', dest='subseg', action='store', help='The sub_segments file to analyze')
 	parser.add_argument('model_dir',metavar='PATH', help='The output model dir')
 	parser.add_argument('--old_model_dir',dest='old_model_dir',action='store', help='old model dir.')
 	parser.add_argument('--ontology',dest='ontology',action='store', help='Ontology file.')
