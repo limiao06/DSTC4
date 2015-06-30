@@ -483,6 +483,7 @@ class slot_value_classifier(object):
 		# load svm model
 		for key in self.model_keys:
 			self.models[key] = load_model(os.path.join(model_dir, '%s.svm.m' %(key)))
+		self._prepare_resources()
 		self.is_set = True
 
 	def PredictUtter(self, Utter, feature_list):
