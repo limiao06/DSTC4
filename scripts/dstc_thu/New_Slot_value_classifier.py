@@ -353,7 +353,7 @@ class feature(object):
 									feature_vector[idx] = weight
 
 					if self.trigram:
-						for j in range(len(len(tokens)-2)):
+						for j in range(len(tokens)-2):
 							key = '%s, %s, %s'%(tokens[i],tokens[i+1],tokens[i+2])
 							if key in self.TRI_LEX:
 								idx = self.TRI_LEX_offset + self.TRI_LEX[key]
