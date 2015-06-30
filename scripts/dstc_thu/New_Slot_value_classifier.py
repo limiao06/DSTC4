@@ -397,7 +397,7 @@ class slot_value_classifier(object):
 	def TrainFromDataSet(self, ontology_file, feature_list, dataset, model_dir, tokenizer_mode, use_stemmer):
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
-		label_samples, train_samples = self._stat_samples_from_dataset(dataset)
+		label_samples, train_samples = self._stat_samples_from_dataset(dataset, feature_list)
 		# stat lexicon
 		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
 		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
@@ -414,7 +414,7 @@ class slot_value_classifier(object):
 	def TrainFromSubSegments(self, ontology_file, feature_list, sub_segments, model_dir, tokenizer_mode, use_stemmer):
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
-		label_samples, train_samples = self._stat_samples_from_sub_segments(sub_segments)
+		label_samples, train_samples = self._stat_samples_from_sub_segments(sub_segments, feature_list)
 		# stat lexicon
 		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
 		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
@@ -576,7 +576,7 @@ class slot_value_classifier(object):
 		self.tagsets = ontology_reader.OntologyReader(ontology_file).get_tagsets()
 		self._prepare_resources()
 
-	def _stat_samples_from_dataset(self, dataset):
+	def _stat_samples_from_dataset(self, dataset, feature_list):
 		# stat train samples
 		tuple_extractor = Tuple_Extractor()
 		label_samples = []
@@ -589,7 +589,7 @@ class slot_value_classifier(object):
 					train_samples.append(self._extract_utter_tuple(log_utter, feature_list))
 		return (label_samples, train_samples)
 
-	def _stat_samples_from_sub_segments(self, sub_segments):
+	def _stat_samples_from_sub_segments(self, sub_segments, feature_list):
 		# stat train samples
 		tuple_extractor = Tuple_Extractor()
 		label_samples = []
