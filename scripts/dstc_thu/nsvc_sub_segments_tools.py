@@ -46,11 +46,11 @@ def main(argv):
 		sys.stderr.write('Error: train and test can not be both false!')
 	elif args.test:
 		print 'Test!'
-		svc.TestFromSubSeg(sub_segments, args.model_dir)
+		svc.TestFromSubSegments(sub_segments, args.model_dir)
 	else:
 		print 'Train'
 		feature_list = GetFeatureList(args.feature)
-		svc.TrainFromSubSeg(args.ontology, feature_list, sub_segments, args.model_dir, args.mode, args.UseST)
+		svc.TrainFromSubSegments(args.ontology, feature_list, sub_segments, args.model_dir, args.mode, args.UseST)
 
 if __name__ =="__main__":
 	main(sys.argv)

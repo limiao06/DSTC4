@@ -448,7 +448,7 @@ class slot_value_classifier(object):
 		EvalMultiLabel(label_samples, out_label_samples)
 
 	
-	def TestFromSubSeg(self, sub_segments, model_dir):
+	def TestFromSubSegments(self, sub_segments, model_dir):
 		self.LoadModel(model_dir)
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
