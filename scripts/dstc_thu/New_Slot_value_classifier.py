@@ -387,6 +387,7 @@ class slot_value_classifier(object):
 		self.is_set = False
 
 	def _prepare_resources(self):
+		self.tuple_extractor = Tuple_Extractor()
 		if self.tagsets:
 			self.SubSeg_baseline = SubSegBaselineTracker(self.tagsets)
 			self.baseline = BaselineTracker(self.tagsets)
@@ -439,7 +440,7 @@ class slot_value_classifier(object):
 		self.LoadModel(model_dir)
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
-		self.tuple_extractor = Tuple_Extractor()
+		
 		label_samples, test_samples = self._stat_samples_from_dataset(dataset, self.feature.feature_list)
 
 		out_label_samples = []
@@ -458,7 +459,6 @@ class slot_value_classifier(object):
 		self.LoadModel(model_dir)
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
-		self.tuple_extractor = Tuple_Extractor()
 		label_samples, test_samples = self._stat_samples_from_sub_segments(sub_segments, self.feature.feature_list)
 
 		out_label_samples = []
@@ -583,9 +583,6 @@ class slot_value_classifier(object):
 		self.ontology_file = ontology_file
 		self.tagsets = ontology_reader.OntologyReader(ontology_file).get_tagsets()
 		self._prepare_resources()
-
-		# tuple extractor
-		self.tuple_extractor = Tuple_Extractor()
 
 	def _stat_samples_from_dataset(self, dataset, feature_list):
 		# stat train samples
