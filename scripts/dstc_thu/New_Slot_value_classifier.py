@@ -433,7 +433,7 @@ class slot_value_classifier(object):
 		self.LoadModel(model_dir)
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
-		tuple_extractor = Tuple_Extractor()
+		self.tuple_extractor = Tuple_Extractor()
 		label_samples, test_samples = self._stat_samples_from_dataset(dataset, self.feature.feature_list)
 
 		out_label_samples = []
@@ -452,7 +452,7 @@ class slot_value_classifier(object):
 		self.LoadModel(model_dir)
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
-		tuple_extractor = Tuple_Extractor()
+		self.tuple_extractor = Tuple_Extractor()
 		label_samples, test_samples = self._stat_samples_from_sub_segments(sub_segments, self.feature.feature_list)
 
 		out_label_samples = []
@@ -532,7 +532,7 @@ class slot_value_classifier(object):
 			elif feature == 'BASELINE':
 				self.baseline.addUtter(utter)
 				baseline_out_label = self.baseline.frame
-				train_sample.append(tuple_extractor.extract_tuple(baseline_out_label))
+				train_sample.append(self.tuple_extractor.extract_tuple(baseline_out_label))
 			elif feature.startswith('NGRAM'):
 				train_sample.append([utter['transcript']])
 			else:
@@ -551,7 +551,7 @@ class slot_value_classifier(object):
 				train_sample.append([topic])
 			elif feature == 'BASELINE':
 				baseline_out_label = self.SubSeg_baseline.addSubSeg(sub_seg)
-				train_sample.append(tuple_extractor.extract_tuple(baseline_out_label))
+				train_sample.append(self.tuple_extractor.extract_tuple(baseline_out_label))
 			elif feature.startswith('NGRAM'):
 				transcripts = []
 				for sent in sub_seg['utter_sents']:
@@ -576,28 +576,29 @@ class slot_value_classifier(object):
 		self.tagsets = ontology_reader.OntologyReader(ontology_file).get_tagsets()
 		self._prepare_resources()
 
+		# tuple extractor
+		self.tuple_extractor = Tuple_Extractor()
+
 	def _stat_samples_from_dataset(self, dataset, feature_list):
 		# stat train samples
-		tuple_extractor = Tuple_Extractor()
 		label_samples = []
 		train_samples = []
 		for call in dataset:
 			for (log_utter, label_utter) in call:
 				if 'frame_label' in label_utter:
 					frame_label = label_utter['frame_label']
-					label_samples.append(tuple_extractor.extract_tuple(frame_label))
+					label_samples.append(self.tuple_extractor.extract_tuple(frame_label))
 					train_samples.append(self._extract_utter_tuple(log_utter, feature_list))
 		return (label_samples, train_samples)
 
 	def _stat_samples_from_sub_segments(self, sub_segments, feature_list):
 		# stat train samples
-		tuple_extractor = Tuple_Extractor()
 		label_samples = []
 		train_samples = []
 		for session in sub_segments['sessions']:
 			for sub_seg in session['sub_segments']:
 				frame_label = sub_seg['frame_label']
-				label_samples.append(tuple_extractor.extract_tuple(frame_label))
+				label_samples.append(self.tuple_extractor.extract_tuple(frame_label))
 				train_samples.append(self._extract_sub_seg_tuple(sub_seg, feature_list))
 		return (label_samples, train_samples)
 
