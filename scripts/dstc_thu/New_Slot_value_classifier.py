@@ -531,8 +531,9 @@ class slot_value_classifier(object):
 			if feature == 'TOPIC':
 				train_sample.append([topic])
 			elif feature == 'BASELINE':
-				self.baseline.addUtter(utter)
-				baseline_out_label = self.baseline.frame
+				self.SubSeg_baseline.reset()
+				self.SubSeg_baseline.addTrans(utter['transcript'], topic)
+				baseline_out_label = self.SubSeg_baseline.frame
 				train_sample.append(self.tuple_extractor.extract_tuple(baseline_out_label))
 			elif feature.startswith('NGRAM'):
 				train_sample.append([utter['transcript']])
