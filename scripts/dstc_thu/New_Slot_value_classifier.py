@@ -502,10 +502,10 @@ class slot_value_classifier(object):
 		result = {}
 		result_prob = {}
 		for key in self.model_keys:
-			(label, prob) = self.svm_predict(self.models[key], feature_vector)
+			(label, label_prob) = self.svm_predict(self.models[key], feature_vector)
 			result[key] = label
-			result_prob[key] = prob
-			# print label, prob
+			result_prob[key] = label_prob
+			self.appLogger.debug('%s: label: %d, prob_dict:%s' %(key, label, label_prob))
 		return result, result_prob
 
 	def svm_predict(self, model, feature_vector):
@@ -521,12 +521,22 @@ class slot_value_classifier(object):
 
 			label = liblinear.predict_values(model, x, dec_values)
 			values = dec_values[:nr_classifier]
-			return (label, values)
+			
+			labels = model.get_labels()
+			value_dict = {}
+			for l,v in zip(labels,values):
+				value_dict[l] = v
+			return (label, value_dict)
 		else:
 			prob_estimates = (c_double * nr_class)()
 			label = liblinear.predict_probability(model, x, prob_estimates)
 			probs = prob_estimates[:nr_class]
-			return (label, probs)
+
+			labels = model.get_labels()
+			prob_dict = {}
+			for l,p in zip(labels,probs):
+				prob_dict[l] = p
+			return (label, prob_dict)
 
 	def _extract_utter_tuple(self, utter, feature_list):
 		'''
