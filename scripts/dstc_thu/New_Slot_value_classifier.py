@@ -434,7 +434,7 @@ class slot_value_classifier(object):
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
 		tuple_extractor = Tuple_Extractor()
-		label_samples, test_samples = self._stat_samples_from_dataset(dataset)
+		label_samples, test_samples = self._stat_samples_from_dataset(dataset, self.feature.feature_list)
 
 		out_label_samples = []
 		for sample in test_samples:
@@ -453,7 +453,7 @@ class slot_value_classifier(object):
 		if not self.is_set:
 			raise Exception('Can not load model from :%s' %(model_dir))
 		tuple_extractor = Tuple_Extractor()
-		label_samples, test_samples = self._stat_samples_from_sub_segments(sub_segments)
+		label_samples, test_samples = self._stat_samples_from_sub_segments(sub_segments, self.feature.feature_list)
 
 		out_label_samples = []
 		for sample in test_samples:
