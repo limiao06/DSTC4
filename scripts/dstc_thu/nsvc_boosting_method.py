@@ -12,7 +12,7 @@ from New_Slot_value_classifier import *
 
 
 
-def nsvc_boosting(iteration = 1, model_dir, sub_segments, dataset, ontology_file, feature_list, tokenize_mode, use_stemmer, old_model_dir):
+def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenize_mode, use_stemmer, old_model_dir=None, iteration = 1):
 	# get svc model (load or train)
 	svc = slot_value_classifier()
 	if old_model_dir:
@@ -166,7 +166,7 @@ def main(argv):
 
 	feature_list = GetFeatureList(args.feature)
 
-	nsvc_boosting(args.iteration, args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.old_model_dir)
+	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.old_model_dir, args.iteration)
 
 if __name__ =="__main__":
 	main(sys.argv)
