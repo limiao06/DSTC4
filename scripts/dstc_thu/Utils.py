@@ -114,7 +114,8 @@ class Tuple_Extractor(object):
                     remove_index.append(i)
                 else:
                     if t[0] in frame_label:
-                        new_prob = 1 - (1-probs[i])*(1- frame_label[t[0]]['prob'])
+                        # new_prob = 1 - (1-probs[i])*(1- frame_label[t[0]]['prob'])
+                        new_prob = probs[i]
                         if t[1] not in frame_label[t[0]]['values']:
                             frame_label[t[0]]['values'][t[1]] = new_prob
                         else:
