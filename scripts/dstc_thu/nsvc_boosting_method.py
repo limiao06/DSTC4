@@ -66,7 +66,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 						svc.appLogger.info('%s, %d, %.3f' %(key, label, prob))
 
 					# add to sub_segments_vec
-					sub_segments_vec.append(log_utter, label_utter, result_prob)
+					sub_segments_vec.append((log_utter, label_utter, result_prob))
 
 				else:
 					if sub_segments_vec:
