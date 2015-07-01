@@ -402,7 +402,7 @@ class slot_value_classifier(object):
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
 		label_samples, train_samples = self._stat_samples_from_dataset(dataset, feature_list)
-		self._train_by_samples(label_samples, train_samples, feature_list)
+		self._train_by_samples(model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer)
 
 	def TrainFromSubSegments(self, ontology_file, feature_list, sub_segments, model_dir, tokenizer_mode, use_stemmer):
 		if not feature_list:
@@ -516,7 +516,7 @@ class slot_value_classifier(object):
 				prob_dict[l] = p
 			return (label, prob_dict)
 
-	def _train_by_samples(self,label_samples, train_samples, feature_list):
+	def _train_by_samples(self, model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer):
 		# stat lexicon
 		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
 		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
