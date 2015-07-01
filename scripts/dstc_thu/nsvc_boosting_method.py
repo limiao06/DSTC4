@@ -21,10 +21,10 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 			if not svc.is_set:
 				raise Exception('Can not load model from :%s' %(old_model_dir))
 	else:
-		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, model_dir, tokenize_mode, use_stemmer)
+		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, old_model_dir, tokenize_mode, use_stemmer)
 
 	# read old train data
-	input = codecs.open(os.path.join(model_dir,'train_samples.json'))
+	input = codecs.open(os.path.join(old_model_dir,'train_samples.json'))
 	in_json = json.load(input)
 	input.close()
 
