@@ -12,7 +12,7 @@ from New_Slot_value_classifier import *
 
 
 
-def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenize_mode, use_stemmer, old_model_dir=None, iteration = 1):
+def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenizer_mode, use_stemmer, old_model_dir=None, iteration = 1):
 	# get svc model (load or train)
 	svc = slot_value_classifier()
 	if old_model_dir:
@@ -21,7 +21,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 			if not svc.is_set:
 				raise Exception('Can not load model from :%s' %(old_model_dir))
 	else:
-		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, old_model_dir, tokenize_mode, use_stemmer)
+		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, old_model_dir, tokenizer_mode, use_stemmer)
 
 	# read old train data
 	input = codecs.open(os.path.join(old_model_dir,'train_samples.json'))
@@ -99,7 +99,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 		if os.path.exists(new_model_dir):
 			shutil.rmtree(new_model_dir,True)
 		os.mkdir(new_model_dir)
-		svc._train_by_samples(new_model_dir, new_label_samples, new_train_samples, svc.feature.feature_list, svc.feature.tokenize_mode, svc.feature.use_stemmer)
+		svc._train_by_samples(new_model_dir, new_label_samples, new_train_samples, svc.feature.feature_list, svc.feature.tokenizer_mode, svc.feature.use_stemmer)
 	print 'done!'
 
 
