@@ -90,7 +90,7 @@ def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, alpha 
 			key = str({slot:value})
 			slot_value_dict[key] = []
 	for key in slot_value_dict:
-		svc.appLogger('start processing key: %s' %(key))
+		svc.appLogger.debug('start processing key: %s' %(key))
 		score_vec = [0] * len(sub_segments_vec)
 		for i, (log_utter, label_utter, result_prob) in enumerate(sub_segments_vec):
 			if "ACK" in label_utter['speech_act'][0]['attributes']:
