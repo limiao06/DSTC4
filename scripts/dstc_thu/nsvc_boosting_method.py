@@ -24,21 +24,27 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, model_dir, tokenize_mode, use_stemmer)
 
 	# process dataset
-	for call in dataset:
-		for (log_utter, label_utter) in call:
-			if 'frame_label' in label_utter:
-				svc.appLogger.info('%d:%d'%(call.log['session_id'], log_utter['utter_index']))
-				svc.appLogger.info('transcript: %s' %(log_utter['transcript']))
-				frame_label = label_utter['frame_label']
-				frame_tuples = svc.tuple_extractor.extract_tuple(frame_label)
-				result, result_prob = svc.PredictUtter(log_utter, svc.feature.feature_list)
-				tuple_results = []
-				for key in frame_tuples:
-					label = result[key]
-					prob = result_prob[key][1]
-					tuple_results.append((key, label, prob))
-				for key, label, prob in tuple_results:
-					svc.appLogger.info('%s, %d, %.3f' %(key, label, prob))
+	try:
+		for call in dataset:
+			for (log_utter, label_utter) in call:
+				if 'frame_label' in label_utter:
+					svc.appLogger.info('%d:%d'%(call.log['session_id'], log_utter['utter_index']))
+					svc.appLogger.info('transcript: %s' %(log_utter['transcript']))
+					frame_label = label_utter['frame_label']
+					frame_tuples = svc.tuple_extractor.extract_tuple(frame_label)
+					result, result_prob = svc.PredictUtter(log_utter, svc.feature.feature_list)
+					tuple_results = []
+					for key in frame_tuples:
+						label = result[key]
+						prob = result_prob[key][1]
+						tuple_results.append((key, label, prob))
+					for key, label, prob in tuple_results:
+						svc.appLogger.info('%s, %d, %.3f' %(key, label, prob))
+	except Exception, e:
+		print frame_label
+		print '%d:%d' %(call.log['session_id'], log_utter['utter_index'])
+		raise e
+	
 
 
 
