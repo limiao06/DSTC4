@@ -100,6 +100,11 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 			shutil.rmtree(new_model_dir,True)
 		os.mkdir(new_model_dir)
 		svc._train_by_samples(new_model_dir, new_label_samples, new_train_samples, svc.feature.feature_list, svc.feature.tokenizer_mode, svc.feature.use_stemmer)
+		del svc
+		svc = slot_value_classifier()
+		svc.LoadModel(new_model_dir)
+		if not svc.is_set:
+			raise Exception('Can not load model from :%s' %(new_model_dir))
 	print 'done!'
 
 
