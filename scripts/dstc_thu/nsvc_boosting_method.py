@@ -103,7 +103,7 @@ def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8):
 						score += result_prob[t][1]
 						count += 1
 				score_vec[i] = score/count
-		svc.appLogger('key: %s, score_vec: %s' %(key, score_vec.__str__()))
+		svc.appLogger.debug('key: %s, score_vec: %s' %(key, score_vec.__str__()))
 		
 		max_score = 0.0
 		max_id = 0
@@ -117,7 +117,7 @@ def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8):
 				add_num += 1
 		if add_num == 0:
 			slot_value_dict[key].append(max_id)
-		svc.appLogger('key: %s, choose ids: %s' %(key, slot_value_dict[key].__str__()))
+		svc.appLogger.debug('key: %s, choose ids: %s' %(key, slot_value_dict[key].__str__()))
 	return slot_value_dict
 
 
