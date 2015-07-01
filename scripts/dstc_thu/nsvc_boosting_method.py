@@ -95,13 +95,20 @@ def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8):
 			if "ACK" in label_utter['speech_act'][0]['attributes']:
 				pass
 			else:
-				tuples = svc.tuple_extractor.extract_tuple(eval(key))
+				t_frame_label = eval(key)
+				tuples = svc.tuple_extractor.extract_tuple(t_frame_label)
 				score = 0.0
 				count = 0
-				for t in tuples:
-					if t in result_prob:
-						score += result_prob[t][1]
-						count += 1
+				if svc.tuple_extractor.enumerable(t_frame_label.keys[0]):
+					for t in tuples:
+						if t in result_prob and not t.startswith('root'):
+							score += result_prob[t][1]
+							count += 1
+				else:
+					for t in tuples:
+						if t in result_prob:
+							score += result_prob[t][1]
+							count += 1
 				score_vec[i] = score/count
 		svc.appLogger.debug('key: %s, score_vec: %s' %(key, score_vec.__str__()))
 		
