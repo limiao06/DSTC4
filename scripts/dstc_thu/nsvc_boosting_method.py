@@ -103,7 +103,6 @@ def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, alpha 
 				if svc.tuple_extractor.enumerable(t_frame_label.keys()[0]):
 					for t in tuples:
 						if t in result_prob:
-							svc.appLogger.debug('add prob: %s, %.3f' %(t, result_prob[t][1]))
 							if t.startswith('root'):
 								score += result_prob[t][1] * alpha
 								count += alpha
@@ -113,7 +112,6 @@ def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, alpha 
 				else:
 					for t in tuples:
 						if t in result_prob:
-							svc.appLogger.debug('add prob: %s, %.3f' %(t, result_prob[t][1]))
 							score += result_prob[t][1]
 							count += 1
 				score_vec[i] = score/count

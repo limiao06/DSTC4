@@ -472,7 +472,7 @@ class slot_value_classifier(object):
 
 	def PredictUtter(self, Utter, feature_list):
 		sample_tuple = self._extract_utter_tuple(Utter, feature_list)
-		self.appLogger.debug('%s' %(sample_tuple.__str__()))
+		#self.appLogger.debug('%s' %(sample_tuple.__str__()))
 		return self.PredictTuple(sample_tuple)
 
 	def PredictTuple(self, s_tuple):
