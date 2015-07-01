@@ -76,7 +76,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 						# add train samples
 
 	
-def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8):
+def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, alpha = 0.2):
 	'''
 	input a sub_segments_vec
 	return a dict indicate which sent id correspond to a slot-value pair
@@ -101,9 +101,13 @@ def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8):
 				count = 0
 				if svc.tuple_extractor.enumerable(t_frame_label.keys()[0]):
 					for t in tuples:
-						if t in result_prob and not t.startswith('root'):
-							score += result_prob[t][1]
-							count += 1
+						if t in result_prob:
+							if t.startswith('root'):
+								score += result_prob[t][1] * alpha
+								count += alpha
+							else:
+								score += result_prob[t][1] * (1- alpha)
+								count += 1- alpha
 				else:
 					for t in tuples:
 						if t in result_prob:
