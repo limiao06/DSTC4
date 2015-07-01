@@ -402,18 +402,7 @@ class slot_value_classifier(object):
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
 		label_samples, train_samples = self._stat_samples_from_dataset(dataset, feature_list)
-		# stat lexicon
-		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
-		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
-		# extract feature, build training data
-		train_labels, train_feature_samples = self._build_svm_train_samples(label_samples, train_samples)
-		# begin train
-		print 'train svm models...'
-		self._train_svm_models(train_labels, train_feature_samples)
-		# save model
-		print 'save models'
-		self._save_models(model_dir, label_samples, train_samples, train_labels, train_feature_samples)
-		print 'Done!'
+		self._train_by_samples(label_samples, train_samples, feature_list)
 
 	def TrainFromSubSegments(self, ontology_file, feature_list, sub_segments, model_dir, tokenizer_mode, use_stemmer):
 		if not feature_list:
@@ -422,18 +411,7 @@ class slot_value_classifier(object):
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
 		label_samples, train_samples = self._stat_samples_from_sub_segments(sub_segments, feature_list)
-		# stat lexicon
-		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
-		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
-		# extract feature, build training data
-		train_labels, train_feature_samples = self._build_svm_train_samples(label_samples, train_samples)
-		# begin train
-		print 'train svm models...'
-		self._train_svm_models(train_labels, train_feature_samples)
-		# save model
-		print 'save models'
-		self._save_models(model_dir, label_samples, train_samples, train_labels, train_feature_samples)
-		print 'Done!'
+		self._train_by_samples(label_samples, train_samples, feature_list)
 
 
 	def TestFromDataSet(self, dataset, model_dir):
@@ -538,6 +516,20 @@ class slot_value_classifier(object):
 				prob_dict[l] = p
 			return (label, prob_dict)
 
+	def _train_by_samples(self,label_samples, train_samples, feature_list):
+		# stat lexicon
+		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
+		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
+		# extract feature, build training data
+		train_labels, train_feature_samples = self._build_svm_train_samples(label_samples, train_samples)
+		# begin train
+		print >>sys.stderr, 'train svm models...'
+		self._train_svm_models(train_labels, train_feature_samples)
+		# save model
+		print >>sys.stderr, 'save models'
+		self._save_models(model_dir, label_samples, train_samples, train_labels, train_feature_samples)
+		print >>sys.stderr, 'Done!'
+	
 	def _extract_utter_tuple(self, utter, feature_list):
 		'''
 		from utter extract feature tuple
