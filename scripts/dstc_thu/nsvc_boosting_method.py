@@ -48,10 +48,16 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 				if 'frame_label' in label_utter:
 					if log_utter['segment_info']['target_bio'] == 'B':
 						if sub_segments_vec:
-							slot_value_dict = process_sub_segments_vec(sub_segments_vec, svc)
+							slot_value_dict = choose_from_sub_segments_vec(sub_segments_vec, svc)
+							new_label_samples, new_train_samples = generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc)
+							for l_sample, t_sample in zip(new_label_samples, new_train_samples):
+								svc.appLogger.debug('new sample: (%s, %s)' %(l_sample.__str__(), t_sample.__str__()))
+							it_train_samples.extend(new_train_samples)
+							it_label_samples.extend(new_label_samples)
 							sub_segments_vec = []
-							# add train samples
-							raw_input('press any thing to continue..')
+
+							raw_input('press any thing to continue.')
+							
 					svc.appLogger.info('%d:%d'%(call.log['session_id'], log_utter['utter_index']))
 					svc.appLogger.info('transcript: %s' %(log_utter['transcript']))
 					frame_label = label_utter['frame_label']
@@ -62,21 +68,40 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 						label = result[key]
 						prob = result_prob[key][1]
 						tuple_results.append((key, label, prob))
-					for key, label, prob in tuple_results:
-						svc.appLogger.info('%s, %d, %.3f' %(key, label, prob))
+
+					#for key, label, prob in tuple_results:
+					#	svc.appLogger.info('%s, %d, %.3f' %(key, label, prob))
 
 					# add to sub_segments_vec
 					sub_segments_vec.append((log_utter, label_utter, result_prob))
 
 				else:
 					if sub_segments_vec:
-						slot_value_dict = process_sub_segments_vec(sub_segments_vec, svc)
+						slot_value_dict = choose_from_sub_segments_vec(sub_segments_vec, svc)
+						new_label_samples, new_train_samples = generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc)
+						for l_sample, t_sample in zip(new_label_samples, new_train_samples):
+							svc.appLogger.debug('new sample: (%s, %s)' %(l_sample.__str__(), t_sample.__str__()))
+						it_train_samples.extend(new_train_samples)
+						it_label_samples.extend(new_label_samples)
 						sub_segments_vec = []
-						raw_input('press any thing to continue..')
-						# add train samples
+						
+						raw_input('press any thing to continue.')
 
+def generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc):
+	train_samples = []
+	label_samples = []
+	for i, (log_utter, label_utter, result_prob) in sub_segments_vec:
+		sample = svc._extract_utter_tuple(log_utter, svc.feature.feature_list)
+		label_sample = []
+		for key in slot_value_dict:
+			if i in slot_value_dict[key]:
+				tuples = svc.tuple_extractor.extract_tuple(eval(key))
+				label_sample.extend(tuples)
+		train_samples.append(sample)
+		label_samples.append(label_sample)
+	return (label_samples, train_samples)
 	
-def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, alpha = 0.2):
+def choose_from_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, alpha = 0.2):
 	'''
 	input a sub_segments_vec
 	return a dict indicate which sent id correspond to a slot-value pair
