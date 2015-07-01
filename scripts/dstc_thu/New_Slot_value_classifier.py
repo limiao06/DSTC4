@@ -386,6 +386,12 @@ class slot_value_classifier(object):
 		self.feature = None
 		self.is_set = False
 
+	def reset(self):
+		self.models = {}
+		self.model_keys = []
+		self.feature = None
+		self.is_set = False
+
 	def _prepare_resources(self):
 		self.tuple_extractor = Tuple_Extractor()
 		if self.tagsets:
@@ -517,6 +523,7 @@ class slot_value_classifier(object):
 			return (label, prob_dict)
 
 	def _train_by_samples(self, model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer):
+		self.reset()
 		# stat lexicon
 		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
 		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
