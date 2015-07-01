@@ -84,13 +84,13 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 						it_train_samples.extend(new_train_samples)
 						it_label_samples.extend(new_label_samples)
 						sub_segments_vec = []
-						
+
 						raw_input('press any thing to continue.')
 
 def generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc):
 	train_samples = []
 	label_samples = []
-	for i, (log_utter, label_utter, result_prob) in sub_segments_vec:
+	for i, (log_utter, label_utter, result_prob) in enumerate(sub_segments_vec):
 		sample = svc._extract_utter_tuple(log_utter, svc.feature.feature_list)
 		label_sample = []
 		for key in slot_value_dict:
