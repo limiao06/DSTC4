@@ -99,7 +99,7 @@ def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8):
 				tuples = svc.tuple_extractor.extract_tuple(t_frame_label)
 				score = 0.0
 				count = 0
-				if svc.tuple_extractor.enumerable(t_frame_label.keys[0]):
+				if svc.tuple_extractor.enumerable(t_frame_label.keys()[0]):
 					for t in tuples:
 						if t in result_prob and not t.startswith('root'):
 							score += result_prob[t][1]
