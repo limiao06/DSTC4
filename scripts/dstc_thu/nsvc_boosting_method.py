@@ -35,12 +35,18 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 
 	
 
-	# process dataset
+	# boosting
+
+	if os.path.exists(model_dir):
+		shutil.rmtree(model_dir,True)
+	os.mkdir(model_dir)
+
 	for it in range(iteration):
 		print 'iteration: %d' %(it)
 		it_train_samples = []
 		it_label_samples = []
 
+		# generate new train samples
 		sub_segments_vec = []
 		for call in dataset:
 			for (log_utter, label_utter) in call:
@@ -55,8 +61,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 							it_train_samples.extend(new_train_samples)
 							it_label_samples.extend(new_label_samples)
 							sub_segments_vec = []
-
-							raw_input('press any thing to continue.')
+							#raw_input('press any thing to continue.')
 							
 					svc.appLogger.info('%d:%d'%(call.log['session_id'], log_utter['utter_index']))
 					svc.appLogger.info('transcript: %s' %(log_utter['transcript']))
@@ -84,8 +89,20 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 						it_train_samples.extend(new_train_samples)
 						it_label_samples.extend(new_label_samples)
 						sub_segments_vec = []
+						#raw_input('press any thing to continue.')
 
-						raw_input('press any thing to continue.')
+		# train new models
+		new_label_samples = old_label_samples + it_label_samples
+		new_train_samples = old_train_samples + it_train_samples
+
+		new_model_dir = os.path.join(model_dir, str(it))
+		if os.path.exists(new_model_dir):
+			shutil.rmtree(new_model_dir,True)
+		os.mkdir(new_model_dir)
+		svc._train_by_samples(new_model_dir, new_label_samples, new_train_samples, svc.feature.feature_list, svc.feature.tokenize_mode, svc.feature.use_stemmer)
+	print 'done!'
+
+
 
 def generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc):
 	train_samples = []
