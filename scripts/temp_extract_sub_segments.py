@@ -79,6 +79,11 @@ def main(argv):
 						topic_slot_counter[sub_segment['topic']][slot] += 1
 
 			extractor.addUtter(log_utter,label_utter)
+		if not extractor.is_empty:
+			sub_segment = extractor.state
+			sub_segment['id'] = sub_seg_counter
+			sub_seg_counter += 1
+			this_session['sub_segments'].append(sub_segment)
 		track["sessions"].append(this_session)
 	end_time = time.time()
 	elapsed_time = end_time - start_time
