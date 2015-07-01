@@ -47,7 +47,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 				sys.stderr.write('%d:%d\n'%(call.log['session_id'], log_utter['utter_index']))
 				if 'frame_label' in label_utter:
 					if log_utter['segment_info']['target_bio'] == 'B':
-						if not sub_segments_vec:
+						if sub_segments_vec:
 							slot_value_dict = process_sub_segments_vec(sub_segments_vec, svc)
 							sub_segments_vec = []
 							# add train samples
@@ -69,7 +69,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 					sub_segments_vec.append(log_utter, label_utter, result_prob)
 
 				else:
-					if not sub_segments_vec:
+					if sub_segments_vec:
 						slot_value_dict = process_sub_segments_vec(sub_segments_vec, svc)
 						sub_segments_vec = []
 						raw_input('press any thing to continue..')
