@@ -411,7 +411,7 @@ class slot_value_classifier(object):
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
 		label_samples, train_samples = self._stat_samples_from_sub_segments(sub_segments, feature_list)
-		self._train_by_samples(label_samples, train_samples, feature_list)
+		self._train_by_samples(model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer)
 
 
 	def TestFromDataSet(self, dataset, model_dir):
