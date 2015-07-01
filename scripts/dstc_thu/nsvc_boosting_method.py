@@ -44,6 +44,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 		sub_segments_vec = []
 		for call in dataset:
 			for (log_utter, label_utter) in call:
+				sys.stderr.write('%d:%d\n'%(call.log['session_id'], log_utter['utter_index']))
 				if 'frame_label' in label_utter:
 					if log_utter['segment_info']['target_bio'] == 'B':
 						if not sub_segments_vec:
