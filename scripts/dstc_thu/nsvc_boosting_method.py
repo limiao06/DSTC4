@@ -87,7 +87,7 @@ def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, alpha 
 	slot_value_dict = {}
 	for slot in frame_label:
 		for value in frame_label[slot]:
-			key = str({slot:value})
+			key = str({slot:[value]})
 			slot_value_dict[key] = []
 	for key in slot_value_dict:
 		svc.appLogger.debug('start processing key: %s' %(key))
