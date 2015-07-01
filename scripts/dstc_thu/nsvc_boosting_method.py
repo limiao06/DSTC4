@@ -12,7 +12,7 @@ from New_Slot_value_classifier import *
 
 
 
-def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenize_mode, use_stemmer, old_model_dir):
+def nsvc_boosting(iteration = 1, model_dir, sub_segments, dataset, ontology_file, feature_list, tokenize_mode, use_stemmer, old_model_dir):
 	# get svc model (load or train)
 	svc = slot_value_classifier()
 	if old_model_dir:
@@ -23,11 +23,34 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 	else:
 		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, model_dir, tokenize_mode, use_stemmer)
 
+	# read old train data
+	input = codecs.open(os.path.join(model_dir,'train_samples.json'))
+	in_json = json.load(input)
+	input.close()
+
+	old_train_samples = in_json['train_samples']
+	old_label_samples = in_json['label_samples']
+	old_train_feature_samples = in_json['train_feature_samples']
+	old_train_labels = in_json['train_labels']
+
+	
+
 	# process dataset
-	try:
+	for it in range(iteration):
+		print 'iteration: %d' %(it)
+		it_train_samples = []
+		it_label_samples = []
+
+		sub_segments_vec = []
 		for call in dataset:
 			for (log_utter, label_utter) in call:
 				if 'frame_label' in label_utter:
+					if log_utter['segment_info']['target_bio'] == 'B':
+						if not sub_segments_vec:
+							slot_value_dict = process_sub_segments_vec(sub_segments_vec, svc)
+							sub_segments_vec = []
+							# add train samples
+							raw_input('press any thing to continue..')
 					svc.appLogger.info('%d:%d'%(call.log['session_id'], log_utter['utter_index']))
 					svc.appLogger.info('transcript: %s' %(log_utter['transcript']))
 					frame_label = label_utter['frame_label']
@@ -40,11 +63,66 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 						tuple_results.append((key, label, prob))
 					for key, label, prob in tuple_results:
 						svc.appLogger.info('%s, %d, %.3f' %(key, label, prob))
-	except Exception, e:
-		print frame_label
-		print '%d:%d' %(call.log['session_id'], log_utter['utter_index'])
-		raise e
+
+					# add to sub_segments_vec
+					sub_segments_vec.append(log_utter, label_utter, result_prob)
+
+				else:
+					if not sub_segments_vec:
+						slot_value_dict = process_sub_segments_vec(sub_segments_vec, svc)
+						sub_segments_vec = []
+						raw_input('press any thing to continue..')
+						# add train samples
+
 	
+def process_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8):
+	'''
+	input a sub_segments_vec
+	return a dict indicate which sent id correspond to a slot-value pair
+	'''
+	if not sub_segments_vec:
+		return {}
+	frame_label = sub_segments_vec[0][1]['frame_label']
+	slot_value_dict = {}
+	for slot in frame_label:
+		for value in frame_label[slot]:
+			key = str({slot:value})
+			slot_value_dict[key] = []
+	for key in slot_value_dict:
+		score_vec = [0] * len(sub_segments_vec)
+		for i, (log_utter, label_utter, result_prob) in enumerate(sub_segments_vec):
+			if "ACK" in label_utter['speech_act'][0]['attributes']:
+				pass
+			else:
+				tuples = svc.tuple_extractor.extract_tuple(eval(key))
+				score = 0.0
+				count = 0
+				for t in tuples:
+					if t in result_prob:
+						score += result_prob[t][1]
+						count += 1
+				score_vec[i] = score/count
+		svc.appLogger('key: %s, score_vec: %s' %(key, score_vec.__str__()))
+		
+		max_score = 0.0
+		max_id = 0
+		add_num = 0
+		for i, score in enumerate(score_vec):
+			if score > max_score:
+				max_score = score
+				max_id = i
+			if score > prob_threshold:
+				slot_value_dict[key].append(i)
+				add_num += 1
+		if add_num == 0:
+			slot_value_dict[key].append(max_id)
+		svc.appLogger('key: %s, choose ids: %s' %(key, slot_value_dict[key].__str__()))
+	return slot_value_dict
+
+
+
+				
+
 
 
 
@@ -76,6 +154,7 @@ def main(argv):
 	parser.add_argument('--feature',dest='feature',action='store', help='feature to use. Example: TubB')
 	parser.add_argument('--mode',dest='mode',action='store', help='tokenizer mode')
 	parser.add_argument('--UseST',dest='UseST',action='store_true', help='use stemmer or not.')
+	parser.add_argument('--it',dest='iteration',action='store', type=int, help='iteration num.')
 	
 	args = parser.parse_args()
 
@@ -87,7 +166,7 @@ def main(argv):
 
 	feature_list = GetFeatureList(args.feature)
 
-	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.old_model_dir)
+	nsvc_boosting(args.iteration, args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.old_model_dir)
 
 if __name__ =="__main__":
 	main(sys.argv)
