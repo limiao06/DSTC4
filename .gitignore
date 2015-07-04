@@ -1,13 +1,12 @@
 *.txt
 *.pyc
-*.sh
 *.swp
 *.csv
 data/
 output/
 processed_data/
 scripts_bk/
-my_code/
 *.bat
 temp/
+back_ups/
 *.log

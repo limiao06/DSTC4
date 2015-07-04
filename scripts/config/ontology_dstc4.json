@@ -1,9 +1,179 @@
 {
+    "pilot_tagsets": {
+        "speech_act": {
+            "category": [
+                "NONE", 
+                "QST", 
+                "RES", 
+                "INI", 
+                "FOL"
+            ], 
+            "attribute": [
+                "NONE", 
+                "ACK", 
+                "CANCEL", 
+                "CLOSING", 
+                "COMMIT", 
+                "CONFIRM", 
+                "ENOUGH", 
+                "EXPLAIN", 
+                "HOW_MUCH", 
+                "HOW_TO", 
+                "INFO", 
+                "NEGATIVE", 
+                "OPENING", 
+                "POSITIVE", 
+                "PREFERENCE", 
+                "RECOMMEND", 
+                "THANK", 
+                "WHAT", 
+                "WHEN", 
+                "WHERE", 
+                "WHICH", 
+                "WHO"
+            ]
+        }, 
+        "semantic": {
+            "LOC": {
+                "FROM-TO": [
+                    "NONE", 
+                    "FROM", 
+                    "TO"
+                ], 
+                "REL": [
+                    "NONE", 
+                    "NEAR", 
+                    "FAR", 
+                    "NEXT", 
+                    "OPPOSITE", 
+                    "DIRECTION-NORTH", 
+                    "DIRECTION-SOUTH", 
+                    "DIRECTION-EAST", 
+                    "DIRECTION-WEST"
+                ], 
+                "CAT": [
+                    "MAIN", 
+                    "TEMPLE", 
+                    "RESTAURANT", 
+                    "SHOP", 
+                    "CULTURAL", 
+                    "GARDEN", 
+                    "ATTRACTION", 
+                    "HOTEL", 
+                    "WATERSIDE", 
+                    "EDUCATION", 
+                    "ROAD", 
+                    "AIRPORT"
+                ]
+            }, 
+            "FEE": {
+                "CAT": [
+                    "MAIN", 
+                    "ATTRACTION", 
+                    "SERVICES", 
+                    "PRODUCTS"
+                ]
+            }, 
+            "AREA": {
+                "FROM-TO": [
+                    "NONE", 
+                    "FROM", 
+                    "TO"
+                ], 
+                "REL": [
+                    "NONE", 
+                    "NEAR", 
+                    "FAR", 
+                    "NEXT", 
+                    "OPPOSITE", 
+                    "DIRECTION-NORTH", 
+                    "DIRECTION-SOUTH", 
+                    "DIRECTION-EAST", 
+                    "DIRECTION-WEST"
+                ], 
+                "CAT": [
+                    "MAIN", 
+                    "COUNTRY", 
+                    "CITY", 
+                    "DISTRICT", 
+                    "NEIGHBORHOOD"
+                ]
+            }, 
+            "FOOD": {
+                "CAT": [
+                    "MAIN"
+                ]
+            }, 
+            "DET": {
+                "CAT": [
+                    "MAIN", 
+                    "ACCESS", 
+                    "BELIEF", 
+                    "BUILDING", 
+                    "EVENT", 
+                    "PRICE", 
+                    "NATURE", 
+                    "HISTORY", 
+                    "MEAL", 
+                    "MONUMENT", 
+                    "STROLL", 
+                    "VIEW"
+                ]
+            }, 
+            "WEATHER": {
+                "CAT": [
+                    "MAIN"
+                ]
+            }, 
+            "TIME": {
+                "REL": [
+                    "NONE", 
+                    "BEFORE", 
+                    "AFTER", 
+                    "AROUND"
+                ], 
+                "CAT": [
+                    "MAIN", 
+                    "DATE", 
+                    "INTERVAL", 
+                    "START", 
+                    "END", 
+                    "OPEN", 
+                    "CLOSE"
+                ]
+            }, 
+            "TRSP": {
+                "FROM-TO": [
+                    "NONE", 
+                    "FROM", 
+                    "TO"
+                ], 
+                "REL": [
+                    "NONE", 
+                    "NEAR", 
+                    "FAR", 
+                    "NEXT", 
+                    "OPPOSITE", 
+                    "DIRECTION-NORTH", 
+                    "DIRECTION-SOUTH", 
+                    "DIRECTION-EAST", 
+                    "DIRECTION-WEST"
+                ], 
+                "CAT": [
+                    "MAIN", 
+                    "STATION", 
+                    "TYPE"
+                ]
+            }
+        }
+    }, 
     "tagsets": {
         "FOOD": {
             "INFO": [
                 "Cuisine", 
+                "Delivery", 
                 "Dish", 
+                "History", 
                 "Image", 
                 "Ingredient", 
                 "Itinerary", 
@@ -34,6 +204,7 @@
                 "English cuisine", 
                 "European cuisine", 
                 "Filipino cuisine", 
+                "Finger food", 
                 "Foochow cuisine", 
                 "French cuisine", 
                 "Fruit", 
@@ -64,6 +235,7 @@
                 "Nonya cuisine", 
                 "North Indian cuisine", 
                 "Pakistani cuisine", 
+                "Palestinian cuisine", 
                 "Peranakan cuisine", 
                 "Philippine cuisine", 
                 "Russian cuisine", 
@@ -80,6 +252,7 @@
                 "Thai cuisine", 
                 "Turkish cuisine", 
                 "Vegetarian cuisine", 
+                "Vietnamese cuisine", 
                 "Western cuisine", 
                 "Zi Char"
             ], 
@@ -90,8 +263,11 @@
                 "Cafe", 
                 "Casual dining", 
                 "Fast food", 
+                "Fine dining", 
                 "Food court", 
+                "Hotel", 
                 "Ice cream parlor", 
+                "Nightclub", 
                 "Restaurant"
             ], 
             "DRINK": [
@@ -111,7 +287,7 @@
                 "Tea", 
                 "Teh halia tarik", 
                 "Teh tarik", 
-                "Tiger beer", 
+                "Tiger Beer", 
                 "Water chestnut drink", 
                 "Wine"
             ], 
@@ -144,6 +320,7 @@
             ], 
             "MEAL_TIME": [
                 "Breakfast", 
+                "Brunch", 
                 "Dinner", 
                 "Lunch"
             ], 
@@ -220,6 +397,7 @@
                 "Ethnic enclave", 
                 "Farm", 
                 "Ferris wheel", 
+                "Fountain", 
                 "Gallery", 
                 "Garden", 
                 "Golf course", 
@@ -227,6 +405,7 @@
                 "Hill", 
                 "Hindu temple", 
                 "Historic site", 
+                "Hotel", 
                 "Library", 
                 "Mosque", 
                 "Mountain", 
@@ -250,28 +429,35 @@
                 "Adventure", 
                 "Amusement ride", 
                 "Animal feed", 
-                "Animal feeding", 
+                "Badminton", 
                 "Beach volleyball", 
                 "Bird watching", 
                 "Boat ride", 
                 "Bungee jumping", 
                 "Cable skiing", 
                 "Climbing", 
+                "Cycling", 
                 "Dance", 
+                "Dating", 
                 "Dining", 
+                "Diving", 
                 "Doctor fish", 
                 "Dolphin show", 
                 "Drinking", 
                 "Driving", 
                 "Extreme sport", 
                 "Fishing", 
+                "Flying disc", 
                 "Game", 
+                "Golf", 
                 "Henna", 
                 "Inline skates", 
+                "Jogging", 
                 "Kite flying", 
                 "Luge", 
                 "Marriage proposal", 
                 "Massage", 
+                "Movie", 
                 "Observation", 
                 "Parachuting", 
                 "Party", 
@@ -290,12 +476,15 @@
                 "Skateboard", 
                 "Snorkeling", 
                 "Spa", 
+                "Sport", 
+                "Surfing", 
                 "Swimming", 
                 "Tea ceremony", 
                 "Tram", 
                 "Trishaw ride", 
                 "Wakeboarding", 
                 "Walking", 
+                "Water sport", 
                 "Zip-line"
             ], 
             "PLACE": [
@@ -466,7 +655,9 @@
             "TYPE": [
                 "Bus", 
                 "Cable Car", 
+                "LRT", 
                 "MRT", 
+                "River taxi", 
                 "Sentosa Express", 
                 "Shuttle bus", 
                 "Taxicab", 
@@ -571,12 +762,15 @@
                 "History", 
                 "Hotel rating", 
                 "Image", 
+                "Itinerary", 
                 "Location", 
+                "Map", 
                 "Meal included", 
                 "Name", 
                 "Preference", 
                 "Pricerange", 
                 "Promotion", 
+                "Restriction", 
                 "Room size", 
                 "Room type", 
                 "Safety", 
@@ -1718,6 +1912,24 @@
                 "NAME": "One Fullerton", 
                 "NEIGHBOURHOOD": [
                     "Marina Bay"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Shopping Mall"
+                ], 
+                "NAME": "Og Albert Complex", 
+                "NEIGHBOURHOOD": [
+                    "Bugis"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Shopping Mall"
+                ], 
+                "NAME": "GSM Building", 
+                "NEIGHBOURHOOD": [
+                    "Bugis"
                 ]
             }
         ], 
@@ -3455,6 +3667,206 @@
                 "CUISINE": [
                     "Western"
                 ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Food Court"
+                ], 
+                "PRICERANGE": 1, 
+                "NAME": "Koufu", 
+                "NEIGHBOURHOOD": [
+                    "*"
+                ], 
+                "CUISINE": [
+                    "Local"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Fine Dining"
+                ], 
+                "PRICERANGE": 5, 
+                "NAME": "Jade Restaurant Fullerton", 
+                "NEIGHBOURHOOD": [
+                    "Marina Bay"
+                ], 
+                "CUISINE": [
+                    "Chinese"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Fine Dining"
+                ], 
+                "PRICERANGE": 4, 
+                "NAME": "Palm Beach Seafood", 
+                "NEIGHBOURHOOD": [
+                    "Marina Bay"
+                ], 
+                "CUISINE": [
+                    "Seafood"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Casual"
+                ], 
+                "PRICERANGE": 3, 
+                "NAME": "Pizzafari", 
+                "NEIGHBOURHOOD": [
+                    "Mandai"
+                ], 
+                "CUISINE": [
+                    "Italian"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Ice cream parlor"
+                ], 
+                "PRICERANGE": 1, 
+                "NAME": "Ben & Jerry's", 
+                "NEIGHBOURHOOD": [
+                    "*"
+                ], 
+                "CUISINE": [
+                    "Dessert"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Casual"
+                ], 
+                "PRICERANGE": 3, 
+                "NAME": "Ah Meng Restaurant", 
+                "NEIGHBOURHOOD": [
+                    "Mandai"
+                ], 
+                "CUISINE": [
+                    "Local"
+                ]
+            }, 
+            {
+                "CUISINE": [
+                    "Dessert"
+                ], 
+                "NAME": "Ya Kun Kaya Toast", 
+                "TYPE_OF_PLACE": [
+                    "Casual"
+                ], 
+                "SPECIALTY": [
+                    "Kaya Toast", 
+                    "Coffee", 
+                    "Tea"
+                ], 
+                "PRICERANGE": 1, 
+                "NEIGHBOURHOOD": [
+                    "*"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Casual"
+                ], 
+                "PRICERANGE": 3, 
+                "NAME": "Seafood Paradise Singapore", 
+                "NEIGHBOURHOOD": [
+                    "*"
+                ], 
+                "CUISINE": [
+                    "Seafood"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Fast Food"
+                ], 
+                "PRICERANGE": 1, 
+                "NAME": "Burger King", 
+                "NEIGHBOURHOOD": [
+                    "*"
+                ], 
+                "CUISINE": [
+                    "Western"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Casual"
+                ], 
+                "PRICERANGE": 1, 
+                "NAME": "Pizza Hut", 
+                "NEIGHBOURHOOD": [
+                    "*"
+                ], 
+                "CUISINE": [
+                    "Italian"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Food Court"
+                ], 
+                "PRICERANGE": 1, 
+                "NAME": "Albert Centre Market & Food Centre", 
+                "NEIGHBOURHOOD": [
+                    "Bugis"
+                ], 
+                "CUISINE": [
+                    "Local"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Bar"
+                ], 
+                "PRICERANGE": 2, 
+                "NAME": "Hooters", 
+                "NEIGHBOURHOOD": [
+                    "Singapore River"
+                ], 
+                "CUISINE": [
+                    "Western"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Bar"
+                ], 
+                "PRICERANGE": 2, 
+                "NAME": "Shanghai Dolly", 
+                "NEIGHBOURHOOD": [
+                    "Singapore River"
+                ], 
+                "CUISINE": [
+                    "Western"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Bar"
+                ], 
+                "PRICERANGE": 2, 
+                "NAME": "Indochine Group", 
+                "NEIGHBOURHOOD": [
+                    "Singapore River"
+                ], 
+                "CUISINE": [
+                    "Western"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Fine Dining"
+                ], 
+                "PRICERANGE": 5, 
+                "NAME": "The Jewel Box", 
+                "NEIGHBOURHOOD": [
+                    "HarbourFront"
+                ], 
+                "CUISINE": [
+                    "Western"
+                ]
             }
         ], 
         "MRT_STATION": [
@@ -4288,6 +4700,42 @@
                 "NAME": "Woodlands MRT Station", 
                 "NEIGHBOURHOOD": [
                     "Woodlands"
+                ]
+            }, 
+            {
+                "CODE": [
+                    "SE1"
+                ], 
+                "NAME": "Sentosa Station", 
+                "NEIGHBOURHOOD": [
+                    "Sentosa"
+                ]
+            }, 
+            {
+                "CODE": [
+                    "SE2"
+                ], 
+                "NAME": "Waterfront Station", 
+                "NEIGHBOURHOOD": [
+                    "Sentosa"
+                ]
+            }, 
+            {
+                "CODE": [
+                    "SE3"
+                ], 
+                "NAME": "Imbiah Station", 
+                "NEIGHBOURHOOD": [
+                    "Sentosa"
+                ]
+            }, 
+            {
+                "CODE": [
+                    "SE4"
+                ], 
+                "NAME": "Beach Station", 
+                "NEIGHBOURHOOD": [
+                    "Sentosa"
                 ]
             }
         ], 
@@ -5395,7 +5843,7 @@
                     "Hotel"
                 ], 
                 "PRICERANGE": 3, 
-                "NAME": "Furama RiverFront Hotel", 
+                "NAME": "Furama Riverfront Singapore", 
                 "NEIGHBOURHOOD": [
                     "Clarke Quay", 
                     "Singapore River"
@@ -5498,7 +5946,7 @@
                     "Hotel"
                 ], 
                 "PRICERANGE": 4, 
-                "NAME": "Grand Park City Hall Hotel", 
+                "NAME": "Grand Park City Hall", 
                 "NEIGHBOURHOOD": [
                     "Marina Bay"
                 ], 
@@ -5981,6 +6429,22 @@
                 "NEIGHBOURHOOD": [
                     "East Coast", 
                     "Katong"
+                ], 
+                "RATING": 2
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Hotel"
+                ], 
+                "PRICERANGE": 1, 
+                "NAME": "Hotel 81", 
+                "NEIGHBOURHOOD": [
+                    "Geylang", 
+                    "East Coast", 
+                    "Katong", 
+                    "Little India", 
+                    "Chinatown", 
+                    "Serangoon"
                 ], 
                 "RATING": 2
             }, 
@@ -6928,7 +7392,7 @@
                     "Hotel"
                 ], 
                 "PRICERANGE": 3, 
-                "NAME": "PARKROYAL on Beach Road Hotel", 
+                "NAME": "Parkroyal", 
                 "NEIGHBOURHOOD": [
                     "Marina Bay"
                 ], 
@@ -8297,6 +8761,61 @@
                     "Sentosa"
                 ], 
                 "RATING": 5
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Hotel"
+                ], 
+                "PRICERANGE": 2, 
+                "NAME": "Hotel Grand Central", 
+                "NEIGHBOURHOOD": [
+                    "Orchard"
+                ], 
+                "RATING": 3
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Hotel"
+                ], 
+                "PRICERANGE": 3, 
+                "NAME": "Traders Hotel Singapore", 
+                "NEIGHBOURHOOD": [
+                    "Orchard"
+                ], 
+                "RATING": 4
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Resort"
+                ], 
+                "PRICERANGE": 3, 
+                "NAME": "Costa Sands Resort", 
+                "NEIGHBOURHOOD": [
+                    "Sentosa"
+                ], 
+                "RATING": 4
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Hotel"
+                ], 
+                "PRICERANGE": 3, 
+                "NAME": "The Scarlet Hotel", 
+                "NEIGHBOURHOOD": [
+                    "Chinatown"
+                ], 
+                "RATING": 4
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Resort"
+                ], 
+                "PRICERANGE": 3, 
+                "NAME": "Siloso Beach Resort", 
+                "NEIGHBOURHOOD": [
+                    "Sentosa"
+                ], 
+                "RATING": 4
             }
         ], 
         "ATTRACTION": [
@@ -8913,7 +9432,7 @@
                     "Bar", 
                     "Nightclub"
                 ], 
-                "NAME": "KU DE TA Club Lounge", 
+                "NAME": "KU DE TA", 
                 "NEIGHBOURHOOD": [
                     "Marina Bay"
                 ]
@@ -9210,7 +9729,7 @@
                 "TYPE_OF_PLACE": [
                     "Shopping mall"
                 ], 
-                "NAME": "Raffles City Shopping Centre", 
+                "NAME": "Raffles City", 
                 "NEIGHBOURHOOD": [
                     "Downtown Core"
                 ]
@@ -9682,7 +10201,7 @@
                 "TYPE_OF_PLACE": [
                     "Shopping mall"
                 ], 
-                "NAME": "Vivo City", 
+                "NAME": "VivoCity", 
                 "NEIGHBOURHOOD": [
                     "HarbourFront"
                 ]
@@ -9730,6 +10249,127 @@
                     "Nightclub"
                 ], 
                 "NAME": "Zouk", 
+                "NEIGHBOURHOOD": [
+                    "Clarke Quay"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Government office"
+                ], 
+                "NAME": "Parliament House", 
+                "NEIGHBOURHOOD": [
+                    "Downtown Core"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Sports complex"
+                ], 
+                "NAME": "Marina Bay Golf Course", 
+                "NEIGHBOURHOOD": [
+                    "Marina Bay"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Bar", 
+                    "Nightclub"
+                ], 
+                "NAME": "Insomnia@Chijmes", 
+                "NEIGHBOURHOOD": [
+                    "Downtown Core"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Bar", 
+                    "Nightclub"
+                ], 
+                "NAME": "The Jewel Box", 
+                "NEIGHBOURHOOD": [
+                    "HarbourFront"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Hotel"
+                ], 
+                "NAME": "Fairmont Singapore", 
+                "NEIGHBOURHOOD": [
+                    "Downtown Core"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Hotel"
+                ], 
+                "NAME": "Raffles Hotel", 
+                "NEIGHBOURHOOD": [
+                    "Downtown Core"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Amusement park"
+                ], 
+                "NAME": "Sentosa 4D Adventureland", 
+                "NEIGHBOURHOOD": [
+                    "Sentosa"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Shopping mall"
+                ], 
+                "NAME": "Plaza Singapura", 
+                "NEIGHBOURHOOD": [
+                    "Orchard"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Buddhist temple"
+                ], 
+                "NAME": "Kwan Im Thong Hood Cho Temple", 
+                "NEIGHBOURHOOD": [
+                    "Bugis"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Shopping mall"
+                ], 
+                "NAME": "Suntec City", 
+                "NEIGHBOURHOOD": [
+                    "Downtown Core"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Museum", 
+                    "Gallery"
+                ], 
+                "NAME": "Stamford Arts Centre", 
+                "NEIGHBOURHOOD": [
+                    "Downtown Core"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Bar", 
+                    "Nightclub"
+                ], 
+                "NAME": "The Arena@Clarke Quay", 
+                "NEIGHBOURHOOD": [
+                    "Clarke Quay"
+                ]
+            }, 
+            {
+                "TYPE_OF_PLACE": [
+                    "Architecture"
+                ], 
+                "NAME": "Read Bridge", 
                 "NEIGHBOURHOOD": [
                     "Clarke Quay"
                 ]
@@ -10682,6 +11322,38 @@
                 "NEIGHBOURHOOD": [
                     "Little India"
                 ]
+            }, 
+            {
+                "NAME": "Dempsey Road", 
+                "NEIGHBOURHOOD": [
+                    "Bukit Timah", 
+                    "Tanglin"
+                ]
+            }, 
+            {
+                "NAME": "High Street", 
+                "NEIGHBOURHOOD": [
+                    "Singapore River"
+                ]
+            }, 
+            {
+                "NAME": "Albert Street", 
+                "NEIGHBOURHOOD": [
+                    "Bugis"
+                ]
+            }, 
+            {
+                "NAME": "Seah Street", 
+                "NEIGHBOURHOOD": [
+                    "Downtown Core", 
+                    "Rochor"
+                ]
+            }, 
+            {
+                "NAME": "North Canal Road", 
+                "NEIGHBOURHOOD": [
+                    "Rochor"
+                ]
             }
         ], 
         "DISH": [
@@ -11376,6 +12048,62 @@
             {
                 "CUISINE": "Western", 
                 "NAME": "Pancake"
+            }, 
+            {
+                "CUISINE": "Local", 
+                "NAME": "Egg"
+            }, 
+            {
+                "CUISINE": "Chinese", 
+                "NAME": "Spring roll"
+            }, 
+            {
+                "CUISINE": "Indian", 
+                "NAME": "Masala"
+            }, 
+            {
+                "CUISINE": "Local", 
+                "NAME": "Rice"
+            }, 
+            {
+                "CUISINE": "Indian", 
+                "NAME": "Basmati"
+            }, 
+            {
+                "CUISINE": "Dessert", 
+                "NAME": "Toast"
+            }, 
+            {
+                "CUISINE": "Turkish", 
+                "NAME": "Kebab"
+            }, 
+            {
+                "CUISINE": "Local", 
+                "NAME": "Boiled egg"
+            }, 
+            {
+                "CUISINE": "Local", 
+                "NAME": "Pork"
+            }, 
+            {
+                "CUISINE": "Local", 
+                "NAME": "Pork Rib Soup"
+            }, 
+            {
+                "CUISINE": "Local", 
+                "NAME": "Noodle"
+            }, 
+            {
+                "CUISINE": "Dessert", 
+                "NAME": "Cake"
+            }, 
+            {
+                "CUISINE": "Chinese", 
+                "NAME": "Black sauce duck"
+            }, 
+            {
+                "CUISINE": "Dessert", 
+                "NAME": "Pudding"
             }
         ], 
         "NEIGHBOURHOOD": [

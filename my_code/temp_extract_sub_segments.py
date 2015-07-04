@@ -1,6 +1,15 @@
-import argparse, sys, ontology_reader, dataset_walker, time, json
+#! /usr/bin/python
+# -*- coding: utf-8 -*- 
+
+'''
+extract sub segments
+'''
+import argparse, sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__),'../scripts/'))
+
+import ontology_reader, dataset_walker, time, json
 from collections import defaultdict
-from fuzzywuzzy import fuzz
+
 
 class sub_segment_extractor(object):
 	def __init__(self):
@@ -11,6 +20,9 @@ class sub_segment_extractor(object):
 			self.reset()
 			self.state['topic'] = log_utter['segment_info']['topic']
 			self.state['frame_label'] = label_utter['frame_label']
+			self.state['guide_act'] = log_utter['segment_info']['guide_act']
+			self.state['tourist_act'] = log_utter['segment_info']['tourist_act']
+			self.state['initiativity'] = log_utter['segment_info']['initiativity']
 			self.is_empty = False
 		
 		if log_utter['segment_info']['target_bio'] != 'O':
@@ -30,6 +42,9 @@ class sub_segment_extractor(object):
 		self.is_empty = True
 		self.state = {}
 		self.state['topic'] = ''
+		self.state['guide_act'] = ''
+		self.state['tourist_act'] = ''
+		self.state['initiativity'] = ''
 		self.state['utter_ids'] = []
 		self.state['utter_sents'] = []
 		self.state['semantic_tags'] = []
@@ -73,6 +88,11 @@ def main(argv):
 						topic_slot_counter[sub_segment['topic']][slot] += 1
 
 			extractor.addUtter(log_utter,label_utter)
+		if not extractor.is_empty:
+			sub_segment = extractor.state
+			sub_segment['id'] = sub_seg_counter
+			sub_seg_counter += 1
+			this_session['sub_segments'].append(sub_segment)
 		track["sessions"].append(this_session)
 	end_time = time.time()
 	elapsed_time = end_time - start_time
