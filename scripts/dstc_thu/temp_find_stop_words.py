@@ -12,6 +12,7 @@ from Utils import *
 from GlobalConfig import *
 
 from preprocessor import *
+from New_Slot_value_classifier import slot_value_classifier
 
 sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
 
