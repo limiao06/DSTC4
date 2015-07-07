@@ -111,7 +111,7 @@ class feature(object):
 		for uni in chosen_unigram:
 			uni_lex[uni] = len(uni_lex) + 1
 
-		'''
+		
 		sys.stderr.write('Sort and output unigram CHI ...')
 		# test codes
 		sorted_unigram_chi = sorted(unigram_chi.items(), key = lambda x:x[1], reverse = True)
@@ -119,7 +119,7 @@ class feature(object):
 		print 'unigram chi:'
 		for key, value in sorted_unigram_chi:
 			print key.encode('utf-8'), value
-		'''
+		
 
 		return uni_lex
 
