@@ -13,6 +13,7 @@ from GlobalConfig import *
 
 from preprocessor import *
 from New_Slot_value_classifier import slot_value_classifier
+from New_Slot_value_classifier import feature
 
 sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
 
@@ -22,6 +23,7 @@ import dataset_walker
 def find_stop_words(dataset):
 	stop_words_count = {}
 	svc = slot_value_classifier()
+	svc.feature = feature(None)
 	for call in dataset:
 		for (log_utter, label_utter) in call:
 			sys.stderr.write('%d:%d\n'%(call.log['session_id'], log_utter['utter_index']))
@@ -31,7 +33,7 @@ def find_stop_words(dataset):
 					flag = True
 			if flag:
 				sent = log_utter['transcript']
-				tokens = svc.tokenizer.tokenize(sent)
+				tokens = svc.feature.tokenizer.tokenize(sent)
 				for t in tokens:
 					stop_words_count[t] = stop_words_count.get(t, 0) + 1
 	return stop_words_count
