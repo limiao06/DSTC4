@@ -22,7 +22,7 @@ class stemmer(object):
 			self.st = Stemmer()
 
 	def stem(self, string):
-		if self.flag and string[0] != '$':
+		if self.flag and string and string[0] != '$':
 			return self.st.stem(string)
 		else:
 			return string
