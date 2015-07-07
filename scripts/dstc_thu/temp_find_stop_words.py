@@ -7,7 +7,7 @@ first use sub_segments file to train a nsvc
 then use the nsvc to find alignment in the dataset 
 construct new training data sets
 '''
-import os, sys, codecs, json
+import os, sys, codecs, json, argparse
 from Utils import *
 from GlobalConfig import *
 
