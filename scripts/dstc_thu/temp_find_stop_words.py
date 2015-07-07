@@ -32,7 +32,7 @@ def find_stop_words(dataset):
 				if "ACK" in act['attributes']:
 					flag = True
 			if flag:
-				sent = log_utter['transcript']
+				sent = log_utter['transcript'].lower()
 				tokens = svc.feature.tokenizer.tokenize(sent)
 				for t in tokens:
 					stop_words_count[t] = stop_words_count.get(t, 0) + 1
