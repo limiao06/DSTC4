@@ -500,7 +500,7 @@ class slot_value_classifier(object):
 
 		is_prob_model = model.is_probability_model()
 		x, idx = gen_feature_nodearray(feature_vector)
-		xi[-2] = biasterm
+		x[-2] = biasterm
 		nr_class = model.get_nr_class()
 		if not is_prob_model:
 			if nr_class <= 2:
