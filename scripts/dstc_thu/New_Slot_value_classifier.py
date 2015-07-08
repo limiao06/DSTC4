@@ -492,7 +492,7 @@ class slot_value_classifier(object):
 		return result, result_prob
 
 	def svm_predict(self, model, feature_vector):
-		bias = m.bias
+		bias = model.bias
 		if bias >= 0:
 			biasterm = feature_node(nr_feature+1, bias)
 		else:
