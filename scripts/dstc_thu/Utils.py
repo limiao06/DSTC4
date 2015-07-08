@@ -19,6 +19,37 @@ from GlobalConfig import GetConfig
 import codecs
 
 
+
+def TupleKeyDict2StrKeyDict(tuple_key_dict):
+    '''
+    input a dict with tuple type key
+    output a dict with str type key that can be store in json file
+    '''
+    if tuple_key_dict == None:
+        return None
+    str_key_dict = {}
+    for key,value in tuple_key_dict.items():
+        str_key = str(key)
+        if str_key in str_key_dict:
+            raise Exception('Error: Cannot convert! One str key matched more than one tuple key!')
+        str_key_dict[str_key] = value
+    return str_key_dict
+
+def StrKeyDict2TupleKeyDict(str_key_dict):
+    '''
+    convert the str key dict to tuple key dict
+    the str key dict must from a tuple key dict
+    '''
+    if str_key_dict == None:
+        return None
+    tuple_key_dict = {}
+    for key, value in str_key_dict.items():
+        tuple_key = eval(key)
+        if tuple_key in tuple_key_dict:
+            raise Exception('Error: Cannot convert! One tuple key matched more than one str key!')
+        tuple_key_dict[tuple_key] = value
+    return tuple_key_dict
+
 def GetLogLevel(log_level_key):
     key = log_level_key.upper()
     if key == 'CRITICAL':

@@ -73,12 +73,28 @@ class tokenizer(object):
 
 class NGRAM_builder(object):
 	MY_ID='ngram_builder'
-	def __init__(self, remove_stopwords=True, remove_puntuation=False, replace_num=True):
+	def __init__(self, remove_stopwords=True, remove_punctuation=False, replace_num=True):
 		self.remove_stopwords = remove_stopwords
-		self.remove_puntuation = remove_puntuation
+		self.remove_punctuation = remove_punctuation
 		self.replace_num = replace_num
 
-		self.stopwords = set([])
+		self.stopwords = set(['okay','yah','yes','alright','oh','uh','i','s','right','see','that','so','it','huh','hm','the','you',
+							'ah','um','a','to','and','in','sure','of','can','is','but','great','this','correct','have','think','also',
+							'me','m','be','very','for','ll','now','do','good','let','then','get','no','just','know','sorry','what',
+							'my','would','two','really','well','welcome','one','are','we','will','on','because','with','not','wow',
+							'please','understand','if','or','your','ooh','cool','here','want','yeah','re','quay','take','about','o',
+							'up','nice','all','how','actually','yup','part','need','eight','fine','ve','day','they','t','guess','lot',
+							'again','kinda','ten','from','give','may','course','bye','mean','eh','got','anyway','going','at','five',
+							'by','ok','problem','other','exactly','v','along','still','too','r','were','say','any','don','definitely',
+							'only','him','she','hmm','while','them','bit','d','was','an','as','hello','particular','did','p','k','a',
+							'about','above','after','again','against','all','an','and','any','are','as','at','be','been','before','being',
+							'below','between','both','but','by','cannot','could','did','do','does','doing','down','during','each','few',
+							'for','from','had','has','have','having','he','her','hers','herself','him','himself','his','how','i','if',
+							'in','into','is','it','its','itself','me','more','most','my','myself','no','nor','not','of','off','on','once',
+							'only','or','other','ought','our','ours','ourselves','out','over','own','same','she','should','so','some',
+							'such','than','that','the','their','theirs','them','themselves','then','these','they','this','those','through',
+							'to','too','under','until','up','very','was','we','were','what','when','where','which','while','who','whom',
+							'with','would','you','your','yours','yourself','yourselves'])
 		self.re_puntuation = re.compile("^\W+$")
 		self.card_numbers = set(['thousand','thousands','hundred','hundreds','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety',
 								'ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen',
@@ -124,23 +140,25 @@ class NGRAM_builder(object):
 				new_tokens.append(t)
 		return new_tokens
 
-	def GenerateNGRAM(self, tokens, n):
-		ngram_list = []
+	def PreReplace(self, tokens):
 		new_tokens = tokens
 		if self.remove_stopwords:
 			new_tokens = self.RemoveStopWords(new_tokens)
-		if self.remove_puntuation:
+		if self.remove_punctuation:
 			new_tokens = self.RemovePunct(new_tokens)
 		if self.replace_num:
 			new_tokens = self.ReplaceNum(new_tokens)
+		return new_tokens
 
-		new_tokens = tuple(new_tokens)
+	def GenerateNGRAM(self, tokens, n):
+		ngram_list = []
+		new_tokens = tuple(tokens)
 		for i in range(len(new_tokens) - (n - 1)):
 			ngram = new_tokens[i:i+n]
 			str_ngram = str(ngram)
 			if self.remove_stopwords and str(ngram).find('$ST') != -1:
 				continue
-			if self.remove_puntuation and str(ngram).find('$PT') != -1:
+			if self.remove_punctuation and str(ngram).find('$PT') != -1:
 				continue
 			ngram_list.append(ngram)
 		return ngram_list

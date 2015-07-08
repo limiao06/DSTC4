@@ -58,6 +58,12 @@ class feature(object):
 		self.use_stemmer = use_stemmer
 		self.stemmer = stemmer(use_stemmer)
 
+		# ngram builder
+		self.remove_stopwords = self.config.getboolean(self.MY_ID,'remove_stopwords')
+		self.remove_punctuation = self.config.getboolean(self.MY_ID,'remove_punctuation')
+		self.replace_num = self.config.getboolean(self.MY_ID,'replace_num')
+		self.ngram_builder = NGRAM_builder(self.remove_stopwords,self.remove_punctuation,self.replace_num)
+
 		self.tagsets = tagsets
 
 		self.feature_list = None
@@ -111,7 +117,8 @@ class feature(object):
 		'''
 		sent = sent.lower()
 		tokens = self.tokenizer.tokenize(sent)
-		new_tokens = [self.stemmer.stem(tk) for tk in tokens]
+		new_tokens = self.ngram_builder.PreReplace(tokens)
+		new_tokens = [self.stemmer.stem(tk) for tk in new_tokens]
 		return new_tokens
 
 
@@ -127,12 +134,12 @@ class feature(object):
 		self.unigram = in_json['feature_unigram']
 		self.bigram = in_json['feature_bigram']
 		self.trigram = in_json['feature_trigram']
-		self.UNI_LEX = in_json['UNI_LEX']
-		self.BI_LEX = in_json['BI_LEX']
-		self.TRI_LEX = in_json['TRI_LEX']
-		self.UNI_LEX_weight = in_json['UNI_LEX_weight']
-		self.BI_LEX_weight = in_json['BI_LEX_weight']
-		self.TRI_LEX_weight = in_json['TRI_LEX_weight']
+		self.UNI_LEX = StrKeyDict2TupleKeyDict(in_json['UNI_LEX'])
+		self.BI_LEX = StrKeyDict2TupleKeyDict(in_json['BI_LEX'])
+		self.TRI_LEX = StrKeyDict2TupleKeyDict(in_json['TRI_LEX'])
+		self.UNI_LEX_weight = StrKeyDict2TupleKeyDict(in_json['UNI_LEX_weight'])
+		self.BI_LEX_weight = StrKeyDict2TupleKeyDict(in_json['BI_LEX_weight'])
+		self.TRI_LEX_weight = StrKeyDict2TupleKeyDict(in_json['TRI_LEX_weight'])
 
 		self.TOPIC_LEX = in_json['TOPIC_LEX']
 		self.BASELINE_LEX = in_json['BASELINE_LEX']
@@ -143,6 +150,11 @@ class feature(object):
 		self.use_stemmer = in_json['use_stemmer']
 		self.stemmer = stemmer(self.use_stemmer)
 
+		self.remove_stopwords = in_json['remove_stopwords']
+		self.remove_punctuation = in_json['remove_punctuation']
+		self.replace_num = in_json['replace_num']
+		self.ngram_builder = NGRAM_builder(self.remove_stopwords,self.remove_punctuation,self.replace_num)
+
 		self._prepare_resources()
 
 
@@ -151,17 +163,21 @@ class feature(object):
 		out_json = {}
 		out_json['tokenizer_mode'] = self.tokenizer_mode
 		out_json['use_stemmer'] = self.use_stemmer
+		out_json['remove_stopwords'] = self.remove_stopwords
+		out_json['remove_punctuation'] = self.remove_punctuation
+		out_json['replace_num'] = self.replace_num
+
 		out_json['feature_list'] = self.feature_list
 		out_json['feature_unigram'] = self.unigram
 		out_json['feature_bigram'] = self.bigram
 		out_json['feature_trigram'] = self.trigram
 
-		out_json['UNI_LEX'] = self.UNI_LEX
-		out_json['BI_LEX'] = self.BI_LEX
-		out_json['TRI_LEX'] = self.TRI_LEX
-		out_json['UNI_LEX_weight'] = self.UNI_LEX_weight
-		out_json['BI_LEX_weight'] = self.BI_LEX_weight
-		out_json['TRI_LEX_weight'] = self.TRI_LEX_weight
+		out_json['UNI_LEX'] = TupleKeyDict2StrKeyDict(self.UNI_LEX)
+		out_json['BI_LEX'] = TupleKeyDict2StrKeyDict(self.BI_LEX)
+		out_json['TRI_LEX'] = TupleKeyDict2StrKeyDict(self.TRI_LEX)
+		out_json['UNI_LEX_weight'] = TupleKeyDict2StrKeyDict(self.UNI_LEX_weight)
+		out_json['BI_LEX_weight'] = TupleKeyDict2StrKeyDict(self.BI_LEX_weight)
+		out_json['TRI_LEX_weight'] = TupleKeyDict2StrKeyDict(self.TRI_LEX_weight)
 
 		out_json['TOPIC_LEX'] = self.TOPIC_LEX
 		out_json['BASELINE_LEX'] = self.BASELINE_LEX
@@ -233,23 +249,11 @@ class feature(object):
 						#print sent
 						tokens = self._preprocessing(sent)
 						if self.unigram:
-							unigram_lists.append(tokens)
-						tokens.insert(0,'*')
-						tokens.insert(0,'*')
-						tokens.append('*')
-						tokens.append('*')
+							unigram_lists.append(self.ngram_builder.GenerateNGRAM(tokens,1))
 						if self.bigram:
-							bigram_tokens = []
-							for j in range(1, len(tokens)-2):
-								key = '%s, %s' %(tokens[j],tokens[j+1])
-								bigram_tokens.append(key)
-							bigram_lists.append(bigram_tokens)
+							bigram_lists.append(self.ngram_builder.GenerateNGRAM(tokens,2))
 						if self.trigram:
-							trigram_tokens = []
-							for j in range(len(tokens)-2):
-								key = '%s, %s, %s'%(tokens[j],tokens[j+1],tokens[j+2])
-								trigram_tokens.append(key)
-							trigram_lists.append(trigram_tokens)
+							trigram_lists.append(self.ngram_builder.GenerateNGRAM(tokens,3))
 
 				if self.unigram:
 					self.UNI_LEX = self._stat_lexicon(unigram_lists, threshold=2)
@@ -329,7 +333,7 @@ class feature(object):
 				for sent in sents:
 					tokens = self._preprocessing(sent)
 					if self.unigram:
-						for tk in tokens:
+						for tk in self.ngram_builder.GenerateNGRAM(tokens,1):
 							if tk in self.UNI_LEX:
 								idx = self.UNI_LEX_offset + self.UNI_LEX[tk]
 								weight = self.UNI_LEX_weight[tk]
@@ -337,27 +341,22 @@ class feature(object):
 									feature_vector[idx] += weight
 								else:
 									feature_vector[idx] = weight
-					tokens.insert(0,'*')
-					tokens.insert(0,'*')
-					tokens.append('*')
-					tokens.append('*')
 					if self.bigram:
-						for j in range(1, len(tokens)-2):
-							key = '%s, %s' %(tokens[j],tokens[j+1])
-							if key in self.BI_LEX:
-								idx = self.BI_LEX_offset + self.BI_LEX[key]
-								weight = self.BI_LEX_weight[key]
+						for tk in self.ngram_builder.GenerateNGRAM(tokens,2):
+							if tk in self.BI_LEX:
+								idx = self.BI_LEX_offset + self.BI_LEX[tk]
+								weight = self.BI_LEX_weight[tk]
 								if idx in feature_vector:
 									feature_vector[idx] += weight
 								else:
 									feature_vector[idx] = weight
 
 					if self.trigram:
-						for j in range(len(tokens)-2):
-							key = '%s, %s, %s'%(tokens[j],tokens[j+1],tokens[j+2])
+						for tk in self.ngram_builder.GenerateNGRAM(tokens,3):
+							tk = '%s, %s, %s'%(tokens[j],tokens[j+1],tokens[j+2])
 							if key in self.TRI_LEX:
-								idx = self.TRI_LEX_offset + self.TRI_LEX[key]
-								weight = self.TRI_LEX_weight[key]
+								idx = self.TRI_LEX_offset + self.TRI_LEX[tk]
+								weight = self.TRI_LEX_weight[tk]
 								if idx in feature_vector:
 									feature_vector[idx] += weight
 								else:
