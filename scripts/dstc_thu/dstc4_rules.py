@@ -18,7 +18,7 @@ class DSTC4_rules(object):
 		for slot in frame_label:
 			if slot not in self.tagsets[topic]:
 				del frame_label[slot]
-
+				continue
 			remove_list = []
 			for i, value in enumerate(frame_label[slot]):
 				if value not in self.tagsets[topic][slot]:
