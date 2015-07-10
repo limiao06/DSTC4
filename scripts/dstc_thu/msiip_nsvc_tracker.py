@@ -15,8 +15,8 @@ import logging
 from GlobalConfig import *
 
 from New_Slot_value_classifier import slot_value_classifier
-from New_Slot_value_classifier import Tuple_Extractor
 from value_extractor import value_extractor
+from BeliefState import BeliefState
 from dstc4_rules import DSTC4_rules
 from Utils import *
 
@@ -28,12 +28,12 @@ import ontology_reader, dataset_walker
 
 class msiip_nsvc_tracker(object):
 	MY_ID = 'msiip_nsvc'
-	def __init__(self, tagsets, model_dir, ratio_thres = 0, max_num = 2, slot_prob_thres = 0.5, mode = 'hr'):
+	def __init__(self, tagsets, model_dir, ratio_thres = 0.8, max_num = 2, slot_prob_thres = 0.5, value_prob_thres = 0.8, mode = 'hr', bs_mode = 'max', bs_alpha = 0.0):
 		self.tagsets = tagsets
 		self.frame = {}
 		self.memory = {}
+		self.beliefstate = BeliefState(bs_mode, bs_alpha)
 
-		self.frame_prob = {}
 		self.slot_prob_threshold = slot_prob_thres
 		self.ratio_thres = ratio_thres
 		self.mode = mode
@@ -71,7 +71,6 @@ class msiip_nsvc_tracker(object):
 			
 		if topic in self.tagsets:
 			transcript = utter['transcript']
-			# first use svc
 			svc_result, result_prob = self.svc.PredictUtter(utter, self.svc.feature.feature_list)
 			tuples = []
 			probs = []
@@ -85,48 +84,37 @@ class msiip_nsvc_tracker(object):
 			self.appLogger.debug('transcript: %s' %(transcript))
 			self.appLogger.debug('tuples: %s, probs: %s' %(tuples.__str__(), probs.__str__()))
 
+			# get the prob_frame_labels for the single utterance
 			prob_frame_labels = self.tuple_extractor.generate_frame(tuples, probs, self.mode)
-			for slot in prob_frame_labels:
-				if slot in self.tagsets[topic]:
-					self._AddSLot2FrameProb(slot, prob_frame_labels[slot]['prob'])
-					if self.tuple_extractor.enumerable(slot):
-						if prob_frame_labels[slot]['values']:
-							for value, prob in prob_frame_labels[slot]['values'].items():
-								self._AddSlotValue2FrameProb(slot, value, prob)
-					else:
-						value_list = self.value_extractor.ExtractValue(topic, slot, transcript)
-						for value, ratio in value_list:
-							self._AddSlotValue2FrameProb(slot, value, ratio)
+			self._AddExtractValue(prob_frame_labels)
+
+			# update belief state
+			self.state.AddFrame(prob_frame_labels)
 
 
+	def _AddExtractValue(self, prob_frame_labels):
+		'''
+		extract values for non-enumerable slots
+		'''
+		for slot in prob_frame_labels:
+			if slot in self.tagsets[topic]:
+				if not self.tuple_extractor.enumerable(slot):
+					value_list = self.value_extractor.ExtractValue(topic, slot, transcript)
+					for value, ratio in value_list:
+						prob_frame_labels[slot]['values'][value] = ratio * 1.0 / 100
 
 	def _UpdateFrame(self):
 		self.frame = {}
-		for slot in self.frame_prob:
+		for slot in self.state:
 			if self.tuple_extractor.enumerable(slot):
-				for value, prob in self.frame_prob[slot][1].items():
+				for value, prob in self.frame_prob[slot]['values'].items():
 					if prob >= self.slot_prob_threshold:
 						self._AddSlotValue2Frame(slot,value)
 			else:
-				if self.frame_prob[slot][0] > self.slot_prob_threshold:
-					for value, ratio in self.frame_prob[slot][1].items():
+				if self.frame_prob[slot]['prob'] > self.slot_prob_threshold:
+					for value, ratio in self.frame_prob[slot]['values'].items():
 						if ratio >= self.ratio_thres:
 							self._AddSlotValue2Frame(slot,value)
-
-
-	def _AddSLot2FrameProb(self, slot, prob):
-		if slot not in self.frame_prob:
-			self.frame_prob[slot] = [prob, {}]
-		else:
-			if self.frame_prob[slot][0] < prob:
-				self.frame_prob[slot][0] = prob
-
-	def _AddSlotValue2FrameProb(self, slot, value, prob):
-		if value not in self.frame_prob[slot][1]:
-			self.frame_prob[slot][1][value] = prob
-		else:
-			if self.frame_prob[slot][1][value] < prob:
-				self.frame_prob[slot][1][value] = prob
 
 	def _AddSlotValue2Frame(self,slot,value):
 		if slot not in self.frame:
@@ -140,8 +128,8 @@ class msiip_nsvc_tracker(object):
 
 	def reset(self):
 		self.frame = {}
-		self.frame_prob = {}
 		self.memory = {}
+		self.beliefstate.reset()
 
 
 
@@ -152,7 +140,7 @@ def main(argv):
 	parser.add_argument('--model_dir',dest='model_dir',action='store',required=True,metavar='PATH', help='model dir')
 	parser.add_argument('--trackfile',dest='trackfile',action='store',required=True,metavar='JSON_FILE', help='File to write with tracker output')
 	parser.add_argument('--ontology',dest='ontology',action='store',metavar='JSON_FILE',required=True,help='JSON Ontology file')
-	parser.add_argument('--ratio_thres',dest='ratio_thres',type=int,action='store',default=80,help='ration threshold')
+	parser.add_argument('--ratio_thres',dest='ratio_thres',type=float,action='store',default=0.8,help='ration threshold')
 	
 	# 读取配置文件
 	InitConfig()
