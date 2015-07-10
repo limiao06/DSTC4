@@ -35,6 +35,7 @@ class msiip_nsvc_tracker(object):
 		self.beliefstate = BeliefState(bs_mode, bs_alpha)
 
 		self.slot_prob_threshold = slot_prob_thres
+		self.value_prob_threshold = value_prob_thres
 		self.ratio_thres = ratio_thres
 		self.mode = mode
 
@@ -59,7 +60,7 @@ class msiip_nsvc_tracker(object):
 			self._UpdateFrameProb(utter)
 			self._UpdateFrame()
 			self.frame = self.rules.prune_frame_label(topic, self.frame)
-			output['frame_prob'] = copy.deepcopy(self.frame_prob)
+			output['frame_prob'] = copy.deepcopy(self.beliefstate.state)
 			output['frame_label'] = copy.deepcopy(self.frame)
 		return output
 
@@ -108,7 +109,7 @@ class msiip_nsvc_tracker(object):
 		for slot in self.beliefstate.state:
 			if self.tuple_extractor.enumerable(slot):
 				for value, prob in self.beliefstate.state[slot]['values'].items():
-					if prob >= self.slot_prob_threshold:
+					if prob >= self.value_prob_threshold:
 						self._AddSlotValue2Frame(slot,value)
 			else:
 				if self.beliefstate.state[slot]['prob'] > self.slot_prob_threshold:
