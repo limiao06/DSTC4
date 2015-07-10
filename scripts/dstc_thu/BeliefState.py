@@ -16,6 +16,7 @@ class BeliefState(object):
 	MY_ID = 'BeliefState'
 	def __init__(self, mode=None, alpha=None):
 		'''
+		BeliefState class: 
 		mode = 'max' 取最大值保留
 		mode = 'average' 历史和当前加权平均
 		mode = 'enhance' 对重复出现的slot_value对进行加强
@@ -33,21 +34,21 @@ class BeliefState(object):
 		}
 		'''
 		self.config = GetConfig()
-        self.appLogger = logging.getLogger(self.MY_ID)
+		self.appLogger = logging.getLogger(self.MY_ID)
 
-        if not mode:
-        	self.appLogger.info('mode is not assigned, use the default config:')
-        	self.mode = self.config.get(self.MY_ID,'mode')
-        else:
-        	self.mode = mode
-        self.appLogger.info('mode: %s' %(self.mode))
+		if not mode:
+			self.appLogger.info('mode is not assigned, use the default config:')
+			self.mode = self.config.get(self.MY_ID,'mode')
+		else:
+			self.mode = mode
+		self.appLogger.info('mode: %s' %(self.mode))
 
-        if not alpha:
-        	self.appLogger.info('alpha is not assigned, use the default config:')
-        	self.alpha = self.config.getfloat(self.MY_ID,'alpha')
-        else:
-        	self.alpha = alpha
-        self.appLogger.info('alpha: %.2f' %(self.alpha))
+		if not alpha:
+			self.appLogger.info('alpha is not assigned, use the default config:')
+			self.alpha = self.config.getfloat(self.MY_ID,'alpha')
+		else:
+			self.alpha = alpha
+		self.appLogger.info('alpha: %.2f' %(self.alpha))
 
 		self.state = {}
 		
