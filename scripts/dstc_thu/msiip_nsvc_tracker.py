@@ -89,7 +89,7 @@ class msiip_nsvc_tracker(object):
 			self._AddExtractValue(topic, transcript, prob_frame_labels)
 
 			# update belief state
-			self.state.AddFrame(prob_frame_labels)
+			self.beliefstate.AddFrame(prob_frame_labels)
 
 
 	def _AddExtractValue(self, topic, transcript, prob_frame_labels):
@@ -105,14 +105,14 @@ class msiip_nsvc_tracker(object):
 
 	def _UpdateFrame(self):
 		self.frame = {}
-		for slot in self.state:
+		for slot in self.beliefstate.state:
 			if self.tuple_extractor.enumerable(slot):
-				for value, prob in self.frame_prob[slot]['values'].items():
+				for value, prob in self.beliefstate.state[slot]['values'].items():
 					if prob >= self.slot_prob_threshold:
 						self._AddSlotValue2Frame(slot,value)
 			else:
-				if self.frame_prob[slot]['prob'] > self.slot_prob_threshold:
-					for value, ratio in self.frame_prob[slot]['values'].items():
+				if self.beliefstate.state[slot]['prob'] > self.slot_prob_threshold:
+					for value, ratio in self.beliefstate.state[slot]['values'].items():
 						if ratio >= self.ratio_thres:
 							self._AddSlotValue2Frame(slot,value)
 
