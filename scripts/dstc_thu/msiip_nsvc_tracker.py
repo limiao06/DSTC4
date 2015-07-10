@@ -86,13 +86,13 @@ class msiip_nsvc_tracker(object):
 
 			# get the prob_frame_labels for the single utterance
 			prob_frame_labels = self.tuple_extractor.generate_frame(tuples, probs, self.mode)
-			self._AddExtractValue(topic, prob_frame_labels)
+			self._AddExtractValue(topic, transcript, prob_frame_labels)
 
 			# update belief state
 			self.state.AddFrame(prob_frame_labels)
 
 
-	def _AddExtractValue(self, topic, prob_frame_labels):
+	def _AddExtractValue(self, topic, transcript, prob_frame_labels):
 		'''
 		extract values for non-enumerable slots
 		'''
