@@ -68,7 +68,7 @@ class msiip_nsvc_tracker(object):
 		topic = utter['segment_info']['topic']
 		if utter['segment_info']['target_bio'] == 'B':
 			self.frame = {}
-			self.frame_prob = {}
+			self.beliefstate.reset()
 			
 		if topic in self.tagsets:
 			transcript = utter['transcript']
