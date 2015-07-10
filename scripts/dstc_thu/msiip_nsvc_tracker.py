@@ -28,7 +28,7 @@ import ontology_reader, dataset_walker
 
 class msiip_nsvc_tracker(object):
 	MY_ID = 'msiip_nsvc'
-	def __init__(self, tagsets, model_dir, ratio_thres = 0.8, max_num = 2, slot_prob_thres = 0.5, value_prob_thres = 0.8, mode = 'hr', bs_mode = 'max', bs_alpha = 0.0):
+	def __init__(self, tagsets, model_dir, ratio_thres = 0.8, max_num = 2, slot_prob_thres = 0.5, value_prob_thres = 0.5, mode = 'hr', bs_mode = 'max', bs_alpha = 0.0):
 		self.tagsets = tagsets
 		self.frame = {}
 		self.memory = {}
