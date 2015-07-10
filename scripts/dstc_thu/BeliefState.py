@@ -71,7 +71,7 @@ class BeliefState(object):
 		}
 		'''
 		for slot, slot_dict in frame.items():
-			self._AddSlot(slot, slot_dict)
+			self._AddSlotDict(slot, slot_dict)
 
 
 	def _AddSlotDict(self, slot, slot_dict):
