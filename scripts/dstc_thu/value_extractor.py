@@ -13,7 +13,7 @@ from fuzzywuzzy import fuzz
 class value_extractor(object):
 	def __init__(self, tagsets, threshold = 0, max_num = 2):
 		self.tagsets = tagsets
-		self.threshold = threshold
+		self.threshold = threshold * 100
 		self.max_num = max_num
 
 	def ExtractValue(self, topic, slot, transcript):
