@@ -15,10 +15,13 @@ class DSTC4_rules(object):
 		self.tagsets = tagsets
 
 	def prune_frame_label(self, topic, frame_label):
+		delete_slot_list = []
 		for slot in frame_label:
 			if slot not in self.tagsets[topic]:
-				del frame_label[slot]
-				continue
+				delete_slot_list.append(slot)
+		for slot in delete_slot_list:
+			del frame_label[slot]
+		for slot in frame_label:
 			remove_list = []
 			for i, value in enumerate(frame_label[slot]):
 				if value not in self.tagsets[topic][slot]:
