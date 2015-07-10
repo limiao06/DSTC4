@@ -147,7 +147,8 @@ def main(argv):
 	parser.add_argument('--STCMode',dest='STCMode',action='store',default='hr',help='STC mode, high precision or high recall')
 	parser.add_argument('--BSMode',dest='BSMode',action='store',help='Belief State mode: max, average or enhance')
 	parser.add_argument('--BSAlpha',dest='BSAlpha',type=float,action='store',default=0.0,help='Belief State average history alpha')
-	
+	args = parser.parse_args()
+
 	# 读取配置文件
 	InitConfig()
 	config = GetConfig()
@@ -162,7 +163,6 @@ def main(argv):
 
 
 
-	args = parser.parse_args()
 	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=False)
 	tagsets = ontology_reader.OntologyReader(args.ontology).get_tagsets()
 
