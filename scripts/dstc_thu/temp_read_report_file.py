@@ -18,7 +18,7 @@ def read_report_file(input):
 
 		if content.startswith('featured metrics'): # into a metrics
 			out_metric = {}
-			out_metric['title'] = last_content
+			out_metric['title'] = ';'.join(last_content.split(','))
 			while True:
 				line = input.readline()
 				if not line:
@@ -38,7 +38,8 @@ def read_report_file(input):
 				else:
 					continue
 			yield out_metric
-		last_content = content
+		if content:
+			last_content = content
 
 
 
@@ -57,11 +58,11 @@ def main(argv):
 	print >>output, ',,schedule1,,,,schedule2,,,'
 	print >>output, 'titile,%s,%s' %(','.join(keys), ','.join(keys))
 	for metrics in read_report_file(input):
-		print >>output, '%s,', %(metrics['title'])
+		print >>output, '%s,' %(metrics['title']) ,
 		for i in range(2):
 			for key in keys:
-				print >>output, '%.4f,', %(metrics[key][i])
-		print >>output,
+				print >>output, '%.4f,' %(metrics[key][i]) ,
+		print >>output, ''
 
 	output.close()
 	input.close()
