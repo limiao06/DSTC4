@@ -99,7 +99,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 		if os.path.exists(new_model_dir):
 			shutil.rmtree(new_model_dir,True)
 		os.mkdir(new_model_dir)
-		svc._train_by_samples(new_model_dir, new_label_samples, new_train_samples, svc.feature.feature_list, svc.feature.tokenizer_mode, svc.feature.use_stemmer)
+		svc._train_by_samples(new_model_dir, new_label_samples, new_train_samples, svc.feature.feature_list, svc.feature.tokenizer_mode, svc.feature.use_stemmer, svc.feature.remove_stopwords)
 		del svc
 		svc = slot_value_classifier()
 		svc.LoadModel(new_model_dir)
