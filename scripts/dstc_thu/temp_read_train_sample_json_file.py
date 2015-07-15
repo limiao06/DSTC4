@@ -23,7 +23,7 @@ def show_train_samples(train_sample_json, tuple_name, show_nums = 5):
 		for index, label in enumerate(train_sample_json['train_labels'][tuple_name]):
 			if label == 1:
 				cur_index += 1
-				if cur_index < shown_index:
+				if cur_index <= shown_index:
 					continue
 				show_list.append((cur_index, train_sample_json['train_samples'][index]))
 				shown_index += 1
