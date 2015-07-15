@@ -37,6 +37,7 @@ def show_train_samples(train_sample_json, tuple_name, show_nums = 5):
 					print t_str
 				print ']'
 			print
+		show_list = []
 		if index >= len(train_sample_json['train_labels'][tuple_name]) - 1:
 			break
 		cmd = raw_input('press any key to continue or press break to break: ')
