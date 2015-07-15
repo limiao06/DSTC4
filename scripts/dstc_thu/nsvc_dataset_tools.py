@@ -33,6 +33,7 @@ def main(argv):
 	parser.add_argument('--mode',dest='mode',action='store', help='tokenizer mode')
 	parser.add_argument('--UseST',dest='UseST',action='store_true', help='use stemmer or not.')
 	parser.add_argument('--test',dest='test',action='store_true', help='train or test.')	
+	parser.add_argument('--RemoveSW',dest='RemoveSW',action='store_true', help='Remove stop words or not.')	
 	args = parser.parse_args()
 
 	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=True)
@@ -48,7 +49,7 @@ def main(argv):
 	else:
 		print 'Train'
 		feature_list = GetFeatureList(args.feature)
-		svc.TrainFromDataSet(args.ontology, feature_list, dataset, args.model_dir, args.mode, args.UseST)
+		svc.TrainFromDataSet(args.ontology, feature_list, dataset, args.model_dir, args.mode, args.UseST, args.RemoveSW)
 
 if __name__ =="__main__":
 	main(sys.argv)

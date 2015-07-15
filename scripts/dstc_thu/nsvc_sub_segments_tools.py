@@ -31,7 +31,8 @@ def main(argv):
 	parser.add_argument('--feature',dest='feature',action='store', help='feature to use. Example: TubB')
 	parser.add_argument('--mode',dest='mode',action='store', help='tokenizer mode')
 	parser.add_argument('--UseST',dest='UseST',action='store_true', help='use stemmer or not.')
-	parser.add_argument('--test',dest='test',action='store_true', help='train or test.')	
+	parser.add_argument('--test',dest='test',action='store_true', help='train or test.')
+	parser.add_argument('--RemoveSW',dest='RemoveSW',action='store_true', help='Remove stop words or not.')	
 	args = parser.parse_args()
 
 	svc = slot_value_classifier()
@@ -50,7 +51,7 @@ def main(argv):
 	else:
 		print 'Train'
 		feature_list = GetFeatureList(args.feature)
-		svc.TrainFromSubSegments(args.ontology, feature_list, sub_segments, args.model_dir, args.mode, args.UseST)
+		svc.TrainFromSubSegments(args.ontology, feature_list, sub_segments, args.model_dir, args.mode, args.UseST, args.RemoveSW)
 
 if __name__ =="__main__":
 	main(sys.argv)

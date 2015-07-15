@@ -12,7 +12,7 @@ from New_Slot_value_classifier import *
 
 
 
-def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenizer_mode, use_stemmer, old_model_dir=None, iteration = 1):
+def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenizer_mode, use_stemmer, remove_stopwords, old_model_dir=None, iteration = 1):
 	# get svc model (load or train)
 	svc = slot_value_classifier()
 	if old_model_dir:
@@ -21,7 +21,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 			if not svc.is_set:
 				raise Exception('Can not load model from :%s' %(old_model_dir))
 	else:
-		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, old_model_dir, tokenizer_mode, use_stemmer)
+		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, old_model_dir, tokenizer_mode, use_stemmer, remove_stopwords)
 
 	# read old train data
 	input = codecs.open(os.path.join(old_model_dir,'train_samples.json'))
@@ -214,6 +214,7 @@ def main(argv):
 	parser.add_argument('--feature',dest='feature',action='store', help='feature to use. Example: TubB')
 	parser.add_argument('--mode',dest='mode',action='store', help='tokenizer mode')
 	parser.add_argument('--UseST',dest='UseST',action='store_true', help='use stemmer or not.')
+	parser.add_argument('--RemoveSW',dest='RemoveSW',action='store_true', help='Remove stop words or not.')	
 	parser.add_argument('--it',dest='iteration',action='store', type=int, help='iteration num.')
 	
 	args = parser.parse_args()
@@ -226,7 +227,7 @@ def main(argv):
 
 	feature_list = GetFeatureList(args.feature)
 
-	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.old_model_dir, args.iteration)
+	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.RemoveSW, args.old_model_dir, args.iteration)
 
 if __name__ =="__main__":
 	main(sys.argv)

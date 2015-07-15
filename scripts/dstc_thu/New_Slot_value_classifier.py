@@ -39,7 +39,7 @@ from liblinear import *
 
 class feature(object):
 	MY_ID = 'svc_feature'
-	def __init__(self, tagsets, tokenizer_mode=None, use_stemmer=None):
+	def __init__(self, tagsets, tokenizer_mode=None, use_stemmer=None, remove_stopwords=None):
 		self.config = GetConfig()
 		self.appLogger = logging.getLogger(self.MY_ID)
 
@@ -59,7 +59,10 @@ class feature(object):
 		self.stemmer = stemmer(use_stemmer)
 
 		# ngram builder
-		self.remove_stopwords = self.config.getboolean(self.MY_ID,'remove_stopwords')
+		if remove_stopwords == None:
+			self.remove_stopwords = self.config.getboolean(self.MY_ID,'remove_stopwords')
+		else:
+			self.remove_stopwords = remove_stopwords
 		self.remove_punctuation = self.config.getboolean(self.MY_ID,'remove_punctuation')
 		self.replace_num = self.config.getboolean(self.MY_ID,'replace_num')
 		self.ngram_builder = NGRAM_builder(self.remove_stopwords,self.remove_punctuation,self.replace_num)
@@ -400,23 +403,23 @@ class slot_value_classifier(object):
 			self.appLogger.error('Error: _prepare_resources(): Ontology tagsets not ready!')
 			raise Exception('Error: _prepare_resources(): Ontology tagsets not ready!')
 
-	def TrainFromDataSet(self, ontology_file, feature_list, dataset, model_dir, tokenizer_mode, use_stemmer):
+	def TrainFromDataSet(self, ontology_file, feature_list, dataset, model_dir, tokenizer_mode, use_stemmer, remove_stopwords):
 		if not feature_list:
 			self.appLogger('Error: feature list can not be empty!')
 			raise Exception('Error: feature list can not be empty!')
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
 		label_samples, train_samples = self._stat_samples_from_dataset(dataset, feature_list)
-		self._train_by_samples(model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer)
+		self._train_by_samples(model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer, remove_stopwords)
 
-	def TrainFromSubSegments(self, ontology_file, feature_list, sub_segments, model_dir, tokenizer_mode, use_stemmer):
+	def TrainFromSubSegments(self, ontology_file, feature_list, sub_segments, model_dir, tokenizer_mode, use_stemmer, remove_stopwords):
 		if not feature_list:
 			self.appLogger('Error: feature list can not be empty!')
 			raise Exception('Error: feature list can not be empty!')
 		self._prepare_train(model_dir, ontology_file)
 		# stat train samples
 		label_samples, train_samples = self._stat_samples_from_sub_segments(sub_segments, feature_list)
-		self._train_by_samples(model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer)
+		self._train_by_samples(model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer, remove_stopwords)
 
 
 	def TestFromDataSet(self, dataset, model_dir):
@@ -537,10 +540,10 @@ class slot_value_classifier(object):
 				prob_dict[l] = p
 			return (label, prob_dict)
 
-	def _train_by_samples(self, model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer):
+	def _train_by_samples(self, model_dir, label_samples, train_samples, feature_list, tokenizer_mode, use_stemmer, remove_stopwords):
 		self.reset()
 		# stat lexicon
-		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer)
+		self.feature = feature(self.tagsets, tokenizer_mode, use_stemmer, remove_stopwords)
 		self.feature.Stat_Lexicon(train_samples, label_samples, feature_list)
 		# extract feature, build training data
 		train_labels, train_feature_samples = self._build_svm_train_samples(label_samples, train_samples)
