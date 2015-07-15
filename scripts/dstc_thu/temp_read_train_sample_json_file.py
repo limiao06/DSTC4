@@ -26,8 +26,13 @@ def show_train_samples(train_sample_json, tuple_name, show_nums = 5):
 					break
 		print 'train examples for %s' %(tuple_name)
 		for sample in show_list:
-			print sample.__str__()
-		cmd = raw_input('press any key to continue or press break to break')
+			for token in sample:
+				print '['
+				for t_str in token:
+					print t_str
+				print ']'
+			print
+		cmd = raw_input('press any key to continue or press break to break: ')
 		if cmd == 'break':
 			break
 	return
@@ -45,7 +50,7 @@ def main(argv):
 	input.close()
 
 	while True:
-		cmd = raw_input('input a tuple name or exit')
+		cmd = raw_input('input a tuple name or exit: ')
 		if cmd == 'exit':
 			break
 		else:
