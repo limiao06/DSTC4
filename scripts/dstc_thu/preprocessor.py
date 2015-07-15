@@ -77,7 +77,7 @@ class NGRAM_builder(object):
 		self.remove_stopwords = remove_stopwords
 		self.remove_punctuation = remove_punctuation
 		self.replace_num = replace_num
-		'''
+		
 		self.stopwords = set(['okay','yah','yes','alright','oh','uh','i','s','right','see','that','so','it','huh','hm','the','you',
 							'ah','um','a','to','and','in','sure','of','can','is','but','great','this','correct','have','think','also',
 							'me','m','be','very','for','ll','now','do','good','let','then','get','no','just','know','sorry','what',
@@ -95,8 +95,8 @@ class NGRAM_builder(object):
 							'such','than','that','the','their','theirs','them','themselves','then','these','they','this','those','through',
 							'to','too','under','until','up','very','was','we','were','what','when','where','which','while','who','whom',
 							'with','would','you','your','yours','yourself','yourselves'])
-		'''
-		self.stopwords = set([])
+		
+		#self.stopwords = set([])
 		self.re_puntuation = re.compile("^\W+$")
 		self.card_numbers = set(['thousand','thousands','hundred','hundreds','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety',
 								'ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen',
