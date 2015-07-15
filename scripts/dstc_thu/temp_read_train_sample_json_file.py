@@ -15,10 +15,11 @@ def show_train_samples(train_sample_json, tuple_name, show_nums = 5):
 		return
 	sample_num = sum(train_sample_json['train_labels'][tuple_name])
 	print 'There are %d samples for tuple: %s' %(sample_num, tuple_name)
-	cur_index = -1
+	
 	shown_index = -1
-	show_list = []
 	while True:
+		cur_index = -1
+		show_list = []
 		for index, label in enumerate(train_sample_json['train_labels'][tuple_name]):
 			if label == 1:
 				cur_index += 1
