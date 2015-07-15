@@ -6,6 +6,7 @@ temp read train sample json file
 '''
 
 import os, sys, codecs, argparse
+import json
 
 
 def show_train_samples(train_sample_json, tuple_name, show_nums = 5):
