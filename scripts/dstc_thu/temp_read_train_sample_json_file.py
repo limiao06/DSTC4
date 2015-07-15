@@ -13,16 +13,20 @@ def show_train_samples(train_sample_json, tuple_name, show_nums = 5):
 	if tuple_name not in train_sample_json['train_labels']:
 		print 'Error: The input tuple_name is not in train samples!'
 		return
-	cur_index = 0
+	sample_num = sum(train_sample_json['train_labels'][tuple_name])
+	print 'There are %d samples for tuple: %s' %(sample_num, tuple_name)
+	cur_index = -1
+	shown_index = -1
 	show_list = []
 	while True:
 		for index, label in enumerate(train_sample_json['train_labels'][tuple_name]):
-			if index < cur_index:
-				continue
 			if label == 1:
+				cur_index += 1
+				if cur_index < shown_index:
+					continue
 				show_list.append(train_sample_json['train_samples'][index])
+				shown_index += 1
 				if len(show_list) == show_nums:
-					cur_index = index + 1
 					break
 		print 'train examples for %s' %(tuple_name)
 		for sample in show_list:
@@ -32,6 +36,8 @@ def show_train_samples(train_sample_json, tuple_name, show_nums = 5):
 					print t_str
 				print ']'
 			print
+		if index >= len(train_sample_json['train_labels'][tuple_name]) - 1:
+			break
 		cmd = raw_input('press any key to continue or press break to break: ')
 		if cmd == 'break':
 			break
