@@ -48,6 +48,7 @@ def main(argv):
 		if cmd == 'exit':
 			break
 		else:
+			show_train_samples(train_sample_json, cmd)
 
 
 if __name__ =="__main__":
