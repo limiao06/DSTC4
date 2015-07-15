@@ -24,12 +24,13 @@ def show_train_samples(train_sample_json, tuple_name, show_nums = 5):
 				cur_index += 1
 				if cur_index < shown_index:
 					continue
-				show_list.append(train_sample_json['train_samples'][index])
+				show_list.append((cur_index, train_sample_json['train_samples'][index]))
 				shown_index += 1
 				if len(show_list) == show_nums:
 					break
 		print 'train examples for %s' %(tuple_name)
-		for sample in show_list:
+		for idx, sample in show_list:
+			print 'sample %d:' %(idx)
 			for token in sample:
 				print '['
 				for t_str in token:
