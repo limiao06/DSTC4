@@ -142,10 +142,10 @@ def main(argv):
 	parser.add_argument('--trackfile',dest='trackfile',action='store',required=True,metavar='JSON_FILE', help='File to write with tracker output')
 	parser.add_argument('--ontology',dest='ontology',action='store',metavar='JSON_FILE',required=True,help='JSON Ontology file')
 	parser.add_argument('--ratio_thres',dest='ratio_thres',type=float,action='store',default=0.8,help='ration threshold')
-	parser.add_argument('--value_prob',dest='value_prob',type=float,action='store',default=0.5,help='output value prob threshold')
-	parser.add_argument('--slot_prob',dest='slot_prob',type=float,action='store',default=0.5,help='output slot prob threshold')
+	parser.add_argument('--value_prob',dest='value_prob',type=float,action='store',default=0.8,help='output value prob threshold')
+	parser.add_argument('--slot_prob',dest='slot_prob',type=float,action='store',default=0.6,help='output slot prob threshold')
 	parser.add_argument('--STCMode',dest='STCMode',action='store',default='hr',help='STC mode, high precision or high recall')
-	parser.add_argument('--BSMode',dest='BSMode',action='store',help='Belief State mode: max, average or enhance')
+	parser.add_argument('--BSMode',dest='BSMode',action='store',default='enhance',help='Belief State mode: max, average or enhance')
 	parser.add_argument('--BSAlpha',dest='BSAlpha',type=float,action='store',default=0.0,help='Belief State average history alpha')
 	args = parser.parse_args()
 
