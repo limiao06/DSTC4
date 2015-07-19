@@ -92,6 +92,18 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 						#raw_input('press any thing to continue.')
 
 		# train new models
+		feature_list = svc.feature_list
+		tokenizer_mode = svc.feature.tokenizer_mode
+		use_stemmer = svc.feature.use_stemmer
+		remove_stopwords = svc.feature.remove_stopwords
+		# train model only based on new aligned data
+		new_model_dir = new_model_dir = os.path.join(model_dir, 'NA'+str(it))
+		if os.path.exists(new_model_dir):
+			shutil.rmtree(new_model_dir,True)
+		os.mkdir(new_model_dir)
+		svc._train_by_samples(new_model_dir, it_label_samples, it_train_samples, feature_list, tokenizer_mode, use_stemmer, remove_stopwords)
+
+		# train model based on old data and new aligned data
 		new_label_samples = old_label_samples + it_label_samples
 		new_train_samples = old_train_samples + it_train_samples
 
