@@ -17,3 +17,11 @@ do
   python ../scripts/report.py --scorefile ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_boost${it}_t80_hr.score >> ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_result.txt
 done
 
+for it in $(seq 0 $[${2}-1])
+do
+  python ../scripts/dstc_thu/msiip_nsvc_tracker.py --dataset dstc4_dev --dataroot ../data/ --model_dir ../output/models/NSVC_models/nsvc_${1}_model_boost/NA${it}/ --trackfile ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_boostNA${it}_t80_hr.json --ontology ../scripts/config/ontology_dstc4.json
+  python ../scripts/score.py --dataset dstc4_dev --dataroot ../data/ --trackfile ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_boostNA${it}_t80_hr.json --scorefile ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_boostNA${it}_t80_hr.score --ontology ../scripts/config/ontology_dstc4.json
+  echo 'boost NA' ${it} >> ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_result.txt
+  python ../scripts/report.py --scorefile ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_boostNA${it}_t80_hr.score >> ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_result.txt
+done
+
