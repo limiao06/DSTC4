@@ -92,7 +92,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 						#raw_input('press any thing to continue.')
 
 		# train new models
-		feature_list = svc.feature_list
+		feature_list = svc.feature.feature_list
 		tokenizer_mode = svc.feature.tokenizer_mode
 		use_stemmer = svc.feature.use_stemmer
 		remove_stopwords = svc.feature.remove_stopwords
