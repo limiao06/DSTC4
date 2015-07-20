@@ -16,6 +16,8 @@ from fuzzywuzzy import fuzz
 
 from GlobalConfig import *
 
+from BeliefState import BeliefState
+from dstc4_rules import DSTC4_rules
 from Utils import *
 from preprocessor import *
 
@@ -150,7 +152,7 @@ class SemanticTagger(object):
 
 class association_rule_tracker(object):
 	MY_ID = 'association_rule_tracker'
-	def __init__(self, tagsets, association_rule_file, semtagger_model, prob_threshold = 0.8, mode = 'exact'):
+	def __init__(self, tagsets, association_rule_file, semtagger_model, prob_threshold = 0.8, mode = 'exact', bs_mode = 'enhance', bs_alpha = 0.0):
 		self.appLogger = logging.getLogger(self.MY_ID)		
 		self.tagsets = tagsets
 		self.prob_threshold = prob_threshold
@@ -160,7 +162,7 @@ class association_rule_tracker(object):
 		self.semtagger = SemanticTagger(semtagger_model)
 		self.mode = mode
 
-
+		self.beliefstate = BeliefState(bs_mode,bs_alpha)
 		self.reset()
 		
 
@@ -172,10 +174,8 @@ class association_rule_tracker(object):
 		if topic in self.tagsets:
 			self._UpdateFrameProb(utter)
 			self._UpdateFrame()
-			if topic == 'ATTRACTION' and 'PLACE' in self.frame and 'NEIGHBOURHOOD' in self.frame and self.frame['PLACE'] == self.frame['NEIGHBOURHOOD']:
-				del self.frame['PLACE']
-
-			output['frame_prob'] = copy.deepcopy(self.frame_prob)
+			self.frame = self.rules.prune_frame_label(topic, self.frame)
+			output['frame_prob'] = copy.deepcopy(self.beliefstate.state)
 			output['frame_label'] = copy.deepcopy(self.frame)
 		return output
 
@@ -216,7 +216,8 @@ class association_rule_tracker(object):
 		topic = utter['segment_info']['topic']
 		if utter['segment_info']['target_bio'] == 'B':
 			self.frame = {}
-			self.frame_prob = {}
+			#self.frame_prob = {}
+			self.beliefstate.reset()
 		
 		if topic in self.tagsets:
 			transcript = utter['transcript']
@@ -224,32 +225,20 @@ class association_rule_tracker(object):
 			for semtag in semtags:
 				candidate_frames = self._get_frame(semtag, topic)
 				for (slot, value, prob) in candidate_frames:
-					self._AddSLot2FrameProb(slot, -1)
-					self._AddSlotValue2FrameProb(slot,value,prob)
+					#self._AddSLot2FrameProb(slot, -1)
+					#self._AddSlotValue2FrameProb(slot,value,prob)
+					self.beliefstate._AddSLot2State(slot, -1)
+					self.beliefstate._AddSlotValue2State(slot,value,prob)
 
 
 
 	def _UpdateFrame(self):
 		self.frame = {}
 		for slot in self.frame_prob:
-			for value, prob in self.frame_prob[slot][1].items():
+			for value, prob in self.beliefstate.state[slot]['values'].items():
 				if prob >= self.prob_threshold:
 					self._AddSlotValue2Frame(slot,value)
 			
-
-	def _AddSLot2FrameProb(self, slot, prob):
-		if slot not in self.frame_prob:
-			self.frame_prob[slot] = [prob, {}]
-		else:
-			if self.frame_prob[slot][0] < prob:
-				self.frame_prob[slot][0] = prob
-
-	def _AddSlotValue2FrameProb(self, slot, value, prob):
-		if value not in self.frame_prob[slot][1]:
-			self.frame_prob[slot][1][value] = prob
-		else:
-			if self.frame_prob[slot][1][value] < prob:
-				self.frame_prob[slot][1][value] = prob
 
 	def _AddSlotValue2Frame(self,slot,value):
 		if slot not in self.frame:
@@ -263,8 +252,9 @@ class association_rule_tracker(object):
 
 	def reset(self):
 		self.frame = {}
-		self.frame_prob = {}
+		#self.frame_prob = {}
 		self.memory = {}
+		self.beliefstate.reset()
 
 
 
