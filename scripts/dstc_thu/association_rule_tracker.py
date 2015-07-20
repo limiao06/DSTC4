@@ -234,7 +234,7 @@ class association_rule_tracker(object):
 
 	def _UpdateFrame(self):
 		self.frame = {}
-		for slot in self.frame_prob:
+		for slot in self.beliefstate.state:
 			for value, prob in self.beliefstate.state[slot]['values'].items():
 				if prob >= self.prob_threshold:
 					self._AddSlotValue2Frame(slot,value)
