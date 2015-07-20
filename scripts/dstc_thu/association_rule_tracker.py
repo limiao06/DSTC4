@@ -163,6 +163,7 @@ class association_rule_tracker(object):
 		self.mode = mode
 
 		self.beliefstate = BeliefState(bs_mode,bs_alpha)
+		self.rules = DSTC4_rules(tagsets)
 		self.reset()
 		
 
