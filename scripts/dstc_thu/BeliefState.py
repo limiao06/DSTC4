@@ -115,7 +115,7 @@ class BeliefState(object):
 	@staticmethod
 	def StateEnsemble(bs_list, config):
 		'''
-		bs_list is a list, each item is a BeliefState
+		bs_list is a list, each item is a dict like state
 		config indicate the ensemble method:
 			if config is a list of weight, then the ensemble method is average
 			elif config is a string 'vote', the ensemble method is vote
