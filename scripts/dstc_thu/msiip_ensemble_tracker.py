@@ -83,6 +83,7 @@ class msiip_ensemble_tracker(object):
 	def ensemble(self):
 		out_json = {"sessions":[]}
 		out_json['dataset'] = self.dataset
+		out_json['wall_time'] = max([log['wall_time'] for log in self.logs])
 		for i, session in enumerate(self.logs[0]['sessions']):
 			this_session = {"session_id":session["session_id"], "utterances":[]}
 			for j, utter in enumerate(session['utterances']):
@@ -155,7 +156,7 @@ def main(argv):
 
 	tracker = msiip_ensemble_tracker(tagsets, dataset, args.LogBaseDir, args.config, args.slot_prob, args.value_prob)
 	track = tracker.ensemble()
-	
+
 	track_file = open(args.trackfile, "wb")
 	json.dump(track, track_file, indent=4)
 	track_file.close()
