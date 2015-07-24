@@ -63,11 +63,11 @@ class msiip_ensemble_tracker(object):
 
 			self.appLogger.info('%s\t%.3f' %(filename, weight))
 
-		for i in range(len(logs)-1):
-			if logs[i]['dataset'] != logs[i+1]['dataset']:
+		for i in range(len(self.logs)-1):
+			if self.logs[i]['dataset'] != self.logs[i+1]['dataset']:
 				raise Exception('Dataset of input logs mismatch!')
 
-		self.dataset = logs[0]['dataset']
+		self.dataset = self.logs[0]['dataset']
 		self.appLogger.info('dataset: %s' %(self.dataset))
 		self.frame_prob = {}
 		self.frame = {}
