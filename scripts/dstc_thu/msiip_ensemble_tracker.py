@@ -128,6 +128,8 @@ class msiip_ensemble_tracker(object):
 
 def main(argv):
 	parser = argparse.ArgumentParser(description='MSIIP ensemble tracker.')
+	parser.add_argument('--dataset', dest='dataset', action='store', metavar='DATASET', required=True, help='The dataset to analyze')
+	parser.add_argument('--dataroot',dest='dataroot',action='store',required=True,metavar='PATH', help='Will look for corpus in <destroot>/<dataset>/...')
 	parser.add_argument('--LogBaseDir',dest='LogBaseDir',action='store',required=True,help='The base directory that contains the log files')
 	parser.add_argument('--config',dest='config',action='store',required=True,help='Config file, indicate log files and weight')
 	parser.add_argument('--trackfile',dest='trackfile',action='store',required=True,metavar='JSON_FILE', help='File to write with tracker output')
@@ -148,9 +150,10 @@ def main(argv):
     					level = GetLogLevel(log_level_key), 
     					format = '%(asctime)s %(levelname)8s %(lineno)4d %(module)s:%(name)s.%(funcName)s: %(message)s')
 
+	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=False)
 	tagsets = ontology_reader.OntologyReader(args.ontology).get_tagsets()
 
-	tracker = msiip_ensemble_tracker(tagsets, args.LogBaseDir, args.config, args.slot_prob, args.value_prob)
+	tracker = msiip_ensemble_tracker(tagsets, dataset, args.LogBaseDir, args.config, args.slot_prob, args.value_prob)
 	track = tracker.ensemble()
 	json.dump(track, track_file, indent=4)
 	track_file.close()
