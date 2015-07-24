@@ -21,7 +21,7 @@ from Utils import *
 #from association_rule_tracker import association_rule_tracker
 
 sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
-import ontology_reader
+import ontology_reader, dataset_walker
 
 
 '''
