@@ -77,7 +77,7 @@ class msiip_ensemble_tracker(object):
 		out_json['dataset'] = self.dataset
 		for i, session in enumerate(self.logs[0]['sessions']):
 			this_session = {"session_id":session["session_id"], "utterances":[]}
-			for j, utter in enumerate(session):
+			for j, utter in enumerate(session['utterances']):
 				sys.stderr.write('%d:%d\n'%(session['session_id'], utter['utter_index']))
 				this_utter = {'utter_index': utter['utter_index']}
 				if 'frame_prob' in utter:
