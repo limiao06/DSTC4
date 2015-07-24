@@ -155,6 +155,8 @@ def main(argv):
 
 	tracker = msiip_ensemble_tracker(tagsets, dataset, args.LogBaseDir, args.config, args.slot_prob, args.value_prob)
 	track = tracker.ensemble()
+	
+	track_file = open(args.trackfile, "wb")
 	json.dump(track, track_file, indent=4)
 	track_file.close()
 
