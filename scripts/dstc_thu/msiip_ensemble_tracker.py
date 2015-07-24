@@ -20,8 +20,8 @@ from Utils import *
 #from msiip_nsvc_tracker import msiip_nsvc_tracker
 #from association_rule_tracker import association_rule_tracker
 
-#sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
-#import ontology_reader, dataset_walker
+sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
+import ontology_reader
 
 
 '''
