@@ -54,7 +54,7 @@ class msiip_ensemble_tracker(object):
 				break
 			tokens = l.split('\t')
 			assert len(tokens) == 2
-			file_name = os.path.join(base_dir, tokens[0])
+			filename = os.path.join(base_dir, tokens[0])
 			log_input = codecs.open(filename, 'r', 'utf-8')
 			self.logs.append(json.load(log_input))
 			log_input.close()
