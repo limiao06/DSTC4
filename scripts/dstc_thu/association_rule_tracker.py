@@ -152,7 +152,7 @@ class SemanticTagger(object):
 
 class association_rule_tracker(object):
 	MY_ID = 'association_rule_tracker'
-	def __init__(self, tagsets, association_rule_file, semtagger_model, prob_threshold = 0.8, mode = 'exact', bs_mode = 'enhance', bs_alpha = 0.0):
+	def __init__(self, tagsets, association_rule_file, semtagger_model, prob_threshold = 0.8, mode = 'exact', bs_mode = 'max', bs_alpha = 0.0):
 		self.appLogger = logging.getLogger(self.MY_ID)		
 		self.tagsets = tagsets
 		self.prob_threshold = prob_threshold
