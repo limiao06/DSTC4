@@ -30,7 +30,7 @@ import ontology_reader
 
 class msiip_ensemble_tracker(object):
 	MY_ID = 'msiip_ensemble'
-	def __init__(self, tagsets, base_dir, config_file, slot_prob_threshold, value_prob_threshold):
+	def __init__(self, tagsets, dataset, base_dir, config_file, slot_prob_threshold, value_prob_threshold):
 		'''
 		config_file has many lines
 		each line indicates a tracker out json file and its performance
@@ -47,6 +47,14 @@ class msiip_ensemble_tracker(object):
 
 		self.logs = []
 		self.weight_list = []
+
+
+		self.topic_dic = {}
+		for call in dataset:
+			session_id = call.log["session_id"]
+			for (utter,_) in call:
+				utter_index = utter['utter_index']
+				self.topic_dic[(session_id, utter_index)] = utter["segment_info"]['topic']
 
 		for line in lines:
 			l = line.strip()
@@ -81,12 +89,13 @@ class msiip_ensemble_tracker(object):
 				sys.stderr.write('%d:%d\n'%(session['session_id'], utter['utter_index']))
 				this_utter = {'utter_index': utter['utter_index']}
 				if 'frame_prob' in utter:
+					topic = 
 					frame_prob_list = []
 					for log in self.logs:
 						frame_prob_list.append(log['sessions'][i]['utterances'][j]['frame_prob'])
 					self._UpdateFrameProb(frame_prob_list, self.weight_list)
 					self._UpdateFrame()
-					self.frame = self.rules.prune_frame_label(topic, self.frame)
+					self.frame = self.rules.prune_frame_label(self,topic_dic[(session['session_id'],utter['utter_index'])], self.frame)
 					this_utter['frame_prob'] = copy.deepcopy(self.beliefstate.state)
 					this_utter['frame_label'] = copy.deepcopy(self.frame)
 				this_session['utterances'].append(this_utter)
