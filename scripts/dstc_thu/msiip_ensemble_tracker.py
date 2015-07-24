@@ -96,14 +96,14 @@ class msiip_ensemble_tracker(object):
 					self._UpdateFrameProb(frame_prob_list, self.weight_list)
 					self._UpdateFrame()
 					self.frame = self.rules.prune_frame_label(topic, self.frame)
-					this_utter['frame_prob'] = copy.deepcopy(self.beliefstate.state)
+					this_utter['frame_prob'] = copy.deepcopy(self.frame_prob)
 					this_utter['frame_label'] = copy.deepcopy(self.frame)
 				this_session['utterances'].append(this_utter)
 			out_json["sessions"].append(this_session)
 		return out_json
 
 	def _UpdateFrameProb(self, frame_prob_list, weight_list):
-		self.frame = BeliefState.StateEnsemble(frame_prob_list, weight_list)
+		self.frame_prob = BeliefState.StateEnsemble(frame_prob_list, weight_list)
 	
 	def _UpdateFrame(self):
 		self.frame = {}
