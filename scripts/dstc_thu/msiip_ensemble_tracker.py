@@ -89,13 +89,13 @@ class msiip_ensemble_tracker(object):
 				sys.stderr.write('%d:%d\n'%(session['session_id'], utter['utter_index']))
 				this_utter = {'utter_index': utter['utter_index']}
 				if 'frame_prob' in utter:
-					topic = 
+					topic = self.topic_dic[(session['session_id'],utter['utter_index'])]
 					frame_prob_list = []
 					for log in self.logs:
 						frame_prob_list.append(log['sessions'][i]['utterances'][j]['frame_prob'])
 					self._UpdateFrameProb(frame_prob_list, self.weight_list)
 					self._UpdateFrame()
-					self.frame = self.rules.prune_frame_label(self,topic_dic[(session['session_id'],utter['utter_index'])], self.frame)
+					self.frame = self.rules.prune_frame_label(topic, self.frame)
 					this_utter['frame_prob'] = copy.deepcopy(self.beliefstate.state)
 					this_utter['frame_label'] = copy.deepcopy(self.frame)
 				this_session['utterances'].append(this_utter)
