@@ -25,6 +25,6 @@ def Clustering(n_cluster):
 	elapsed = end - start
 	print >>sys.stderr, "Time taken for K Means clustering: ", elapsed, "seconds."
 
-	word_centroid_map = dict(zip( model.index2word, idx ))
+	word_centroid_map = dict(zip(model.index2word, idx ))
 
 
