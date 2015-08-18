@@ -15,12 +15,16 @@ class DSTC4_rules(object):
 		self.tagsets = tagsets
 
 	def prune_frame_label(self, topic, frame_label):
+		# delete invalid slot
 		delete_slot_list = []
 		for slot in frame_label:
 			if slot not in self.tagsets[topic]:
 				delete_slot_list.append(slot)
 		for slot in delete_slot_list:
 			del frame_label[slot]
+
+		# delete invalid value and empty slot
+		empty_slot_list = []
 		for slot in frame_label:
 			remove_list = []
 			for i, value in enumerate(frame_label[slot]):
@@ -28,7 +32,9 @@ class DSTC4_rules(object):
 					remove_list.append(i)
 			frame_label[slot] = [v for i,v in enumerate(frame_label[slot]) if i not in remove_list]
 			if not frame_label[slot]:
-				del frame_label[slot]
+				empty_slot_list.append(slot)
+		for slot in empty_slot_list:
+			del frame_label[slot]
 
 		if topic == 'ATTRACTION' and 'PLACE' in frame_label and 'NEIGHBOURHOOD' in frame_label and frame_label['PLACE'] == frame_label['NEIGHBOURHOOD']:
 			del frame_label['PLACE']
