@@ -1,4 +1,5 @@
 # remove stop words version
+# not finish yet!! 
 # the first model is not trained from sub_segments data, it is re-trained from an existing model's training samples
 # TrainBoostNSVCModelRS.sh old_feature_list iteration_index new_feature_list iteration_nums
 # ./TrainBoostNSVCModelRS.sh uB 3 u 5
