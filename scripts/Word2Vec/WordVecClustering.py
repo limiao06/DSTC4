@@ -14,7 +14,7 @@ from sklearn.cluster import KMeans
 
 def Clustering(num_clusters, max_iter_num=100, num_init=5):
 	kmeans_clustering = KMeans(n_clusters=num_clusters,max_iter=max_iter_num,n_init=num_init,precompute_distances=True)
-	
+
 	model = GetModel()
 	word_vectors = model.syn0
 
@@ -36,8 +36,8 @@ if __name__ =="__main__":
 	parser = argparse.ArgumentParser(description='Clustering the word2vec vectors.')
 	parser.add_argument('--OUT', dest='OUT', required=True, help='The output file.')
 	parser.add_argument('--NCluster', dest='NCluster', type=int, required=True, help='The number of clusters.')
-	parser.add_argument('--NIter', dest='NIter', type=int, help='The number of max iterations.')
-	parser.add_argument('--NInit', dest='NInit', type=int, help='The number of init runs.')
+	parser.add_argument('--NIter', dest='NIter', type=int, default=100, help='The number of max iterations.')
+	parser.add_argument('--NInit', dest='NInit', type=int, default=5, help='The number of init runs.')
 	args = parser.parse_args()
 
 	word_centroid_map, idx = Clustering(args.NCluster, args.NIter, args.NInit)
