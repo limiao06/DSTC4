@@ -26,7 +26,9 @@ class DSTC4_rules(object):
 			for i, value in enumerate(frame_label[slot]):
 				if value not in self.tagsets[topic][slot]:
 					remove_list.append(i)
-				frame_label[slot] = [v for i,v in enumerate(frame_label[slot]) if i not in remove_list]
+			frame_label[slot] = [v for i,v in enumerate(frame_label[slot]) if i not in remove_list]
+			if not frame_label[slot]:
+				del frame_label[slot]
 
 		if topic == 'ATTRACTION' and 'PLACE' in frame_label and 'NEIGHBOURHOOD' in frame_label and frame_label['PLACE'] == frame_label['NEIGHBOURHOOD']:
 			del frame_label['PLACE']
