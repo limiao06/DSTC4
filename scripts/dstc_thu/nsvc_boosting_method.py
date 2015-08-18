@@ -12,34 +12,14 @@ from New_Slot_value_classifier import *
 
 
 
-def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenizer_mode, use_stemmer, remove_stopwords, old_model_dir=None, iteration = 1, re_train_flag=False):
-	
-	if os.path.exists(model_dir):
-		shutil.rmtree(model_dir,True)
-	os.mkdir(model_dir)
-
-	# get svc model (load or re_train or train)
+def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenizer_mode, use_stemmer, remove_stopwords, old_model_dir=None, iteration = 1):
+	# get svc model (load or train)
 	svc = slot_value_classifier()
 	if old_model_dir:
 		if os.path.exists(old_model_dir):
-			if re_train_flag:
-				# re-train the model based on the data samples
-				re_train_model_out = os.path.join(model_dir, 'base')
-				if os.path.exists(re_train_model_out):
-					shutil.rmtree(re_train_model_out,True)
-				os.mkdir(re_train_model_out)
-				input = codecs.open(os.path.join(old_model_dir,'train_samples.json'))
-				t_in_json = json.load(input)
-				input.close()
-
-				t_old_train_samples = t_in_json['train_samples']
-				t_old_label_samples = t_in_json['label_samples']
-				svc._train_by_samples(re_train_model_out, t_old_label_samples, t_old_train_samples, feature_list, tokenizer_mode, use_stemmer, remove_stopwords)
-			else:
-				# load the model
-				svc.LoadModel(old_model_dir)
-				if not svc.is_set:
-					raise Exception('Can not load model from :%s' %(old_model_dir))
+			svc.LoadModel(old_model_dir)
+			if not svc.is_set:
+				raise Exception('Can not load model from :%s' %(old_model_dir))
 	else:
 		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, old_model_dir, tokenizer_mode, use_stemmer, remove_stopwords)
 
@@ -56,6 +36,11 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 	
 
 	# boosting
+
+	if os.path.exists(model_dir):
+		shutil.rmtree(model_dir,True)
+	os.mkdir(model_dir)
+
 	for it in range(iteration):
 		print 'iteration: %d' %(it)
 		it_train_samples = []
@@ -243,8 +228,7 @@ def main(argv):
 	parser.add_argument('--UseST',dest='UseST',action='store_true', help='use stemmer or not.')
 	parser.add_argument('--RemoveSW',dest='RemoveSW',action='store_true', help='Remove stop words or not.')	
 	parser.add_argument('--it',dest='iteration',action='store', type=int, help='iteration num.')
-	parser.add_argument('--ReTrain',dest='ReTrain',action='store_true', help='Retrain the model or Load the model.')	
-
+	
 	args = parser.parse_args()
 
 	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=True)
@@ -255,7 +239,7 @@ def main(argv):
 
 	feature_list = GetFeatureList(args.feature)
 
-	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.RemoveSW, args.old_model_dir, args.iteration, args.ReTrain)
+	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.RemoveSW, args.old_model_dir, args.iteration)
 
 if __name__ =="__main__":
 	main(sys.argv)
