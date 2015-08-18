@@ -12,14 +12,25 @@ from New_Slot_value_classifier import *
 
 
 
-def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenizer_mode, use_stemmer, remove_stopwords, old_model_dir=None, iteration = 1):
-	# get svc model (load or train)
+def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenizer_mode, use_stemmer, remove_stopwords, old_model_dir=None, iteration = 1, re_train_flag=False):
+	# get svc model (load or re_train or train)
 	svc = slot_value_classifier()
 	if old_model_dir:
 		if os.path.exists(old_model_dir):
-			svc.LoadModel(old_model_dir)
-			if not svc.is_set:
-				raise Exception('Can not load model from :%s' %(old_model_dir))
+			if re_train_flag:
+				# re-train the model based on the data samples
+				input = codecs.open(os.path.join(old_model_dir,'train_samples.json'))
+				t_in_json = json.load(input)
+				input.close()
+
+				t_old_train_samples = t_in_json['train_samples']
+				t_old_label_samples = t_in_json['label_samples']
+				svc._train_by_samples(new_model_dir, t_old_label_samples, t_old_train_samples, feature_list, tokenizer_mode, use_stemmer, remove_stopwords)
+			else:
+				# load the model
+				svc.LoadModel(old_model_dir)
+				if not svc.is_set:
+					raise Exception('Can not load model from :%s' %(old_model_dir))
 	else:
 		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, old_model_dir, tokenizer_mode, use_stemmer, remove_stopwords)
 
@@ -228,6 +239,7 @@ def main(argv):
 	parser.add_argument('--UseST',dest='UseST',action='store_true', help='use stemmer or not.')
 	parser.add_argument('--RemoveSW',dest='RemoveSW',action='store_true', help='Remove stop words or not.')	
 	parser.add_argument('--it',dest='iteration',action='store', type=int, help='iteration num.')
+	parser.add_argument('--ReTrain',dest='ReTrain',action='store_true', help='Retrain the model or Load the model.')	
 	
 	args = parser.parse_args()
 
@@ -239,7 +251,7 @@ def main(argv):
 
 	feature_list = GetFeatureList(args.feature)
 
-	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.RemoveSW, args.old_model_dir, args.iteration)
+	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.RemoveSW, args.old_model_dir, args.iteration, args.ReTrain)
 
 if __name__ =="__main__":
 	main(sys.argv)
