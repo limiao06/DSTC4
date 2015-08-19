@@ -12,6 +12,7 @@ from fuzzywuzzy import fuzz
 
 class value_extractor(object):
 	def __init__(self, tagsets, threshold = 0, max_num = 2):
+		'''
 		self.tagsets = {}
 		for topic in tagsets:
 			self.tagsets[topic] = {}
@@ -28,7 +29,8 @@ class value_extractor(object):
 				else:
 					for value in tagsets[topic][slot]:
 						self.tagsets[topic][slot].append(value)
-
+		'''
+		self.tagsets = tagsets
 		self.threshold = threshold * 100
 		self.max_num = max_num
 
