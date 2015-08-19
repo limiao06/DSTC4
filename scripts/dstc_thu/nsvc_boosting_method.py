@@ -63,6 +63,24 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 					if log_utter['segment_info']['target_bio'] == 'B':
 						if sub_segments_vec:
 							slot_value_dict = choose_from_sub_segments_vec(sub_segments_vec, svc)
+							# generate alignment data
+							session_id = call.log['session_id']
+							for key in slot_value_dict:
+								for i in slot_value_dict[key]:
+									utter_index = sub_segments_vec[i][0]['utter_index']
+									align_key = (session_id, utter_index)
+									if align_key not in alignment_dict:
+										alignment_dict[align_key] = {}
+									t_frame_label = eval(key)
+									for slot in t_frame_label:
+										if slot not in alignment_dict[align_key]:
+											alignment_dict[align_key][slot] = []
+										for value in t_frame_label[slot]:
+											if value not in alignment_dict[align_key][slot]:
+												alignment_dict[align_key][slot].append(value)
+
+
+							# generate new training samples
 							new_label_samples, new_train_samples = generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc)
 							for l_sample, t_sample in zip(new_label_samples, new_train_samples):
 								svc.appLogger.debug('new sample: (%s, %s)' %(l_sample.__str__(), t_sample.__str__()))
