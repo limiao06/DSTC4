@@ -6,13 +6,29 @@ given a slot,
 find the most likely value in a utter
 '''
 
-import argparse, sys, time, json, os
+import argparse, sys, time, json, os, copy
 from collections import defaultdict
 from fuzzywuzzy import fuzz
 
 class value_extractor(object):
 	def __init__(self, tagsets, threshold = 0, max_num = 2):
-		self.tagsets = tagsets
+		self.tagsets = {}
+		for topic in tagsets:
+			self.tagsets[topic] = {}
+			for slot in tagsets[topic]:
+				self.tagsets[topic][slot] = []
+				if slot == 'CUISINE':
+					for value in tagsets[topic][slot]:
+						new_value = value.replace(' cuisine', '')
+						self.tagsets[topic][slot].append(new_value)
+				elif slot == 'STATION':
+					for value in tagsets[topic][slot]:
+						new_value = value.replace(' Station', '')
+						self.tagsets[topic][slot].append(new_value)
+				else:
+					for value in tagsets[topic][slot]:
+						self.tagsets[topic][slot].append(value)
+
 		self.threshold = threshold * 100
 		self.max_num = max_num
 
