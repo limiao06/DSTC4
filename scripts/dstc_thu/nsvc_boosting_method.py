@@ -9,6 +9,7 @@ construct new training data sets
 '''
 import os
 from New_Slot_value_classifier import *
+from Utils import *
 
 
 
@@ -48,6 +49,13 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 
 		# generate new train samples
 		sub_segments_vec = []
+
+		alignment_dict = {}
+		'''
+		alignment_dict stores the alignment information,
+		key of this dict is a tuple (session_id, utter_index)
+		value of this dict is a frame_label
+		'''
 		for call in dataset:
 			for (log_utter, label_utter) in call:
 				sys.stderr.write('%d:%d\n'%(call.log['session_id'], log_utter['utter_index']))
@@ -83,6 +91,24 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 				else:
 					if sub_segments_vec:
 						slot_value_dict = choose_from_sub_segments_vec(sub_segments_vec, svc)
+						# generate alignment data
+						session_id = call.log['session_id']
+						for key in slot_value_dict:
+							for i in slot_value_dict[key]:
+								utter_index = sub_segments_vec[i][0]['utter_index']
+								align_key = (session_id, utter_index)
+								if align_key not in alignment_dict:
+									alignment_dict[align_key] = {}
+								t_frame_label = eval(key)
+								for slot in t_frame_label:
+									if slot not in alignment_dict[align_key]:
+										alignment_dict[align_key][slot] = []
+									for value in t_frame_label[slot]:
+										if value not in alignment_dict[align_key][slot]:
+											alignment_dict[align_key][slot].append(value)
+
+
+						# generate new training samples
 						new_label_samples, new_train_samples = generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc)
 						for l_sample, t_sample in zip(new_label_samples, new_train_samples):
 							svc.appLogger.debug('new sample: (%s, %s)' %(l_sample.__str__(), t_sample.__str__()))
@@ -117,6 +143,13 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 		svc.LoadModel(new_model_dir)
 		if not svc.is_set:
 			raise Exception('Can not load model from :%s' %(new_model_dir))
+		# save alignment dict
+		out_alignment_file = os.path.join(new_model_dir, 'alignment_dict.json')
+		out_alignment_dict = TupleKeyDict2StrKeyDict(alignment_dict)
+		output = file(out_alignment_file, 'w')
+		json.dump(out_alignment_dict, output, indent=4)
+		output.close()
+
 	print 'done!'
 
 
