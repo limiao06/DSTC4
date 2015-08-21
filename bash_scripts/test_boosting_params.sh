@@ -14,9 +14,9 @@ python ../scripts/report.py --scorefile ../output/msiip_out/msiip_nsvc_out/test_
 
 
 high_thres_vec=(0.6 0.7 0.75 0.8 0.85 0.9)
-low_thre_vec=(0.1 0.2 0.3 0.4)
+low_thres_vec=(0.1 0.2 0.3 0.4)
 
-for high_thres in ${high_thres[@]}
+for high_thres in ${high_thres_vec[@]}
 do
 	for low_thres in ${low_thres_vec[@]}
 	do
