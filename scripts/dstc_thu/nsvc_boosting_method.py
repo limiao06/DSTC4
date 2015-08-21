@@ -6,6 +6,13 @@ nsvc boosting method
 first use sub_segments file to train a nsvc
 then use the nsvc to find alignment in the dataset 
 construct new training data sets
+
+
+new things:
+1. add output alignment file function
+2. Now label_sample has positive case and NpNn(Neither positive Nor negative) case, NpNn case will not used in SVM training data
+    only label_sample generated from boosting method may be a dict instance, any other is a list instance
+
 '''
 import os
 from New_Slot_value_classifier import *
@@ -13,7 +20,10 @@ from Utils import *
 
 
 
-def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, tokenizer_mode, use_stemmer, remove_stopwords, old_model_dir=None, iteration = 1):
+def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list, \
+				 tokenizer_mode, use_stemmer, remove_stopwords, \
+				 old_model_dir=None, iteration = 1, \
+				 high_thres=0.8, low_thres=0.2, alpha=0.2):
 	# get svc model (load or train)
 	svc = slot_value_classifier()
 	if old_model_dir:
@@ -22,7 +32,8 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 			if not svc.is_set:
 				raise Exception('Can not load model from :%s' %(old_model_dir))
 	else:
-		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, old_model_dir, tokenizer_mode, use_stemmer, remove_stopwords)
+		svc.TrainFromSubSegments(ontology_file, feature_list, sub_segments, old_model_dir, \
+								 tokenizer_mode, use_stemmer, remove_stopwords)
 
 	# read old train data
 	input = codecs.open(os.path.join(old_model_dir,'train_samples.json'))
@@ -62,7 +73,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 				if 'frame_label' in label_utter:
 					if log_utter['segment_info']['target_bio'] == 'B':
 						if sub_segments_vec:
-							slot_value_dict = choose_from_sub_segments_vec(sub_segments_vec, svc)
+							slot_value_dict = choose_from_sub_segments_vec(sub_segments_vec, svc, high_thres, low_thres, alpha)
 							# generate alignment data
 							session_id = call.log['session_id']
 							for key in slot_value_dict:
@@ -108,7 +119,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 
 				else:
 					if sub_segments_vec:
-						slot_value_dict = choose_from_sub_segments_vec(sub_segments_vec, svc)
+						slot_value_dict = choose_from_sub_segments_vec(sub_segments_vec, svc, high_thres, low_thres, alpha)
 						# generate alignment data
 						session_id = call.log['session_id']
 						for key in slot_value_dict:
@@ -170,8 +181,8 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 
 	print 'done!'
 
-
-
+'''
+# backup
 def generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc):
 	train_samples = []
 	label_samples = []
@@ -185,11 +196,32 @@ def generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc
 		train_samples.append(sample)
 		label_samples.append(label_sample)
 	return (label_samples, train_samples)
+'''
+
+def generate_sample_from_sub_segments_vec(sub_segments_vec, slot_value_dict, svc):
+	train_samples = []
+	label_samples = []
+	for i, (log_utter, label_utter, result_prob) in enumerate(sub_segments_vec):
+		sample = svc._extract_utter_tuple(log_utter, svc.feature.feature_list)
+		label_sample = {"positive":[], "NpNn": []}
+		for key in slot_value_dict:
+			if i in slot_value_dict[key]["positive"]:
+				tuples = svc.tuple_extractor.extract_tuple(eval(key))
+				label_sample["positive"].extend(tuples)
+			if i in slot_value_dict[key]["NpNn"]:
+				tuples = svc.tuple_extractor.extract_tuple(eval(key))
+				label_sample["NpNn"].extend(tuples)
+		train_samples.append(sample)
+		label_samples.append(label_sample)
+	return (label_samples, train_samples)
 	
-def choose_from_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, alpha = 0.2):
+def choose_from_sub_segments_vec(sub_segments_vec, svc, high_thres, low_thres, alpha):
 	'''
 	input a sub_segments_vec
 	return a dict indicate which sent id correspond to a slot-value pair
+
+	alpha is a weight factor, for a slot value pair (s,v) and its correspond tuples [root:s, s:v]
+		alpha indicate which is important to calc score root:s or s:v
 	'''
 	if not sub_segments_vec:
 		return {}
@@ -198,7 +230,7 @@ def choose_from_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, al
 	for slot in frame_label:
 		for value in frame_label[slot]:
 			key = str({slot:[value]})
-			slot_value_dict[key] = []
+			slot_value_dict[key] = {"positive":[], "NpNn": []}
 	for key in slot_value_dict:
 		svc.appLogger.debug('start processing key: %s' %(key))
 		score_vec = [0] * len(sub_segments_vec)
@@ -234,12 +266,19 @@ def choose_from_sub_segments_vec(sub_segments_vec, svc, prob_threshold = 0.8, al
 			if score > max_score:
 				max_score = score
 				max_id = i
-			if score > prob_threshold:
-				slot_value_dict[key].append(i)
+			if score > high_thres:
+				slot_value_dict[key]["positive"].append(i)
 				add_num += 1
-		if add_num == 0:
-			slot_value_dict[key].append(max_id)
-		svc.appLogger.debug('key: %s, choose ids: %s' %(key, slot_value_dict[key].__str__()))
+		if add_num == 0:	# if there is no case whose score > high_thres, then add the case with max score to positive
+			slot_value_dict[key]["positive"].append(max_id)
+
+		# add NpNn case
+		for i, score in enumerate(score_vec):
+			if score > low_thres and score < high_thres and i != max_id:
+				slot_value_dict[key]["NpNn"].append(i)
+
+		svc.appLogger.debug('key: %s, choose positive ids: %s' %(key, slot_value_dict[key]["positive"].__str__()))
+		svc.appLogger.debug('key: %s, choose Neither positive nor negative ids: %s' %(key, slot_value_dict[key]["NpNn"].__str__()))
 	return slot_value_dict
 
 
@@ -279,6 +318,8 @@ def main(argv):
 	parser.add_argument('--UseST',dest='UseST',action='store_true', help='use stemmer or not.')
 	parser.add_argument('--RemoveSW',dest='RemoveSW',action='store_true', help='Remove stop words or not.')	
 	parser.add_argument('--it',dest='iteration',action='store', type=int, help='iteration num.')
+	parser.add_argument('--ht',dest='high_thres',action='store', type=float, default=0.8, help='High threshold parameter of boosting.')
+	parser.add_argument('--lt',dest='low_thres',action='store', type=float, default=0.2, help='High threshold parameter of boosting.')
 	
 	args = parser.parse_args()
 
@@ -290,7 +331,10 @@ def main(argv):
 
 	feature_list = GetFeatureList(args.feature)
 
-	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list, args.mode, args.UseST, args.RemoveSW, args.old_model_dir, args.iteration)
+	nsvc_boosting(args.model_dir, sub_segments, dataset, args.ontology, feature_list,\
+				 args.mode, args.UseST, args.RemoveSW,\
+				 args.old_model_dir, args.iteration,\
+				 args.high_thres, args.low_thres)
 
 if __name__ =="__main__":
 	main(sys.argv)

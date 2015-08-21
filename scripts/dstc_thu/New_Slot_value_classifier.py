@@ -636,8 +636,12 @@ class slot_value_classifier(object):
 		return (label_samples, train_samples)
 
 	def _build_svm_train_samples(self, label_samples, train_samples):
-		for labels in label_samples:
-			for label in labels:
+		for label_sample in label_samples:
+			if isinstance(label_sample, dict):
+				list_label_sample = label_sample["positive"]
+			else:
+				list_label_sample = label_sample
+			for label in list_label_sample:
 				if label not in self.models:
 					self.models[label] = None
 		self.model_keys = self.models.keys()
@@ -649,15 +653,28 @@ class slot_value_classifier(object):
 		train_labels = {}
 		for key in self.model_keys:
 			train_labels[key] = [0] * len(train_feature_samples)
-		for i,labels in enumerate(label_samples):
-			for key in list(set(labels)):
-				train_labels[key][i] = 1
+		for i,label_sample in enumerate(label_samples):
+			if isinstance(label_sample, dict):
+				for key in list(set(label_sample["positive"])):
+					train_labels[key][i] = 1
+				for key in list(set(label_sample["NpNn"])):
+					train_labels[key][i] = None
+			else:
+				for key in list(set(label_sample)):
+					train_labels[key][i] = 1
 		return (train_labels, train_feature_samples)
 
 	def _train_svm_models(self, train_labels, train_feature_samples, param_str = '-s 0 -c 1'):
 		for model_key in self.model_keys:
 			print 'Train tuple: %s' %(model_key)
-			prob = problem(train_labels[model_key], train_feature_samples)
+			labels_list = []
+			samples_list = []
+			for label, sample in zip(train_labels[model_key], train_feature_samples):
+				if label != None:
+					labels_list.append(label)
+					samples_list.append(sample)
+					
+			prob = problem(labels_list, samples_list)
 			param = parameter(param_str)
 			self.models[model_key] = liblinear.train(prob, param)
 
