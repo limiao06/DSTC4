@@ -35,20 +35,20 @@ do
 		python ../scripts/dstc_thu/nsvc_boosting_method.py --dataset dstc4_train --dataroot ../data \
 			--subseg ../output/processed_data/sub_segments_data/sub_segments_train.json \
 			--old_model ../output/models/NSVC_models/nsvc_${1}_model \
-			${outmodel_path}/nsvc_boost_${1}_HT${high_thres}_LT{low_thres} \
+			${outmodel_path}/nsvc_boost_${1}_HT${high_thres}_LT${low_thres} \
 			--it ${2} --ht ${high_thres} --lt ${low_thres}
 		for it in $(seq 0 $[${2}-1])
 		do
 			python ../scripts/dstc_thu/msiip_nsvc_tracker.py --dataset dstc4_dev --dataroot ../data/ \
-				--model_dir ${outmodel_path}/nsvc_boost_${1}_HT${high_thres}_LT{low_thres}/${it}/ \
-				--trackfile ${outfile_path}/msiip_nsvc_${1}_boost_HT${high_thres}_LT{low_thres}_${it}_t80_hr.json \
+				--model_dir ${outmodel_path}/nsvc_boost_${1}_HT${high_thres}_LT${low_thres}/${it}/ \
+				--trackfile ${outfile_path}/msiip_nsvc_${1}_boost_HT${high_thres}_LT${low_thres}_${it}_t80_hr.json \
 				--ontology ../scripts/config/ontology_dstc4.json
 			python ../scripts/score.py --dataset dstc4_dev --dataroot ../data/ \
-				--trackfile ${outfile_path}/msiip_nsvc_${1}_boost_HT${high_thres}_LT{low_thres}_${it}_t80_hr.json \
-				--scorefile ${outfile_path}/msiip_nsvc_${1}_boost_HT${high_thres}_LT{low_thres}_${it}_t80_hr.score \
+				--trackfile ${outfile_path}/msiip_nsvc_${1}_boost_HT${high_thres}_LT${low_thres}_${it}_t80_hr.json \
+				--scorefile ${outfile_path}/msiip_nsvc_${1}_boost_HT${high_thres}_LT${low_thres}_${it}_t80_hr.score \
 				--ontology ../scripts/config/ontology_dstc4.json
 			echo "high_thres:" $high_thres ", low_thres:" $low_thres ", boost" ${it} >> ${logfile}
-			python ../scripts/report.py --scorefile ${outfile_path}/msiip_nsvc_${1}_boost_HT${high_thres}_LT{low_thres}_${it}_t80_hr.score >> ${logfile}
+			python ../scripts/report.py --scorefile ${outfile_path}/msiip_nsvc_${1}_boost_HT${high_thres}_LT${low_thres}_${it}_t80_hr.score >> ${logfile}
 		done
 	done
 done
