@@ -77,7 +77,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 							# generate alignment data
 							session_id = call.log['session_id']
 							for key in slot_value_dict:
-								for i in slot_value_dict[key]:
+								for i in slot_value_dict[key]["positive"]:
 									utter_index = sub_segments_vec[i][0]['utter_index']
 									align_key = (session_id, utter_index)
 									if align_key not in alignment_dict:
@@ -123,7 +123,7 @@ def nsvc_boosting(model_dir, sub_segments, dataset, ontology_file, feature_list,
 						# generate alignment data
 						session_id = call.log['session_id']
 						for key in slot_value_dict:
-							for i in slot_value_dict[key]:
+							for i in slot_value_dict[key]["positive"]:
 								utter_index = sub_segments_vec[i][0]['utter_index']
 								align_key = (session_id, utter_index)
 								if align_key not in alignment_dict:
