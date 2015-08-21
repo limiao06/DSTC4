@@ -25,7 +25,7 @@ echo "base" > ${logfile}
 python ../scripts/report.py --scorefile ${outfile_path}/msiip_nsvc_${1}_t80_hr.score >> ${logfile}
 
 
-high_thres_vec=(0.6 0.7 0.75 0.8 0.85 0.9)
+high_thres_vec=(0.6 0.7 0.8 0.9)
 low_thres_vec=(0.1 0.2 0.3 0.4)
 
 for high_thres in ${high_thres_vec[@]}
