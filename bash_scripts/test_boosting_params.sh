@@ -4,7 +4,7 @@
 
 set -u
 set -e
-logfile=../output/msiip_out/msiip_nsvc_out/test_boosting_params/test_boosting_params.txt
+logfile=../output/msiip_out/msiip_nsvc_out/test_boosting_params/test_boosting_params_${1}_${2}.txt
 outfile_path=../output/msiip_out/msiip_nsvc_out/test_boosting_params
 outmodel_path=../output/models/NSVC_models/nsvc_test_boost
 echo "test_boosting_params" ${1} > ${logfile}
