@@ -9,7 +9,7 @@ return the match ratio that above than the low_thres
 '''
 
 class ValueMatchFeature(object):
-	def __init__(self, tagsets, low_thres=0.3, case_sensitive=False):
+	def __init__(self, tagsets, low_thres=0.5, case_sensitive=False):
 		self.low_thres = low_thres
 		self.topic_value_id_map = {}
 		self.case_sensitive=case_sensitive
