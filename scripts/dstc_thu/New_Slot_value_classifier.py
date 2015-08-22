@@ -783,5 +783,7 @@ def GetFeatureList(feature_code):
 		feature_list.append(NGRAM_key)
 	if 'B' in feature_code_list:
 		feature_list.append('BASELINE')	
+	if 'V' in feature_code_list:
+		feature_list.append('VALUE_MATCH')
 
 	return feature_list
