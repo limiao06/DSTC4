@@ -156,7 +156,7 @@ class feature(object):
 		self.TOPIC_LEX = in_json['TOPIC_LEX']
 		self.BASELINE_LEX = in_json['BASELINE_LEX']
 
-		if in_json['ValueMatchFeature']:
+		if 'ValueMatchFeature' in in_json and in_json['ValueMatchFeature']:
 			self.ValueMatchFeature = ValueMatchFeature(self.tagsets)
 			self.ValueMatchFeature.Load(in_json['ValueMatchFeature'])
 		else:
