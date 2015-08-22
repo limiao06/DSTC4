@@ -287,6 +287,8 @@ class feature(object):
 				if self.trigram:
 					self.TRI_LEX = self._stat_lexicon(trigram_lists, threshold=2)
 					self.TRI_LEX_weight = self._calc_feature_weight(trigram_lists, label_samples, self.TRI_LEX,'simple')
+			elif feature == 'VALUE_MATCH':
+				pass
 			else:
 				self.appLogger.error('Unknown feature! %s' %(feature))
 				raise Exception('Unknown feature! %s' %(feature))
