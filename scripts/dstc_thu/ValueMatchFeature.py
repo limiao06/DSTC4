@@ -31,7 +31,7 @@ class ValueMatchFeature(object):
 	def extract_trans_feature(self, trans, topic):
 		transcript = trans.replace('Singapore', '')
 		feature_vec={}
-		if topic in self.tagsets:
+		if topic in self.topic_value_id_map:
 			for value,idx in self.topic_value_id_map[topic].items():
 				if not self.case_sensitive:
 					transcript = transcript.lower()
