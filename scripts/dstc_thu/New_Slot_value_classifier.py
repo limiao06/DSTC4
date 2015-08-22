@@ -35,6 +35,9 @@ from liblinearutil import save_model
 from liblinearutil import load_model
 from liblinear import *
 
+# other complex feature
+from ValueMatchFeature import ValueMatchFeature
+
 
 
 class feature(object):
@@ -86,12 +89,15 @@ class feature(object):
 
 		self.TOPIC_LEX = None
 		self.BASELINE_LEX = None
+
+		self.ValueMatchFeature = None
 		
 		self.TOPIC_LEX_offset = 0
 		self.UNI_LEX_offset = 0
 		self.BI_LEX_offset = 0
 		self.TRI_LEX_offset = 0
 		self.BASELINE_LEX_offset = 0
+		self.VMF_offset = 0
 		self.is_set = False
 
 	def _set_offset(self):
@@ -112,6 +118,9 @@ class feature(object):
 
 		if self.trigram:
 			self.BASELINE_LEX_offset = self.TRI_LEX_offset + len(self.TRI_LEX)
+
+		if 'BASELINE' in self.feature_list and self.ValueMatchFeature:
+			self.VMF_offset = self.BASELINE_LEX_offset + self.ValueMatchFeature.GetFeatureSize()
 
 	def _preprocessing(self, sent):
 		'''
@@ -146,6 +155,12 @@ class feature(object):
 
 		self.TOPIC_LEX = in_json['TOPIC_LEX']
 		self.BASELINE_LEX = in_json['BASELINE_LEX']
+
+		if in_json['ValueMatchFeature']:
+			self.ValueMatchFeature = ValueMatchFeature(self.tagsets)
+			self.ValueMatchFeature.Load(in_json['ValueMatchFeature'])
+		else:
+			self.ValueMatchFeature = None
 
 		self.tokenizer_mode = in_json['tokenizer_mode']
 		self.tokenizer = tokenizer(self.tokenizer_mode)
@@ -184,11 +199,16 @@ class feature(object):
 
 		out_json['TOPIC_LEX'] = self.TOPIC_LEX
 		out_json['BASELINE_LEX'] = self.BASELINE_LEX
+
+		if self.ValueMatchFeature:
+			out_json['ValueMatchFeature'] = self.ValueMatchFeature.Save()
+		else:
+			out_json['ValueMatchFeature'] = None
 		json.dump(out_json, output, indent=4)
 		output.close()
 
 
-	def Stat_Lexicon(self, train_samples, label_samples,  feature_list = ['TOPIC', 'NGRAM_u:b', 'BASELINE']):
+	def Stat_Lexicon(self, train_samples, label_samples,  feature_list = ['TOPIC', 'NGRAM_u:b', 'BASELINE', 'VALUE_MATCH']):
 		'''
 		train samples is a list of samples
 		each item is a list , each item of the list is correspond to the feature list
@@ -364,6 +384,16 @@ class feature(object):
 									feature_vector[idx] += weight
 								else:
 									feature_vector[idx] = weight
+			elif feature == 'VALUE_MATCH':
+				temp_feature_vec = {}
+				topic = feature_tuple[i][0]
+				sents = feature_tuple[i][1]
+				for sent in sents:
+					f = self.ValueMatchFeature.extract_trans_feature(sent,topic)
+					temp_feature_vec = self.ValueMatchFeature.Merge2Features(temp_feature_vec, f)
+				for idx, value in temp_feature_vec.items():
+					feature_vector[idx + self.VMF_offset] = value
+
 		return feature_vector
 
 
@@ -571,6 +601,8 @@ class slot_value_classifier(object):
 				train_sample.append(self.tuple_extractor.extract_tuple(baseline_out_label))
 			elif feature.startswith('NGRAM'):
 				train_sample.append([utter['transcript']])
+			elif feature == 'VALUE_MATCH':
+				train_sample.append((topic,[utter['transcript']]))
 			else:
 				self.appLogger.error('Unknown feature: %s' %(feature))
 				raise Exception('Unknown feature: %s' %(feature))
@@ -594,6 +626,12 @@ class slot_value_classifier(object):
 					transcript = sent[sent.find(':')+2:]
 					transcripts.append(transcript)
 				train_sample.append(transcripts)
+			elif feature == 'VALUE_MATCH':
+				transcripts = []
+				for sent in sub_seg['utter_sents']:
+					transcript = sent[sent.find(':')+2:]
+					transcripts.append(transcript)
+				train_sample.append((topic,transcripts))
 			else:
 				self.appLogger.error('Unknown feature: %s' %(feature))
 				raise Exception('Unknown feature: %s' %(feature))
@@ -673,7 +711,7 @@ class slot_value_classifier(object):
 				if label != None:
 					labels_list.append(label)
 					samples_list.append(sample)
-					
+
 			prob = problem(labels_list, samples_list)
 			param = parameter(param_str)
 			self.models[model_key] = liblinear.train(prob, param)
