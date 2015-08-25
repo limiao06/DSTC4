@@ -1,18 +1,32 @@
-# test_boosting_params.sh feature_list iteration_times
-# ./test_boosting_params.sh uB 5
+# test_boosting_params.sh feature_list iteration_times train or no-train
+# ./test_boosting_params.sh uB 5 NT
 # train base model
 
 set -u
 set -e
+
+train=1
+if [ $# -eq 3 ];then
+	if [ ${3} == NT ];then
+		train=0
+	fi
+fi
+if [ ${train} -eq 1 ];then
+	echo train model
+else
+	echo no-train model
+fi
+
 logfile=../output/msiip_out/msiip_nsvc_out/test_boosting_params/test_boosting_params_fg_${1}_${2}.txt
 outfile_path=../output/msiip_out/msiip_nsvc_out/test_boosting_params
 outmodel_path=../output/models/NSVC_models/nsvc_test_boost
 echo "test_boosting_params" ${1} > ${logfile}
-
-python ../scripts/dstc_thu/nsvc_sub_segments_tools.py \
-	--subseg ../output/processed_data/sub_segments_data/sub_segments_train.json \
-	--train --ontology ../scripts/config/ontology_dstc4.json --feature ${1} \
-	../output/models/NSVC_models/nsvc_${1}_model
+if [ train -eq 1 ];then
+	python ../scripts/dstc_thu/nsvc_sub_segments_tools.py \
+		--subseg ../output/processed_data/sub_segments_data/sub_segments_train.json \
+		--train --ontology ../scripts/config/ontology_dstc4.json --feature ${1} \
+		../output/models/NSVC_models/nsvc_${1}_model
+fi
 python ../scripts/dstc_thu/msiip_nsvc_tracker.py --dataset dstc4_dev --dataroot ../data \
 	--ontology ../scripts/config/ontology_dstc4.json \
 	--model_dir ../output/models/NSVC_models/nsvc_${1}_model/ \
@@ -32,11 +46,13 @@ for high_thres in ${high_thres_vec[@]}
 do
 	for low_thres in ${low_thres_vec[@]}
 	do
-		python ../scripts/dstc_thu/nsvc_boosting_method.py --dataset dstc4_train --dataroot ../data \
-			--subseg ../output/processed_data/sub_segments_data/sub_segments_train.json \
-			--old_model ../output/models/NSVC_models/nsvc_${1}_model \
-			${outmodel_path}/nsvc_boost_${1}_HT${high_thres}_LT${low_thres} \
-			--it ${2} --ht ${high_thres} --lt ${low_thres}
+		if [ train -eq 1 ];then
+			python ../scripts/dstc_thu/nsvc_boosting_method.py --dataset dstc4_train --dataroot ../data \
+				--subseg ../output/processed_data/sub_segments_data/sub_segments_train.json \
+				--old_model ../output/models/NSVC_models/nsvc_${1}_model \
+				${outmodel_path}/nsvc_boost_${1}_HT${high_thres}_LT${low_thres} \
+				--it ${2} --ht ${high_thres} --lt ${low_thres}
+		fi
 		for it in $(seq 0 $[${2}-1])
 		do
 			python ../scripts/dstc_thu/msiip_nsvc_tracker.py --dataset dstc4_dev --dataroot ../data/ \
