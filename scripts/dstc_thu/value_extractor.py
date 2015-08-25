@@ -11,8 +11,9 @@ from collections import defaultdict
 from fuzzywuzzy import fuzz
 
 class value_extractor(object):
-	def __init__(self, tagsets, threshold = 0, max_num = 2, case_sensitive=False):
+	def __init__(self, tagsets, threshold = 0, max_num = 2, case_sensitive=True):
 		#'''
+		self.case_sensitive = case_sensitive
 		self.tagsets = {}
 		for topic in tagsets:
 			self.tagsets[topic] = {}
@@ -21,21 +22,21 @@ class value_extractor(object):
 				if slot == 'CUISINE':
 					for value in tagsets[topic][slot]:
 						match_value = value.replace(' cuisine', '')
-						if case_sensitive:
+						if self.case_sensitive:
 							self.tagsets[topic][slot][match_value] = value
 						else:
 							self.tagsets[topic][slot][match_value.lower()] = value
 				elif slot == 'STATION':
 					for value in tagsets[topic][slot]:
 						match_value = value.replace(' Station', '')
-						if case_sensitive:
+						if self.case_sensitive:
 							self.tagsets[topic][slot][match_value] = value
 						else:
 							self.tagsets[topic][slot][match_value.lower()] = value
 				else:
 					for value in tagsets[topic][slot]:
 						match_value = value
-						if case_sensitive:
+						if self.case_sensitive:
 							self.tagsets[topic][slot][match_value] = value
 						else:
 							self.tagsets[topic][slot][match_value.lower()] = value
@@ -71,7 +72,7 @@ class value_extractor(object):
 		if topic in self.tagsets:
 			if slot in self.tagsets[topic]:
 				for match_value, value in self.tagsets[topic][slot].items():
-					if case_sensitive:
+					if self.case_sensitive:
 						ratio = fuzz.partial_ratio(match_value, transcript)
 					else:
 						ratio = fuzz.partial_ratio(match_value, transcript.lower())
