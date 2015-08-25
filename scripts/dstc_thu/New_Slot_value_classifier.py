@@ -741,6 +741,21 @@ class slot_value_classifier(object):
 		json.dump(train_json, output, indent=4)
 		output.close()
 
+		# save train sample nums
+		output = codecs.open(os.path.join(model_dir, out_json['train_samples_numbers_file']), 'w', 'utf-8')
+		out_json={}
+		for key, labels in train_labels.items():
+			pos_num = 0
+			neg_num = 0
+			for label in labels:
+				if label == 0:
+					neg_num += 1
+				elif label == 1:
+					pos_num += 1
+			out_json[key] = {0:neg_num, 1:pos_num}
+		json.dump(out_json, output, indent=4)
+		output.close()
+
 		# save feature
 		self.feature.save_Lexicon(os.path.join(model_dir, out_json['feature_lexicon_file']))
 
