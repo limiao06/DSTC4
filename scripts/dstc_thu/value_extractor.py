@@ -17,18 +17,19 @@ class value_extractor(object):
 		for topic in tagsets:
 			self.tagsets[topic] = {}
 			for slot in tagsets[topic]:
-				self.tagsets[topic][slot] = []
+				self.tagsets[topic][slot] = {}
 				if slot == 'CUISINE':
 					for value in tagsets[topic][slot]:
-						new_value = value.replace(' cuisine', '')
-						self.tagsets[topic][slot].append(new_value)
+						match_value = value.replace(' cuisine', '')
+						self.tagsets[topic][slot][match_value] = value
 				elif slot == 'STATION':
 					for value in tagsets[topic][slot]:
-						new_value = value.replace(' Station', '')
-						self.tagsets[topic][slot].append(new_value)
+						match_value = value.replace(' Station', '')
+						self.tagsets[topic][slot][match_value] = value
 				else:
 					for value in tagsets[topic][slot]:
-						self.tagsets[topic][slot].append(value)
+						match_value = value
+						self.tagsets[topic][slot][match_value] = value
 		#'''
 		#self.tagsets = tagsets
 		self.threshold = threshold * 100
@@ -60,8 +61,8 @@ class value_extractor(object):
 			transcript = transcript.replace('Singapore', '')
 		if topic in self.tagsets:
 			if slot in self.tagsets[topic]:
-				for value in self.tagsets[topic][slot]:
-					ratio = fuzz.partial_ratio(value, transcript)
+				for match_value, value in self.tagsets[topic][slot].items():
+					ratio = fuzz.partial_ratio(match_value, transcript)
 					if ratio > value_dict[value]:
 						value_dict[value] = ratio
 		return value_dict
