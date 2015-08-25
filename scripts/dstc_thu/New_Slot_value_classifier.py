@@ -743,7 +743,7 @@ class slot_value_classifier(object):
 
 		# save train sample nums
 		output = codecs.open(os.path.join(model_dir, 'train_samples_number.json'), 'w', 'utf-8')
-		out_json={}
+		train_number_json={}
 		for key, labels in train_labels.items():
 			pos_num = 0
 			neg_num = 0
@@ -752,8 +752,8 @@ class slot_value_classifier(object):
 					neg_num += 1
 				elif label == 1:
 					pos_num += 1
-			out_json[key] = {0:neg_num, 1:pos_num}
-		json.dump(out_json, output, indent=4)
+			train_number_json[key] = {0:neg_num, 1:pos_num}
+		json.dump(train_number_json, output, indent=4)
 		output.close()
 
 		# save feature
