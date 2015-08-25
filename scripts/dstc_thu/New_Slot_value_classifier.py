@@ -742,7 +742,7 @@ class slot_value_classifier(object):
 		output.close()
 
 		# save train sample nums
-		output = codecs.open(os.path.join(model_dir, out_json['train_samples_numbers_file']), 'w', 'utf-8')
+		output = codecs.open(os.path.join(model_dir, 'train_samples_number.json'), 'w', 'utf-8')
 		out_json={}
 		for key, labels in train_labels.items():
 			pos_num = 0
