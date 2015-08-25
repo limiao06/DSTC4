@@ -1,7 +1,6 @@
 # test_boosting_params.sh feature_list iteration_times train or no-train
 # ./test_boosting_params.sh uB 5 NT
 # train base model
-
 set -u
 set -e
 
@@ -21,7 +20,7 @@ logfile=../output/msiip_out/msiip_nsvc_out/test_boosting_params/test_boosting_pa
 outfile_path=../output/msiip_out/msiip_nsvc_out/test_boosting_params
 outmodel_path=../output/models/NSVC_models/nsvc_test_boost
 echo "test_boosting_params" ${1} > ${logfile}
-if [ train -eq 1 ];then
+if [ $train -eq 1 ];then
 	python ../scripts/dstc_thu/nsvc_sub_segments_tools.py \
 		--subseg ../output/processed_data/sub_segments_data/sub_segments_train.json \
 		--train --ontology ../scripts/config/ontology_dstc4.json --feature ${1} \
@@ -46,7 +45,7 @@ for high_thres in ${high_thres_vec[@]}
 do
 	for low_thres in ${low_thres_vec[@]}
 	do
-		if [ train -eq 1 ];then
+		if [ $train -eq 1 ];then
 			python ../scripts/dstc_thu/nsvc_boosting_method.py --dataset dstc4_train --dataroot ../data \
 				--subseg ../output/processed_data/sub_segments_data/sub_segments_train.json \
 				--old_model ../output/models/NSVC_models/nsvc_${1}_model \
