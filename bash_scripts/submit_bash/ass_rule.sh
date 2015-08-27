@@ -8,7 +8,7 @@ if [ $# -ne 1 ];then
 fi
 
 if [ ${1} == dev ];then
-	python ${base_path}/dstc_thu/association_rule_tracker.py --dataset dstc4_dev --dataroot ${base_path}/data \
+	python ${base_path}/scripts/dstc_thu/association_rule_tracker.py --dataset dstc4_dev --dataroot ${base_path}/data \
 		--ar ${base_path}/output/models/association_rule_models/association_train_rule.json \
 		--stm ${base_path}/output/models/SemTagModel/semtag_train_model \
 		--trackfile ${base_path}/submit/ass_rule/answer_dev.json \
@@ -22,7 +22,7 @@ if [ ${1} == dev ];then
 fi
 
 if [ ${1} == "test" ];then
-	python ${base_path}/dstc_thu/association_rule_tracker.py --dataset dstc4_test --dataroot ${base_path}/data \
+	python ${base_path}/scripts/dstc_thu/association_rule_tracker.py --dataset dstc4_test --dataroot ${base_path}/data \
 		--ar ${base_path}/output/models/association_rule_models/association_train_rule.json \
 		--stm ${base_path}/output/models/SemTagModel/semtag_train_model \
 		--trackfile ${base_path}/submit/ass_rule/answer_test.json \
