@@ -2,8 +2,8 @@ logfile=../output/msiip_out/msiip_nsvc_out/test_all_params/test_all_params_fg.tx
 echo 'test_all_params:' > ${logfile}
 set -e
 
-slot_prob_vec=(0.55 0.65)
-value_prob_vec=(0.75 0.85)
+slot_prob_vec=(0.55 0.6 0.65)
+value_prob_vec=(0.75 0.8 0.85)
 stc_mode_vec=("hr" "hp")
 bs_mode=enhance
 
