@@ -2,8 +2,9 @@ import argparse, sys, ontology_reader, dataset_walker, time, json, copy
 from fuzzywuzzy import fuzz
 
 class BaselineTracker(object):
-	def __init__(self, tagsets):
+	def __init__(self, tagsets, threshold):
 		self.tagsets = tagsets
+		self.threshold=threshold
 		self.frame = {}
 		self.memory = {}
 
@@ -22,7 +23,7 @@ class BaselineTracker(object):
 			for slot in self.tagsets[topic]:
 				for value in self.tagsets[topic][slot]:
 					ratio = fuzz.partial_ratio(value.lower(), transcript.lower())
-					if ratio > 80:
+					if ratio > self.threshold:
 						if slot not in self.frame:
 							self.frame[slot] = []
 						if value not in self.frame[slot]:
@@ -42,6 +43,7 @@ def main(argv):
 	parser.add_argument('--dataroot',dest='dataroot',action='store',required=True,metavar='PATH', help='Will look for corpus in <destroot>/<dataset>/...')
 	parser.add_argument('--trackfile',dest='trackfile',action='store',required=True,metavar='JSON_FILE', help='File to write with tracker output')
 	parser.add_argument('--ontology',dest='ontology',action='store',metavar='JSON_FILE',required=True,help='JSON Ontology file')
+	parser.add_argument('--threshod',dest='threshold',type=int,action='store',default=80,help='threshold')
 
 	args = parser.parse_args()
 	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=False)
@@ -52,7 +54,7 @@ def main(argv):
 	track["dataset"]  = args.dataset
 	start_time = time.time()
 
-	tracker = BaselineTracker(tagsets)
+	tracker = BaselineTracker(tagsets, args.threshold)
 	for call in dataset:
 		this_session = {"session_id":call.log["session_id"], "utterances":[]}
 		tracker.reset()
