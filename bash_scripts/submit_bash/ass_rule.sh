@@ -1,5 +1,6 @@
 # ass_rule
 # ass_rule test or baseline dev
+set -e
 base_path=../..
 if [ $# -ne 1 ];then
 	echo ${0} "test | dev"
@@ -8,10 +9,10 @@ fi
 
 if [ ${1} == dev ];then
 	python ${base_path}/dstc_thu/association_rule_tracker.py --dataset dstc4_dev --dataroot ${base_path}/data \
-		--ar ${base_path}/output/models/association_rule_models/association_train_rule.json
-		--stm ${base_path}/output/models/SemTagModel/semtag_train_model
+		--ar ${base_path}/output/models/association_rule_models/association_train_rule.json \
+		--stm ${base_path}/output/models/SemTagModel/semtag_train_model \
 		--trackfile ${base_path}/submit/ass_rule/answer_dev.json \
-		--ontology ${base_path}/scripts/config/ontology_dstc4.json
+		--ontology ${base_path}/scripts/config/ontology_dstc4.json \
 		--pt 0.8
 	python ${base_path}/scripts/score.py --dataset dstc4_dev --dataroot ${base_path}/data \
 		--trackfile ${base_path}/submit/ass_rule/answer_dev.json \
@@ -22,9 +23,9 @@ fi
 
 if [ ${1} == "test" ];then
 	python ${base_path}/dstc_thu/association_rule_tracker.py --dataset dstc4_test --dataroot ${base_path}/data \
-		--ar ${base_path}/output/models/association_rule_models/association_train_rule.json
-		--stm ${base_path}/output/models/SemTagModel/semtag_train_model
+		--ar ${base_path}/output/models/association_rule_models/association_train_rule.json \
+		--stm ${base_path}/output/models/SemTagModel/semtag_train_model \
 		--trackfile ${base_path}/submit/ass_rule/answer_test.json \
-		--ontology ${base_path}/scripts/config/ontology_dstc4.json
+		--ontology ${base_path}/scripts/config/ontology_dstc4.json \
 		--pt 0.8
 fi
