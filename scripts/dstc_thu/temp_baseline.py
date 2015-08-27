@@ -22,8 +22,8 @@ class BaselineTracker(object):
 		if topic in self.tagsets:
 			for slot in self.tagsets[topic]:
 				for value in self.tagsets[topic][slot]:
-					ratio = fuzz.partial_ratio(value, transcript)
-					if ratio > 80:
+					ratio = fuzz.partial_ratio(value.lower(), transcript.lower())
+					if ratio > 85:
 						if slot not in self.frame:
 							self.frame[slot] = []
 						if value not in self.frame[slot]:
