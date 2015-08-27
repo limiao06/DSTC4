@@ -1,7 +1,7 @@
 # baseline
 # baseline test or baseline dev
 base_path=../..
-if [ $# -ne 2 ];then
+if [ $# -ne 1 ];then
 	echo ${0} "test | dev"
 	exit
 fi
