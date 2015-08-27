@@ -43,7 +43,7 @@ def main(argv):
 	parser.add_argument('--dataroot',dest='dataroot',action='store',required=True,metavar='PATH', help='Will look for corpus in <destroot>/<dataset>/...')
 	parser.add_argument('--trackfile',dest='trackfile',action='store',required=True,metavar='JSON_FILE', help='File to write with tracker output')
 	parser.add_argument('--ontology',dest='ontology',action='store',metavar='JSON_FILE',required=True,help='JSON Ontology file')
-	parser.add_argument('--threshod',dest='threshold',type=int,action='store',default=80,help='threshold')
+	parser.add_argument('--threshold',dest='threshold',type=int,action='store',default=80,help='threshold')
 
 	args = parser.parse_args()
 	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=False)
