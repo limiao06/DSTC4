@@ -25,7 +25,7 @@ import ontology_reader, dataset_walker
 
 
 '''
-é‡‡ç”¨åèåˆçš„æ–¹å¼ï¼Œä»¥å…¶ä»–è¾“å‡ºçš„ç»“æœä½œä¸ºè¾“å…¥
+²ÉÓÃºóÈÚºÏµÄ·½Ê½£¬ÒÔÆäËûÊä³öµÄ½á¹û×÷ÎªÊäÈë
 '''
 
 class msiip_ensemble_tracker(object):
@@ -80,7 +80,15 @@ class msiip_ensemble_tracker(object):
 							temp_weight.append(0.0)
 				sum_weight = sum(temp_weight)
 				self.weight_dict[topic][slot] = [value / sum_weight for value in temp_weight]
-
+		temp_weight=[]
+		for perform_dict in self.perform_list:
+			value = perform_dict['all']['all'][self.weight_key]
+			if value != 'NULL':
+				temp_weight.append(value)
+			else:
+				temp_weight.append(0.0)
+		sum_weight = sum(temp_weight)
+		self.default_weight = [value / sum_weight for value in temp_weight]
 
 
 		self.topic_dic = {}
@@ -127,6 +135,7 @@ class msiip_ensemble_tracker(object):
 		return logs, perform_list
 
 	def _read_score_file(self, score_file):
+		input=file(score_file)
 		score_dict = {}
 		line = input.readline()
 		if not line.strip() == 'topic, slot, schedule, stat, N, result':
@@ -153,11 +162,11 @@ class msiip_ensemble_tracker(object):
 						value = 'NULL'
 					else:
 						value = float(value)
-
 					if slot not in score_dict[topic]:
 						score_dict[topic][slot] = {}
 					if stat_term not in score_dict[topic][slot]:
 						score_dict[topic][slot][stat_term] = value
+		input.close()
 		return score_dict
 
 	def ensemble(self):
@@ -214,7 +223,10 @@ class msiip_ensemble_tracker(object):
 							value_prob_list.append(0.0)
 						else:
 							value_prob_list.append(bs[slot]['values'][value])
-				weight_vector = self.weight_dict[topic][slot]
+				if topic in self.weight_dict and slot in self.weight_dict[topic]:
+					weight_vector = self.weight_dict[topic][slot]
+				else:
+					weight_vector = self.default_weight
 				for weight, prob in zip(weight_vector, value_prob_list):
 					out_state[slot]['values'][value] += weight * prob
 
@@ -234,7 +246,6 @@ class msiip_ensemble_tracker(object):
 		if value not in self.frame[slot]:
 			self.frame[slot].append(value)
 
-	def _frame_prob_ensemble(self, frame_prob_list)
 
 
 
@@ -255,12 +266,12 @@ def main(argv):
 	parser.add_argument('--weight_key',dest='weight_key',action='store',default='f1',help='key to calc weight')
 	args = parser.parse_args()
 
-	# è¯»å–é…ç½®æ–‡ä»¶
+	# ¶ÁÈ¡ÅäÖÃÎÄ¼ş
 	InitConfig()
 	config = GetConfig()
 	config.read([os.path.join(os.path.dirname(__file__),'../config/msiip_simple.cfg')])
 
-	# è®¾ç½®logging
+	# ÉèÖÃlogging
 	log_level_key = config.get('logging','level')
 	run_code_name = os.path.basename(sys.argv[0])[0:-3]
 	logging.basicConfig(filename = os.path.join(os.path.dirname(__file__), '../../output/logs', '%s_%s.log' %(run_code_name,time.strftime('%Y-%m-%d',time.localtime(time.time())))), \
@@ -270,7 +281,7 @@ def main(argv):
 	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=False)
 	tagsets = ontology_reader.OntologyReader(args.ontology).get_tagsets()
 
-	tracker = msiip_ensemble_tracker(tagsets, dataset, args.LogBaseDir, args.config, args.unified_thres, args.weight_key)
+	tracker = msiip_ensemble_tracker(tagsets, dataset, args.LogBaseDir, args.config, args.weight_key, args.unified_thres)
 	track = tracker.ensemble()
 
 	track_file = open(args.trackfile, "wb")
