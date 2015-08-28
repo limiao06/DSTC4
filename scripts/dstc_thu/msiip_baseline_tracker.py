@@ -13,6 +13,7 @@ import argparse, sys, time, json, os, copy
 import logging
 from GlobalConfig import *
 import math
+from fuzzywuzzy import fuzz
 
 from BeliefState import BeliefState
 from dstc4_rules import DSTC4_rules
