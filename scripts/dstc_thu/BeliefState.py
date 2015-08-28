@@ -86,7 +86,7 @@ class BeliefState(object):
 			self.state[slot] = {'prob': prob, 'values':{}}
 		else:
 			if self.state[slot]['prob'] == -1:
-					self.state[slot]['prob'] = prob
+				self.state[slot]['prob'] = prob
 			elif self.mode == 'max':
 				if self.state[slot]['prob'] < prob:
 					self.state[slot]['prob'] = prob
@@ -100,7 +100,7 @@ class BeliefState(object):
 
 	def _AddSlotValue2State(self, slot, value, prob):
 		if value not in self.state[slot]['values']:
-			self.state[slot]['values'][value] = prob
+			self.state[slot]['values'][value] = prob * (1-self.alpha)
 		else:
 			if self.mode == 'max':
 				if self.state[slot]['values'][value] < prob:
