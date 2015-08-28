@@ -28,7 +28,6 @@ do
 	do
 		echo "ratio_thres:" $ratio_thres ", bs_mode: average, bs_alpha:" $bs_alpha >> ${logfile}
 		python ../scripts/dstc_thu/msiip_baseline_tracker.py --dataset dstc4_dev --dataroot ../data/ \
-			--model_dir ../output/models/NSVC_models/nsvc_uB_model_boost/3/ \
 			--ontology ../scripts/config/ontology_dstc4.json \
 			--trackfile ${outdir}/test_all_params_RT${ratio_thres}_BMaver_BA${bs_alpha}.json \
 			--ratio_thres ${ratio_thres} --BSMode average --BSAlpha ${bs_alpha}
