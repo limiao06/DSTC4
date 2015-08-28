@@ -13,6 +13,7 @@ then output frame based on the association rules
 import argparse, sys, time, json, os, copy, codecs
 import logging
 from fuzzywuzzy import fuzz
+import math
 
 from GlobalConfig import *
 
@@ -152,10 +153,14 @@ class SemanticTagger(object):
 
 class association_rule_tracker(object):
 	MY_ID = 'association_rule_tracker'
-	def __init__(self, tagsets, association_rule_file, semtagger_model, prob_threshold = 0.8, mode = 'exact', bs_mode = 'max', bs_alpha = 0.0):
+	def __init__(self, tagsets, association_rule_file, semtagger_model, prob_threshold = 0.8, mode = 'exact', bs_mode = 'max', bs_alpha = 0.0, unified_thres=0.5):
 		self.appLogger = logging.getLogger(self.MY_ID)		
 		self.tagsets = tagsets
+
+		self.unified_thres = unified_thres
 		self.prob_threshold = prob_threshold
+		self.prob_thres_factor = math.log(self.unified_thres, self.prob_threshold)
+
 		input = codecs.open(association_rule_file, 'r', 'utf-8')
 		self.association_rules = json.load(input)
 		input.close()
@@ -229,7 +234,8 @@ class association_rule_tracker(object):
 					#self._AddSLot2FrameProb(slot, -1)
 					#self._AddSlotValue2FrameProb(slot,value,prob)
 					self.beliefstate._AddSLot2State(slot, -1)
-					self.beliefstate._AddSlotValue2State(slot,value,prob)
+					normalised_prob = math.pow(prob, self.prob_thres_factor)
+					self.beliefstate._AddSlotValue2State(slot,value,normalised_prob)
 
 
 
@@ -237,7 +243,7 @@ class association_rule_tracker(object):
 		self.frame = {}
 		for slot in self.beliefstate.state:
 			for value, prob in self.beliefstate.state[slot]['values'].items():
-				if prob >= self.prob_threshold:
+				if prob >= self.unified_thres:
 					self._AddSlotValue2Frame(slot,value)
 			
 
