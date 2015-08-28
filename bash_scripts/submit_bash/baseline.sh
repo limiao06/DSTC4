@@ -7,7 +7,7 @@ if [ $# -ne 1 ];then
 fi
 
 if [ ${1} == dev ];then
-	python ${base_path}/scripts/dstc_thu/msiip_baseline_tracker.py --dataset dstc4_dev --dataroot ../data/ \
+	python ${base_path}/scripts/dstc_thu/msiip_baseline_tracker.py --dataset dstc4_dev --dataroot ${base_path}/data/ \
 		--trackfile ${base_path}/submit/baseline/answer_dev.json \
 		--ontology ${base_path}/scripts/config/ontology_dstc4.json
 	python ${base_path}/scripts/score.py --dataset dstc4_dev --dataroot ${base_path}/data \
