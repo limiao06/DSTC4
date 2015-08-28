@@ -13,6 +13,7 @@ then use value_extractor to extract value for slots that appear in the sub_segme
 import argparse, sys, time, json, os, copy
 import logging
 from GlobalConfig import *
+import math
 
 from New_Slot_value_classifier import slot_value_classifier
 from value_extractor import value_extractor
@@ -28,7 +29,10 @@ import ontology_reader, dataset_walker
 
 class msiip_nsvc_tracker(object):
 	MY_ID = 'msiip_nsvc'
-	def __init__(self, tagsets, model_dir, ratio_thres = 0.8, max_num = 2, slot_prob_thres = 0.6, value_prob_thres = 0.8, mode = 'hr', bs_mode = 'enhance', bs_alpha = 0.0):
+	def __init__(self, tagsets, model_dir, ratio_thres = 0.8, max_num = 2, \
+				slot_prob_thres = 0.6, value_prob_thres = 0.8, \
+				mode = 'hr', bs_mode = 'enhance', bs_alpha = 0.0, \
+				unified_thres = 0.5):
 		self.tagsets = tagsets
 		self.frame = {}
 		self.memory = {}
@@ -37,6 +41,12 @@ class msiip_nsvc_tracker(object):
 		self.slot_prob_threshold = slot_prob_thres
 		self.value_prob_threshold = value_prob_thres
 		self.ratio_thres = ratio_thres
+
+		self.unified_thres = unified_thres
+		self.slot_prob_factor = math.log(self.unified_thres, self.slot_prob_threshold)
+		self.value_prob_factor = math.log(self.unified_thres, self.value_prob_threshold)
+		self.ratio_thres_factor = math.log(self.unified_thres, self.ratio_thres)
+
 		self.mode = mode
 
 		self.svc = slot_value_classifier()
@@ -88,11 +98,25 @@ class msiip_nsvc_tracker(object):
 			# get the prob_frame_labels for the single utterance
 			prob_frame_labels = self.tuple_extractor.generate_frame(tuples, probs, self.mode)
 			self._AddExtractValue(topic, transcript, prob_frame_labels)
-
+			# normalise prob so as 0.5 is the threshold
+			self._NormalisProb(prob_frame_labels)
 			# update belief state
 			self.beliefstate.AddFrame(prob_frame_labels)
 
-
+	def _NormalisProb(self, prob_frame_labels):
+		'''
+		based on the threshold, normalise threshold to 0.5
+		'''
+		for slot in prob_frame_labels:
+			if prob_frame_labels[slot]['prob'] != -1:
+				prob_frame_labels[slot]['prob'] = math.pow(prob_frame_labels[slot]['prob'], self.slot_prob_factor)
+			if self.tuple_extractor.enumerable(slot):
+				for value, prob in prob_frame_labels[slot]['values'].items():
+					prob_frame_labels[slot]['values'][value] = math.pow(prob, self.value_prob_factor)
+			else:
+				for value, ratio in prob_frame_labels[slot]['values'].items():
+					prob_frame_labels[slot]['values'][value] = math.pow(ratio, self.ratio_thres_factor)
+	
 	def _AddExtractValue(self, topic, transcript, prob_frame_labels):
 		'''
 		extract values for non-enumerable slots
@@ -109,12 +133,12 @@ class msiip_nsvc_tracker(object):
 		for slot in self.beliefstate.state:
 			if self.tuple_extractor.enumerable(slot):
 				for value, prob in self.beliefstate.state[slot]['values'].items():
-					if prob >= self.value_prob_threshold:
+					if prob >= self.unified_thres:
 						self._AddSlotValue2Frame(slot,value)
 			else:
-				if self.beliefstate.state[slot]['prob'] > self.slot_prob_threshold:
+				if self.beliefstate.state[slot]['prob'] > self.unified_thres:
 					for value, ratio in self.beliefstate.state[slot]['values'].items():
-						if ratio >= self.ratio_thres:
+						if ratio >= self.unified_thres:
 							self._AddSlotValue2Frame(slot,value)
 
 	def _AddSlotValue2Frame(self,slot,value):
