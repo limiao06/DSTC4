@@ -192,8 +192,8 @@ class msiip_ensemble_tracker(object):
 				this_session['utterances'].append(this_utter)
 			out_json["sessions"].append(this_session)
 		end_time = time.time()
-    	elapsed_time = end_time - start_time
-    	out_json['wall_time'] += elapsed_time
+		elapsed_time = end_time - start_time
+		out_json['wall_time'] += elapsed_time
 		return out_json
 
 	def _UpdateFrameProb(self, frame_prob_list, topic):
