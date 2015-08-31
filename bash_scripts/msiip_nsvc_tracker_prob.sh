@@ -1,6 +1,6 @@
 # msiip_nsvc_tracker.sh feature iteration
 # msiip_nsvc_tracker.sh uB 5
-
+set -e
 set -u
 logfile=../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_prob_result.txt
 rm $logfile
