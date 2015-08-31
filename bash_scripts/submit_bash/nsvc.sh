@@ -10,6 +10,7 @@ if [ ${2} == dev ];then
 	python ${base_path}/scripts/dstc_thu/msiip_nsvc_tracker.py --dataset dstc4_dev --dataroot ${base_path}/data \
 		--ontology ${base_path}/scripts/config/ontology_dstc4.json \
 		--model_dir ${base_path}/submit/nsvc/Feat_${1}/model/ \
+    --slot_prob 0.5 \
 		--trackfile ${base_path}/submit/nsvc/Feat_${1}/answer_dev.json
 	python ${base_path}/scripts/score.py --dataset dstc4_dev --dataroot ${base_path}/data \
 		--trackfile ${base_path}/submit/nsvc/Feat_${1}/answer_dev.json \
