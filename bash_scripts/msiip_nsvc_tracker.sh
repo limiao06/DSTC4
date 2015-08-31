@@ -1,6 +1,6 @@
 # msiip_nsvc_tracker.sh feature iteration
 # msiip_nsvc_tracker.sh uB 5
-set -e
+
 set -u
 rm ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_result.txt
 python ../scripts/dstc_thu/msiip_nsvc_tracker.py --dataset dstc4_dev --dataroot ../data --ontology ../scripts/config/ontology_dstc4.json --model_dir ../output/models/NSVC_models/nsvc_${1}_model/ --trackfile ../output/msiip_out/msiip_nsvc_out/msiip_nsvc_${1}_t80_hr.json
