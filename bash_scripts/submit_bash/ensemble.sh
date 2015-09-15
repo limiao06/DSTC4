@@ -27,4 +27,9 @@ if [ ${2} == "test" ];then
      --trackfile ${base_path}/submit/ensemble/answer_${1}_test.json \
      --ontology ${base_path}/scripts/config/ontology_dstc4.json \
      --unified_thres ${3}
+	python ${base_path}/scripts/score.py --dataset dstc4_test --dataroot ${base_path}/data \
+		--trackfile ${base_path}/submit/ensemble/answer_${1}_test.json \
+		--scorefile ${base_path}/submit/ensemble/answer_${1}_test.score \
+		--ontology ${base_path}/scripts/config/ontology_dstc4.json
+	python ${base_path}/scripts/report.py --scorefile ${base_path}/submit/ensemble/answer_${1}_test.score
 fi
