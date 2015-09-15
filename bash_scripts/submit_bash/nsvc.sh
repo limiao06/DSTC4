@@ -24,4 +24,9 @@ if [ ${3} == "test" ];then
 		--ontology ${base_path}/scripts/config/ontology_dstc4.json \
 		--model_dir ${base_path}/submit/nsvc/Feat_${1}/model${2}/ \
 		--trackfile ${base_path}/submit/nsvc/Feat_${1}/answer_${2}_test.json
+	python ${base_path}/scripts/score.py --dataset dstc4_test --dataroot ${base_path}/data \
+		--trackfile ${base_path}/submit/nsvc/Feat_${1}/answer_${2}_test.json \
+		--scorefile ${base_path}/submit/nsvc/Feat_${1}/answer_${2}_test.score \
+		--ontology ${base_path}/scripts/config/ontology_dstc4.json
+	python ${base_path}/scripts/report.py --scorefile ${base_path}/submit/nsvc/Feat_${1}/answer_${2}_test.score
 fi
