@@ -228,7 +228,7 @@ class msiip_ensemble_tracker(object):
 							value_prob_list.append(0.0)
 						else:
 							value_prob_list.append(bs[slot]['values'][value])
-				if slot_specific and topic in self.weight_dict and slot in self.weight_dict[topic]:
+				if self.slot_specific and topic in self.weight_dict and slot in self.weight_dict[topic]:
 					weight_vector = self.weight_dict[topic][slot]
 				else:
 					weight_vector = self.default_weight
