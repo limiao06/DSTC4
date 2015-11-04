@@ -135,8 +135,8 @@ def main(argv):
 	parser.add_argument('--config',dest='config',action='store',required=True,help='Config file, indicate log files and weight')
 	parser.add_argument('--trackfile',dest='trackfile',action='store',required=True,metavar='JSON_FILE', help='File to write with tracker output')
 	parser.add_argument('--ontology',dest='ontology',action='store',metavar='JSON_FILE',required=True,help='JSON Ontology file')
-	parser.add_argument('--value_prob',dest='value_prob',type=float,action='store',default=0.8,help='output value prob threshold')
-	parser.add_argument('--slot_prob',dest='slot_prob',type=float,action='store',default=0.6,help='output slot prob threshold')
+	parser.add_argument('--value_prob',dest='value_prob',type=float,action='store',default=0.4,help='output value prob threshold')
+	parser.add_argument('--slot_prob',dest='slot_prob',type=float,action='store',default=0.5,help='output slot prob threshold')
 	args = parser.parse_args()
 
 	# 读取配置文件
