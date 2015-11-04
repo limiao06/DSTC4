@@ -43,6 +43,7 @@ class msiip_ensemble_tracker(object):
 		self.rules = DSTC4_rules(tagsets)
 		self.unified_threshold = unified_threshold
 		self.tagsets = tagsets
+		self.slot_specific = slot_specific
 
 		self.logs, self.perform_list = self._read_config(config_file, base_dir)
 
