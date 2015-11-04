@@ -31,7 +31,7 @@ import ontology_reader, dataset_walker
 class msiip_ensemble_tracker(object):
 	MY_ID = 'msiip_ensemble'
 	def __init__(self, tagsets, dataset, base_dir, config_file, \
-				weight_key='f1', unified_threshold=0.5):
+				weight_key='f1', unified_threshold=0.5, slot_specific=True):
 		'''
 		weight_key can be 'precision', 'recall' or 'f1'
 		config_file has many lines
@@ -227,7 +227,7 @@ class msiip_ensemble_tracker(object):
 							value_prob_list.append(0.0)
 						else:
 							value_prob_list.append(bs[slot]['values'][value])
-				if topic in self.weight_dict and slot in self.weight_dict[topic]:
+				if slot_specific and topic in self.weight_dict and slot in self.weight_dict[topic]:
 					weight_vector = self.weight_dict[topic][slot]
 				else:
 					weight_vector = self.default_weight
@@ -268,6 +268,7 @@ def main(argv):
 	parser.add_argument('--ontology',dest='ontology',action='store',metavar='JSON_FILE',required=True,help='JSON Ontology file')
 	parser.add_argument('--unified_thres',dest='unified_thres',type=float,action='store',default=0.5,help='output value prob threshold')
 	parser.add_argument('--weight_key',dest='weight_key',action='store',default='f1',help='key to calc weight')
+	parser.add_argument('--SA',dest='score_averaging',action='store_true',help='use conventional score averaging or not.')
 	args = parser.parse_args()
 
 	# ∂¡»°≈‰÷√Œƒº˛
@@ -285,7 +286,7 @@ def main(argv):
 	dataset = dataset_walker.dataset_walker(args.dataset,dataroot=args.dataroot,labels=False)
 	tagsets = ontology_reader.OntologyReader(args.ontology).get_tagsets()
 
-	tracker = msiip_ensemble_tracker(tagsets, dataset, args.LogBaseDir, args.config, args.weight_key, args.unified_thres)
+	tracker = msiip_ensemble_tracker(tagsets, dataset, args.LogBaseDir, args.config, args.weight_key, args.unified_thres, not args.score_averaging)
 	track = tracker.ensemble()
 
 	track_file = open(args.trackfile, "wb")
