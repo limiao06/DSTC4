@@ -32,7 +32,7 @@ class msiip_nsvc_tracker(object):
 	def __init__(self, tagsets, model_dir, ratio_thres = 0.8, max_num = 2, \
 				slot_prob_thres = 0.6, value_prob_thres = 0.8, \
 				mode = 'hr', bs_mode = 'enhance', bs_alpha = 0.0, \
-				unified_thres = 0.5):
+				unified_thres = 0.5, classif_thres = 0.5):
 		self.tagsets = tagsets
 		self.frame = {}
 		self.memory = {}
@@ -41,6 +41,8 @@ class msiip_nsvc_tracker(object):
 		self.slot_prob_threshold = slot_prob_thres
 		self.value_prob_threshold = value_prob_thres
 		self.ratio_thres = ratio_thres
+
+		self.classif_thres = classif_thres
 
 		self.unified_thres = unified_thres
 		self.slot_prob_factor = math.log(self.unified_thres, self.slot_prob_threshold)
@@ -88,7 +90,8 @@ class msiip_nsvc_tracker(object):
 			for key in svc_result:
 				label = svc_result[key]
 				prob = result_prob[key][1]
-				if label == 1:
+				#if label == 1:
+				if prob > self.classif_thres:
 					tuples.append(key)
 					probs.append(prob)
 
@@ -168,6 +171,7 @@ def main(argv):
 	parser.add_argument('--ratio_thres',dest='ratio_thres',type=float,action='store',default=0.8,help='ration threshold')
 	parser.add_argument('--value_prob',dest='value_prob',type=float,action='store',default=0.8,help='output value prob threshold')
 	parser.add_argument('--slot_prob',dest='slot_prob',type=float,action='store',default=0.6,help='output slot prob threshold')
+	parser.add_argument('--classif_prob',dest='classif_prob',type=float,action='store',default=0.5,help='output prob frame threshold')
 	parser.add_argument('--STCMode',dest='STCMode',action='store',default='hr',help='STC mode, high precision or high recall')
 	parser.add_argument('--BSMode',dest='BSMode',action='store',default='enhance',help='Belief State mode: max, average or enhance')
 	parser.add_argument('--BSAlpha',dest='BSAlpha',type=float,action='store',default=0.0,help='Belief State average history alpha')
@@ -201,7 +205,8 @@ def main(argv):
 								value_prob_thres = args.value_prob, 
 								mode = args.STCMode, 
 								bs_mode = args.BSMode, 
-								bs_alpha = args.BSAlpha)
+								bs_alpha = args.BSAlpha,
+								classif_thres = args.classif_prob)
 	for call in dataset:
 		this_session = {"session_id":call.log["session_id"], "utterances":[]}
 		tracker.reset()
