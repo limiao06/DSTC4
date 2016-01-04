@@ -2,7 +2,9 @@ log=../../output/msiip_out/msiip_nsvc_out/test_param/test_classif_prob_thres.txt
 rm $log
 model_dir=../../submit/nsvc/Feat_uB/model1
 set -e
-for t in $(seq 0.3 0.35 0.4 0.45 0.5 0.6)
+
+classif_prob_vec=(0.3 0.35 0.4 0.45 0.5 0.6)
+for t in ${classif_prob_vec[@]}
 do
   python ../../scripts/dstc_thu/msiip_nsvc_tracker.py --dataset dstc4_dev --dataroot ../../data/ \
   	--model_dir ${model_dir} --trackfile ../../output/msiip_out/msiip_nsvc_out/test_param/test_classif_prob_t${t}_hr_08.json \
