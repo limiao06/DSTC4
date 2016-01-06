@@ -21,6 +21,8 @@ def main(argv):
 
     ontology = OntologyReader(args.ontology)
 
+    tagsets = ontology.get_tagsets()
+
     stat = {}
     stat[('all', 'all')] = 0
     for topic in ontology.get_topics():
@@ -40,11 +42,12 @@ def main(argv):
 
 
     csvfile = open(args.outfile,'w')
-    print >> csvfile,("topic, slot, count")
-    print >> csvfile,("all, all, %d" %(stat[('all','all')]))
+    print >> csvfile,("topic,slot,count,value_number")
+    print >> csvfile,("all,all,%d," %(stat[('all','all')]))
     for topic in ontology.get_topics():
-        for slot in ontology.get_slots(topic) + ['all']:
-            print >> csvfile,("%s, %s, %d" %(topic, slot, stat[(topic,slot)]))
+        for slot in ontology.get_slots(topic):
+            print >> csvfile,("%s,%s,%d,%d" %(topic, slot, stat[(topic,slot)], len(tagsets[topic][slot])))
+        print >> csvfile,("%s,all,%d," %(topic, stat[(topic,'all')]))
     csvfile.close()
 
 if (__name__ == '__main__'):
