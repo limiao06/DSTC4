@@ -133,7 +133,6 @@ def main(argv):
 
                 elif log_utter['segment_info']['target_bio'] == 'O':
                     ref_frame = None
-                    prev_topic = None
 
 
             
