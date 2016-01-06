@@ -34,10 +34,9 @@ def main(argv):
             topic = sub_seg['topic']
             frame_label = sub_seg['frame_label']
             if frame_label:
-                stat[('all', 'all')] += 1
-                stat[(topic, 'all')] += 1
-
                 for slot,values in frame_label.items():
+                    stat[('all', 'all')] += len(values)
+                    stat[(topic, 'all')] += len(values)
                     stat[(topic, slot)] += len(values)
 
 
