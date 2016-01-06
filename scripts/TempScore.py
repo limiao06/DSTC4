@@ -97,6 +97,30 @@ def main(argv):
                 elif log_utter['segment_info']['target_bio'] == 'O':
                     ref_frame = None
                     track_frame = None
+
+            if prev_ref_frame and prev_track_frame:
+                for slot, values in prev_ref_frame.items():
+                    for value in values:
+                        if (prev_topic,slot,value) not in stats:
+                            stats[(prev_topic,slot,value)] = [0,0,0]
+                        stats[(prev_topic,slot,value)][1] += 1
+                        stats[('all','all','all')][1] += 1
+                        stats[(prev_topic,'all','all')][1] += 1
+                        stats[(prev_topic,slot,'all')][1] += 1
+                        if slot in prev_track_frame and value in prev_track_frame[slot]:
+                            stats[('all','all','all')][2] += 1
+                            stats[(prev_topic,'all','all')][2] += 1
+                            stats[(prev_topic,slot,'all')][2] += 1
+                            stats[(prev_topic,slot,value)][2] += 1
+
+                for slot, values in prev_track_frame.items():
+                    for value in values:
+                        if (prev_topic,slot,value) not in stats:
+                            stats[(prev_topic,slot,value)] = [0,0,0]
+                        stats[('all','all','all')][0] += 1
+                        stats[(prev_topic,'all','all')][0] += 1
+                        stats[(prev_topic,slot,'all')][0] += 1
+                        stats[(prev_topic,slot,value)][0] += 1
     else:
         for session in sessions:
             session_id = session.log['session_id']
@@ -133,6 +157,17 @@ def main(argv):
 
                 elif log_utter['segment_info']['target_bio'] == 'O':
                     ref_frame = None
+
+            if prev_ref_frame:
+                for slot, values in prev_ref_frame.items():
+                    for value in values:
+                        if (prev_topic,slot,value) not in stats:
+                            stats[(prev_topic,slot,value)] = [0,0,0]
+
+                        stats[('all','all','all')][1] += 1
+                        stats[(prev_topic,'all','all')][1] += 1
+                        stats[(prev_topic,slot,'all')][1] += 1
+                        stats[(prev_topic,slot,value)][1] += 1
 
 
             
