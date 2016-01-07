@@ -173,10 +173,10 @@ def main(argv):
             
 
     csvfile = open(args.scorefile,'w')
-    print >> csvfile,("topic, slot, value, tracker, ref, matched")
+    print >> csvfile,("topic,slot,value,tracker,ref,matched")
 
     for (topic,slot,value), values in stats.items():
-        print >>csvfile,("%s, %s, %s, %d, %d, %d"%(topic, slot, value, values[0], values[1], values[2]))
+        print >>csvfile,("%s,%s,%s,%d,%d,%d"%(topic, slot, value, values[0], values[1], values[2]))
     csvfile.close()
 
 if (__name__ == '__main__'):

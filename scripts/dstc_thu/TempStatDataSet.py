@@ -46,7 +46,8 @@ def main(argv):
     for topic in ontology.get_topics():
         for slot in ontology.get_slots(topic):
             print >> csvfile,("%s,%s,%d,%d" %(topic, slot, stat[(topic,slot)], len(tagsets[topic][slot])))
-        print >> csvfile,("%s,all,%d," %(topic, stat[(topic,'all')]))
+        all_value_count = sum([len(tagsets[topic][slot]) for slot in tagsets[topic]])
+        print >> csvfile,("%s,all,%d,%d" %(topic, stat[(topic,'all')],all_value_count))
     csvfile.close()
 
 if (__name__ == '__main__'):
