@@ -98,7 +98,7 @@ def main(argv):
                     ref_frame = None
                     track_frame = None
 
-            if prev_ref_frame and prev_track_frame:
+            if prev_ref_frame or prev_track_frame:
                 for slot, values in prev_ref_frame.items():
                     for value in values:
                         if (prev_topic,slot,value) not in stats:
