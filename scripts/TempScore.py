@@ -57,7 +57,7 @@ def main(argv):
                     ref_frame = label_utter['frame_label']
                     track_frame = track_utter['frame_label']
 
-                    if prev_ref_frame:
+                    if prev_ref_frame or prev_track_frame:
                         for slot, values in prev_ref_frame.items():
                             for value in values:
                                 if (prev_topic,slot,value) not in stats:
