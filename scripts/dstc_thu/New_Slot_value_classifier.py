@@ -101,28 +101,38 @@ class feature(object):
 		self.is_set = False
 
 	def _set_offset(self):
-		self.TOPIC_LEX_offset = 0
-		self.UNI_LEX_offset = 0
-		self.BI_LEX_offset = 0
-		self.TRI_LEX_offset = 0
-		self.BASELINE_LEX_offset = 0
+		self.TOPIC_LEX_offset = -1
+		self.UNI_LEX_offset = -1
+		self.BI_LEX_offset = -1
+		self.TRI_LEX_offset = -1
+		self.BASELINE_LEX_offset = -1
 
-		cur_offset = 0
+		self.TOPIC_LEX_offset = cur_offset = 0
 
 		if 'TOPIC' in self.feature_list:
-			cur_offset = self.UNI_LEX_offset = cur_offset + len(self.TOPIC_LEX)
+			cur_offset += len(self.TOPIC_LEX)
+
+		self.UNI_LEX_offset = cur_offset
 
 		if self.unigram:
-			cur_offset = self.BI_LEX_offset = cur_offset + len(self.UNI_LEX)
+			cur_offset += len(self.UNI_LEX)
+
+		self.BI_LEX_offset = cur_offset
 
 		if self.bigram:
-			cur_offset = self.TRI_LEX_offset = self.BI_LEX_offset + len(self.BI_LEX)
+			cur_offset += len(self.BI_LEX)
+
+		self.TRI_LEX_offset = cur_offset
 
 		if self.trigram:
-			cur_offset = self.BASELINE_LEX_offset = self.TRI_LEX_offset + len(self.TRI_LEX)
+			cur_offset += len(self.TRI_LEX)
+
+		self.BASELINE_LEX_offset = cur_offset
 
 		if 'BASELINE' in self.feature_list and self.ValueMatchFeature:
-			cur_offset = self.VMF_offset = self.BASELINE_LEX_offset + self.ValueMatchFeature.GetFeatureSize()
+			cur_offset += len(self.BASELINE_LEX)
+
+		self.VMF_offset = cur_offset
 
 	def _preprocessing(self, sent):
 		'''
