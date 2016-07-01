@@ -101,26 +101,28 @@ class feature(object):
 		self.is_set = False
 
 	def _set_offset(self):
-		self.TOPIC_LEX_offset = 0
-		self.UNI_LEX_offset = 0
-		self.BI_LEX_offset = 0
-		self.TRI_LEX_offset = 0
-		self.BASELINE_LEX_offset = 0
+		self.TOPIC_LEX_offset = -1
+		self.UNI_LEX_offset = -1
+		self.BI_LEX_offset = -1
+		self.TRI_LEX_offset = -1
+		self.BASELINE_LEX_offset = -1
+
+		cur_offset = 0
 
 		if 'TOPIC' in self.feature_list:
-			self.UNI_LEX_offset = self.TOPIC_LEX_offset + len(self.TOPIC_LEX)
+			cur_offset = self.UNI_LEX_offset = cur_offset + len(self.TOPIC_LEX)
 
 		if self.unigram:
-			self.BI_LEX_offset = self.UNI_LEX_offset + len(self.UNI_LEX)
+			cur_offset = self.BI_LEX_offset = cur_offset + len(self.UNI_LEX)
 
 		if self.bigram:
-			self.TRI_LEX_offset = self.BI_LEX_offset + len(self.BI_LEX)
+			cur_offset = self.TRI_LEX_offset = self.BI_LEX_offset + len(self.BI_LEX)
 
 		if self.trigram:
-			self.BASELINE_LEX_offset = self.TRI_LEX_offset + len(self.TRI_LEX)
+			cur_offset = self.BASELINE_LEX_offset = self.TRI_LEX_offset + len(self.TRI_LEX)
 
 		if 'BASELINE' in self.feature_list and self.ValueMatchFeature:
-			self.VMF_offset = self.BASELINE_LEX_offset + self.ValueMatchFeature.GetFeatureSize()
+			cur_offset = self.VMF_offset = self.BASELINE_LEX_offset + self.ValueMatchFeature.GetFeatureSize()
 
 	def _preprocessing(self, sent):
 		'''
@@ -292,6 +294,7 @@ class feature(object):
 			else:
 				self.appLogger.error('Unknown feature! %s' %(feature))
 				raise Exception('Unknown feature! %s' %(feature))
+		self._prepare_resources()
 		return
 
 	def _calc_feature_weight(self, feature_lists, label_samples, lexcion, method = 'simple'):
