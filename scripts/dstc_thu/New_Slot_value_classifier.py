@@ -101,11 +101,11 @@ class feature(object):
 		self.is_set = False
 
 	def _set_offset(self):
-		self.TOPIC_LEX_offset = -1
-		self.UNI_LEX_offset = -1
-		self.BI_LEX_offset = -1
-		self.TRI_LEX_offset = -1
-		self.BASELINE_LEX_offset = -1
+		self.TOPIC_LEX_offset = 0
+		self.UNI_LEX_offset = 0
+		self.BI_LEX_offset = 0
+		self.TRI_LEX_offset = 0
+		self.BASELINE_LEX_offset = 0
 
 		cur_offset = 0
 
