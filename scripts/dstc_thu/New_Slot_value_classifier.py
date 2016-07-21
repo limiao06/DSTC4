@@ -734,7 +734,7 @@ class slot_value_classifier(object):
 
 				weight_dict = {}
 				for l in label_dict:
-					weight_dict[l] = len(labels_list) * 0.1 / label_dict[i]
+					weight_dict[l] = len(labels_list) * 0.1 / label_dict[l]
 
 				sum_weight = sum(weight_dict.values())
 				for l in weight_dict:
