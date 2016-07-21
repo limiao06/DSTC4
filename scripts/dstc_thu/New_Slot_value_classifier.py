@@ -727,6 +727,8 @@ class slot_value_classifier(object):
 					labels_list.append(label)
 					samples_list.append(sample)
 
+			param_str_suffix = ''
+			
 			if weighted:
 				label_dict = {}
 				for l in labels_list:
@@ -741,12 +743,12 @@ class slot_value_classifier(object):
 					weight_dict[l] = weight_dict[l] / sum_weight
 
 				for l, w in weight_dict.items():
-					param_str += ' -w%s %.2f' %(l, w)
-
+					param_str_suffix += ' -w%s %f' %(l, w)	
 			else:
 				pass
+
 			prob = problem(labels_list, samples_list)
-			param = parameter(param_str)
+			param = parameter(param_str + param_str_suffix)
 			self.models[model_key] = liblinear.train(prob, param)
 
 	def _save_models(self, model_dir, label_samples, train_samples, train_labels, train_feature_samples):
