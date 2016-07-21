@@ -717,7 +717,7 @@ class slot_value_classifier(object):
 					train_labels[key][i] = 1
 		return (train_labels, train_feature_samples)
 
-	def _train_svm_models(self, train_labels, train_feature_samples, param_str = '-s 0 -c 1'):
+	def _train_svm_models(self, train_labels, train_feature_samples, param_str = '-s 0 -c 1', weighted = True):
 		for model_key in self.model_keys:
 			print 'Train tuple: %s' %(model_key)
 			labels_list = []
@@ -727,6 +727,24 @@ class slot_value_classifier(object):
 					labels_list.append(label)
 					samples_list.append(sample)
 
+			if weighted:
+				label_dict = {}
+				for l in labels_list:
+					label_dict[l] = label_dict.get(l, 0) + 1
+
+				weight_dict = {}
+				for l in label_dict:
+					weight_dict[l] = len(labels_list) * 0.1 / label_dict[i]
+
+				sum_weight = sum(weight_dict.values())
+				for l in weight_dict:
+					weight_dict[l] = weight_dict[l] / sum_weight
+
+				for l, w in weight_dict.items():
+					param_str += ' -w%s %.2f' %(l, w)
+
+			else:
+				pass
 			prob = problem(labels_list, samples_list)
 			param = parameter(param_str)
 			self.models[model_key] = liblinear.train(prob, param)
